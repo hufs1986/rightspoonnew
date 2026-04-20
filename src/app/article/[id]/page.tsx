@@ -3,6 +3,7 @@ import Link from "next/link";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ArticleCard } from "../../components/ArticleCard";
+import AdSlot from "../../components/AdSlot";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
 
@@ -127,11 +128,17 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     </div>
                 )}
 
+                {/* AdSlot Top */}
+                <AdSlot />
+
                 {/* Article Content */}
                 <div
                     className={styles.article__body}
                     dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br/>') }}
                 />
+
+                {/* AdSlot Bottom */}
+                <AdSlot />
 
                 {/* Share */}
                 <div className={styles.article__share}>
