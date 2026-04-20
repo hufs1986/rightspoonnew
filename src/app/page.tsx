@@ -8,6 +8,7 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { getCategoryValue } from "./data/articles";
 
+import DailyQuote from "./components/DailyQuote";
 import { formatArticle } from "@/utils/articleFormat";
 import LoadMore from "./components/LoadMore";
 
@@ -65,6 +66,8 @@ export default async function Home() {
           </span>
         </div>
       </div>
+
+      <DailyQuote />
 
       {/* Hero Section */}
       <section className={styles["hero-section"]}>
