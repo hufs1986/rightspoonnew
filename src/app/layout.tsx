@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import InstallPrompt from "./components/InstallPrompt";
+import InstallBanner from "./components/InstallBanner";
 import PushPermission from "./components/PushPermission";
 import "./globals.css";
 
@@ -74,8 +74,8 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/logo-v2.png" />
       </head>
       <body>
+        <InstallBanner />
         {children}
-        <InstallPrompt />
         <PushPermission />
       </body>
     </html>
