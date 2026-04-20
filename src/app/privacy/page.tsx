@@ -1,6 +1,6 @@
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import styles from "../category/[slug]/page.module.css"; // category header styles 재사용
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import styles from "../category/[slug]/page.module.css";
 
 export const metadata = {
     title: "개인정보처리방침 | 오른스푼",
