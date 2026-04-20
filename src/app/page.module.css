@@ -8,21 +8,23 @@
   background: var(--color-accent);
   overflow: hidden;
   white-space: nowrap;
+  position: relative;
 }
 
 .ticker__inner {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  max-width: var(--max-width);
-  margin: 0 auto;
   padding: var(--space-2) var(--space-6);
   gap: var(--space-4);
+  animation: tickerScroll 20s linear infinite;
+  will-change: transform;
 }
 
 .ticker__label {
   font-size: var(--text-xs);
   font-weight: var(--font-weight-black);
   background: rgba(0, 0, 0, 0.3);
+  color: #fff;
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-sm);
   flex-shrink: 0;
@@ -31,17 +33,18 @@
 
 .ticker__text {
   font-size: var(--text-sm);
-  font-weight: var(--font-weight-medium);
-  animation: tickerScroll 30s linear infinite;
+  font-weight: var(--font-weight-bold);
+  color: #fff;
+  white-space: nowrap;
 }
 
 @keyframes tickerScroll {
   0% {
-    transform: translateX(100%);
+    transform: translateX(0%);
   }
 
   100% {
-    transform: translateX(-200%);
+    transform: translateX(-50%);
   }
 }
 
@@ -49,21 +52,21 @@
 .hero-section {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: var(--space-8) var(--space-6) 0;
+  padding: var(--space-6) var(--space-4) 0;
 }
 
 /* Section Heading */
 .section {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: var(--space-12) var(--space-6) 0;
+  padding: var(--space-10) var(--space-4) 0;
 }
 
 .section__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
 }
 
 .section__title {
@@ -103,7 +106,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
 }
 
 .filter__btn {
@@ -130,14 +133,14 @@
 /* Newsletter CTA */
 .cta {
   max-width: var(--max-width);
-  margin: var(--space-16) auto 0;
-  padding: 0 var(--space-6);
+  margin: var(--space-10) auto 0;
+  padding: 0 var(--space-4);
 }
 
 .cta__inner {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   border-radius: var(--radius-xl);
-  padding: var(--space-12) var(--space-10);
+  padding: var(--space-10) var(--space-8);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -154,21 +157,22 @@
   background: radial-gradient(circle at 50% 50%,
       rgba(230, 57, 70, 0.08) 0%,
       transparent 50%);
-  animation: pulse 4s ease-in-out infinite;
 }
 
 .cta__title {
-  font-size: var(--text-3xl);
+  font-size: var(--text-2xl);
   font-weight: var(--font-weight-black);
-  margin-bottom: var(--space-4);
+  color: #fff;
+  margin-bottom: var(--space-3);
   position: relative;
 }
 
 .cta__desc {
-  font-size: var(--text-base);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-8);
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: var(--space-6);
   position: relative;
+  line-height: var(--line-height-loose);
 }
 
 .cta__actions {
@@ -188,18 +192,36 @@
 @media (max-width: 640px) {
   .grid {
     grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .hero-section {
+    padding: var(--space-4) var(--space-3) 0;
+  }
+
+  .section {
+    padding: var(--space-6) var(--space-3) 0;
+  }
+
+  .cta {
+    padding: 0 var(--space-3);
+    margin-top: var(--space-6);
   }
 
   .cta__inner {
-    padding: var(--space-8) var(--space-6);
+    padding: var(--space-6) var(--space-4);
+    border-radius: var(--radius-lg);
   }
 
   .cta__title {
-    font-size: var(--text-2xl);
+    font-size: var(--text-xl);
   }
 
-  .cta__actions {
-    flex-direction: column;
-    align-items: center;
+  .cta__desc {
+    font-size: var(--text-xs);
+  }
+
+  .section__title {
+    font-size: var(--text-xl);
   }
 }

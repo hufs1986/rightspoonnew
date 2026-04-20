@@ -36,16 +36,19 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         );
     }
 
+    const cleanYid = (id: string) => id ? id.replace(/[\/\\?#]+$/, '') : '';
+    const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
+
     const article = {
         id: dbArticle.id,
         title: dbArticle.title,
-        excerpt: typeof dbArticle.content === 'string' ? dbArticle.content.substring(0, 100) + '...' : '',
+        excerpt: stripHtml(typeof dbArticle.content === 'string' ? dbArticle.content : '').substring(0, 100) + '...',
         category: (dbArticle.category === "정치" ? "politics" : "economy") as "politics" | "economy",
         categoryLabel: dbArticle.category,
         content: dbArticle.content,
         author: dbArticle.author,
-        youtubeId: dbArticle.youtube_id,
-        thumbnailUrl: dbArticle.youtube_id ? `https://img.youtube.com/vi/${dbArticle.youtube_id}/hqdefault.jpg` : "",
+        youtubeId: cleanYid(dbArticle.youtube_id),
+        thumbnailUrl: cleanYid(dbArticle.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(dbArticle.youtube_id)}/mqdefault.jpg` : "",
         publishedAt: new Date(dbArticle.created_at).toLocaleDateString(),
         readTime: dbArticle.read_time,
         views: dbArticle.view_count,
@@ -61,13 +64,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const relatedArticles = (relatedDb || []).map((a) => ({
         id: a.id,
         title: a.title,
-        excerpt: typeof a.content === 'string' ? a.content.substring(0, 100) + '...' : '',
+        excerpt: stripHtml(typeof a.content === 'string' ? a.content : '').substring(0, 100) + '...',
         category: (a.category === "정치" ? "politics" : "economy") as "politics" | "economy",
         categoryLabel: a.category,
         content: a.content,
         author: a.author,
-        youtubeId: a.youtube_id,
-        thumbnailUrl: a.youtube_id ? `https://img.youtube.com/vi/${a.youtube_id}/hqdefault.jpg` : "",
+        youtubeId: cleanYid(a.youtube_id),
+        thumbnailUrl: cleanYid(a.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(a.youtube_id)}/mqdefault.jpg` : "",
         publishedAt: new Date(a.created_at).toLocaleDateString(),
         readTime: a.read_time,
         views: a.view_count,

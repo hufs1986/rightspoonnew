@@ -38,17 +38,25 @@ export default async function Home() {
     );
   }
 
+  // Helper: youtube ID 에서 slash 등 정리
+  const cleanYoutubeId = (id: string) => id ? id.replace(/[\/\\?#]+$/, '') : '';
+
+  // Helper: HTML 태그 제거 (Rich Editor content에서 excerpt 추출)
+  const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
+
   // 데이터 포맷팅 (DB -> 컴포넌트 프롭스 구조)
   const formattedArticles = dbArticles.map((a) => ({
     id: a.id,
     title: a.title,
-    excerpt: typeof a.content === 'string' ? a.content.substring(0, 100) + '...' : '',
+    excerpt: stripHtml(typeof a.content === 'string' ? a.content : '').substring(0, 100) + '...',
     category: (a.category === "정치" ? "politics" : "economy") as "politics" | "economy",
     categoryLabel: a.category,
     content: a.content,
     author: a.author,
-    youtubeId: a.youtube_id,
-    thumbnailUrl: a.youtube_id ? `https://img.youtube.com/vi/${a.youtube_id}/hqdefault.jpg` : "",
+    youtubeId: cleanYoutubeId(a.youtube_id),
+    thumbnailUrl: cleanYoutubeId(a.youtube_id)
+      ? `https://img.youtube.com/vi/${cleanYoutubeId(a.youtube_id)}/mqdefault.jpg`
+      : "",
     publishedAt: new Date(a.created_at).toLocaleDateString(),
     readTime: a.read_time,
     views: a.view_count,
@@ -66,7 +74,10 @@ export default async function Home() {
         <div className={styles.ticker__inner}>
           <span className={styles.ticker__label}>속보</span>
           <span className={styles.ticker__text}>
-            올바른 생각만 떠먹여 드립니다. 대한민국 보수 시각의 뉴스와 칼럼을 매일 전합니다.
+            올바른 생각만 떠먹여 드립니다. 대한민국 보수 시각의 뉴스와 칼럼을 매일 전합니다. &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
+          </span>
+          <span className={styles.ticker__text}>
+            올바른 생각만 떠먹여 드립니다. 대한민국 보수 시각의 뉴스와 칼럼을 매일 전합니다. &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
           </span>
         </div>
       </div>
