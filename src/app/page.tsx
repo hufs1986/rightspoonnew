@@ -9,6 +9,7 @@ import { createClient } from "@/utils/supabase/server";
 import { getCategoryValue } from "./data/articles";
 
 import DailyQuote from "./components/DailyQuote";
+import CardNewsSwiper from "./components/CardNewsSwiper";
 import { formatArticle } from "@/utils/articleFormat";
 import LoadMore from "./components/LoadMore";
 
@@ -122,6 +123,9 @@ export default async function Home() {
 
       {/* Popular Articles Ranking */}
       <PopularArticles />
+
+      {/* Weekly Card News */}
+      <CardNewsSwiper />
 
       {/* Join CTA */}
       <section className={styles.cta}>
