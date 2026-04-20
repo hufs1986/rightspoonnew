@@ -15,7 +15,7 @@ export default function AboutPage() {
             <section className={styles.hero}>
                 <div className={styles.heroInner}>
                     <img
-                        src="/logo-character.jpg"
+                        src="/logo-character.webp"
                         alt="드럼통119"
                         className={styles.heroLogo}
                     />

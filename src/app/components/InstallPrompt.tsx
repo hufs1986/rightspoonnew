@@ -160,7 +160,7 @@ export default function InstallPrompt() {
                         {/* 중앙: 아이콘 + 메시지 */}
                         <div style={{ display: "flex", gap: "14px", alignItems: "flex-start", marginBottom: "16px" }}>
                             <img
-                                src="/logo-character.jpg"
+                                src="/logo-character.webp"
                                 alt="오른스푼"
                                 style={{
                                     width: 52,

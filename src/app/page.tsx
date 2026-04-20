@@ -108,7 +108,7 @@ export default async function Home() {
             </>
           ) : (
             <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "100px 20px", background: "var(--color-bg-card)", borderRadius: "var(--radius-lg)", border: "1px solid var(--color-border)", minHeight: "300px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-              <img src="/logo-character.jpg" alt="character" style={{ width: "100px", borderRadius: "50%", margin: "0 auto 20px", border: "2px solid var(--color-accent)", opacity: 0.8 }} />
+              <img src="/logo-character.webp" alt="character" style={{ width: "100px", borderRadius: "50%", margin: "0 auto 20px", border: "2px solid var(--color-accent)", opacity: 0.8 }} />
               <h3 style={{ color: "var(--color-text-primary)", fontSize: "24px", marginBottom: "12px", fontWeight: "bold" }}>더 많은 콘텐츠가 준비 중입니다!</h3>
               <p style={{ color: "var(--color-text-secondary)", fontSize: "16px" }}>불 드럼통119 캐릭터와 함께하는 다양한 우파 콘텐츠가 곧 업로드됩니다.</p>
             </div>
@@ -120,7 +120,7 @@ export default async function Home() {
       <section className={styles.cta}>
         <div className={styles.cta__inner}>
           <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <img src="/logo-character.jpg" alt="드럼통119" style={{ width: "100px", height: "100px", borderRadius: "50%", border: "3px solid #d32f2f", boxShadow: "0 0 20px rgba(211,47,47,0.5)", marginBottom: "20px" }} />
+            <img src="/logo-character.webp" alt="드럼통119" style={{ width: "100px", height: "100px", borderRadius: "50%", border: "3px solid #d32f2f", boxShadow: "0 0 20px rgba(211,47,47,0.5)", marginBottom: "20px" }} />
             <h2 className={styles.cta__title}>
               대한민국 오른 목소리, 유튜브에서!
             </h2>

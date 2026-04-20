@@ -107,7 +107,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     <div className={styles.article__meta}>
                         <div className={styles.article__author}>
                             <span className={styles["article__author-avatar"]}>
-                                <img src="/logo-character.jpg" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="드럼통119" />
+                                <img src="/logo-character.webp" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="드럼통119" />
                             </span>
                             <span className={styles["article__author-name"]}>
                                 {article.author}

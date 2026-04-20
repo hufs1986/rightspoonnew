@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./Header.module.css";
 
 export default function Header() {
@@ -12,9 +13,12 @@ export default function Header() {
             <div className={styles.header__inner}>
                 {/* Logo */}
                 <Link href="/" className={styles.header__logo}>
-                    <img
-                        src="/logo-character.jpg"
+                    <Image
+                        src="/logo-character.webp"
                         alt="드럼통119"
+                        width={40}
+                        height={40}
+                        priority
                         className={styles["header__logo-icon"]}
                     />
                     <span className={styles["header__logo-text"]}>RIGHT SPOON</span>

@@ -35,7 +35,7 @@ export default function AdminLoginPage() {
             <div className={styles.loginCard}>
                 <div className={styles.loginHeader}>
                     <img
-                        src="/logo-character.jpg"
+                        src="/logo-character.webp"
                         alt="드럼통119"
                         className={styles.loginLogo}
                     />
