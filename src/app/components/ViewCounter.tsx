@@ -9,9 +9,13 @@ interface ViewCounterProps {
 
 export default function ViewCounter({ articleId }: ViewCounterProps) {
     useEffect(() => {
+        const key = `viewed_${articleId}`;
+        if (sessionStorage.getItem(key)) return; // 같은 세션 내 중복 방지
+
         const incrementView = async () => {
             const supabase = createClient();
             await supabase.rpc("increment_view_count", { article_id: articleId });
+            sessionStorage.setItem(key, "true");
         };
         incrementView();
     }, [articleId]);
