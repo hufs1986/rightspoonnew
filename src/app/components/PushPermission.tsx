@@ -52,12 +52,27 @@ export default function PushPermission() {
         // 이미 거부된 상태라면 표시하지 않음
         if (Notification.permission === "denied") return;
 
-        // PWA에서만 또는 일반 브라우저에서도 표시 (설치 배너 닫은 후 3초 지연)
-        const timer = setTimeout(() => {
-            setShowPrompt(true);
-        }, isStandalone ? 2000 : 8000);
+        // 설치 배너가 보이는 동안은 표시하지 않음
+        let installBannerVisible = false;
+        const onInstallBanner = (e: Event) => {
+            installBannerVisible = (e as CustomEvent).detail;
+            if (installBannerVisible) {
+                setShowPrompt(false);
+            }
+        };
+        window.addEventListener("install-banner-visible", onInstallBanner);
 
-        return () => clearTimeout(timer);
+        // PWA에서만 또는 일반 브라우저에서도 표시 (설치 배너 닫은 후 충분한 지연)
+        const timer = setTimeout(() => {
+            if (!installBannerVisible) {
+                setShowPrompt(true);
+            }
+        }, isStandalone ? 2000 : 12000);
+
+        return () => {
+            clearTimeout(timer);
+            window.removeEventListener("install-banner-visible", onInstallBanner);
+        };
     }, []);
 
     async function autoSubscribe() {

@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/client";
 export default function InstallBanner() {
     const [show, setShow] = useState(false);
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+    const [installed, setInstalled] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
 
     useEffect(() => {
@@ -53,9 +54,20 @@ export default function InstallBanner() {
 
         window.addEventListener("appinstalled", () => {
             localStorage.setItem("pwa-installed", "true");
+            setInstalled(true);
             setShow(false);
             const sb = createClient();
             sb.rpc("increment_download_count");
+        });
+
+        // 스탠드얼론 모드 전환 감지 (설치 후 재방문 시)
+        const mql = window.matchMedia("(display-mode: standalone)");
+        mql.addEventListener("change", (e) => {
+            if (e.matches) {
+                localStorage.setItem("pwa-installed", "true");
+                setInstalled(true);
+                setShow(false);
+            }
         });
 
         // 스크롤 후 또는 5초 후 표시 (더 자연스러운 타이밍)
@@ -64,6 +76,8 @@ export default function InstallBanner() {
             if (triggered) return;
             triggered = true;
             setShow(true);
+            // PushPermission에게 설치 배너가 표시 중임을 알림
+            window.dispatchEvent(new CustomEvent("install-banner-visible", { detail: true }));
         };
 
         const scrollHandler = () => {
@@ -88,9 +102,14 @@ export default function InstallBanner() {
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === "accepted") {
                 localStorage.setItem("pwa-installed", "true");
+                setInstalled(true);
                 setShow(false);
-                const sb = createClient();
-                sb.rpc("increment_download_count");
+                // 다운로드 카운트 (appinstalled 이벤트가 안 올 수도 있으므로 여기서도 처리)
+                if (!localStorage.getItem("download-counted")) {
+                    const sb = createClient();
+                    sb.rpc("increment_download_count");
+                    localStorage.setItem("download-counted", "true");
+                }
             }
             setDeferredPrompt(null);
         } else {
@@ -107,6 +126,7 @@ export default function InstallBanner() {
 
     const handleClose = () => {
         setIsClosing(true);
+        window.dispatchEvent(new CustomEvent("install-banner-visible", { detail: false }));
         setTimeout(() => {
             setShow(false);
             setIsClosing(false);
@@ -114,7 +134,7 @@ export default function InstallBanner() {
         }, 300);
     };
 
-    if (!show) return null;
+    if (!show || installed) return null;
 
     return (
         <>
