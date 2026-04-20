@@ -15,7 +15,7 @@ export default function AdSlot({
     format = "auto",
     responsive = "true",
     className = "",
-    style = { display: "block", minHeight: "100px", margin: "20px 0" }
+    style = { display: "block", minHeight: "0px", margin: "0" }
 }: AdSlotProps) {
     useEffect(() => {
         try {
