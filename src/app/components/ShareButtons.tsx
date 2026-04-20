@@ -57,10 +57,9 @@ export default function ShareButtons({ title, description, thumbnailUrl }: Share
 
     const handleKakaoShare = () => {
         if (!window.Kakao?.Share) {
-            // SDK 로드 실패 시 폴백: 카카오톡 URL 스킴
-            const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent(`[오른스푼] ${title}`);
-            window.open(`https://story.kakao.com/share?url=${url}&text=${text}`, "_blank");
+            // SDK 로드 실패 시 링크 복사 폴백
+            navigator.clipboard.writeText(window.location.href);
+            alert("카카오톡 연동 준비 중입니다. 링크가 복사되었으니 카카오톡에 직접 붙여넣기 해주세요!");
             return;
         }
 
