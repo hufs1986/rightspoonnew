@@ -13,6 +13,12 @@ export default function AdminWritePage() {
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const handleLogout = async () => {
+        const supabase = createClient();
+        await supabase.auth.signOut();
+        window.location.href = "/";
+    };
+
     // Preview YouTube ID extraction
     const getYoutubeId = (url: string) => {
         if (!url) return null;
@@ -56,7 +62,20 @@ export default function AdminWritePage() {
             <Header />
 
             <div className={styles.adminContainer}>
-                <h1 className={styles.adminTitle}>새 콘텐츠 작성 (관리자)</h1>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <h1 className={styles.adminTitle}>새 콘텐츠 작성 (관리자)</h1>
+                    <button onClick={handleLogout} style={{
+                        padding: "8px 16px",
+                        fontSize: "var(--text-sm)",
+                        background: "var(--color-surface)",
+                        border: "1px solid var(--color-border)",
+                        borderRadius: "var(--radius-md)",
+                        cursor: "pointer",
+                        color: "var(--color-text-secondary)"
+                    }}>
+                        로그아웃
+                    </button>
+                </div>
                 <p className={styles.adminDesc}>
                     유튜브 영상 URL과 기사 본문을 입력하여 새로운 콘텐츠를 발행합니다.
                 </p>
