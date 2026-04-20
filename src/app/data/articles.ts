@@ -44,9 +44,9 @@ export const mockArticles: Article[] = [
     },
     {
         id: "2",
-        title: "2026 한국 경제 전망: 보수 경제학의 관점",
+        title: "2026 한국 경제 전망: 오른 경제학의 관점",
         excerpt:
-            "글로벌 경기 침체 속에서 한국 경제의 활로를 찾기 위한 보수 경제학적 정책 제안을 짚어봅니다.",
+            "글로벌 경기 침체 속에서 한국 경제의 활로를 찾기 위한 오른 경제학적 정책 제안을 짚어봅니다.",
         category: "economy",
         categoryLabel: "경제",
         youtubeId: null,
@@ -63,16 +63,16 @@ export const mockArticles: Article[] = [
     },
     {
         id: "3",
-        title: "MZ세대 보수, 왜 늘어나고 있는가",
+        title: "MZ세대 오른, 왜 늘어나고 있는가",
         excerpt:
-            "젊은 세대에서 보수 가치관이 확산되는 현상의 배경과 의미를 분석합니다. 공정성에 대한 요구가 핵심입니다.",
+            "젊은 세대에서 오른 가치관이 확산되는 현상의 배경과 의미를 분석합니다. 공정성에 대한 요구가 핵심입니다.",
         category: "politics",
         categoryLabel: "정치",
         youtubeId: "dQw4w9WgXcQ",
         thumbnailUrl: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=450&fit=crop",
-        content: `<p>최근 조사에 따르면 2030세대에서 보수적 가치관을 가진 비율이 크게 증가하고 있습니다.</p>
+        content: `<p>최근 조사에 따르면 2030세대에서 오른 가치관을 가진 비율이 크게 증가하고 있습니다.</p>
 <h2>공정성이 핵심</h2>
-<p>MZ세대가 보수에 공감하는 가장 큰 이유는 '공정성'입니다. 능력주의와 기회의 평등을 중시하는 이 세대는 결과의 평등을 강조하는 좌파 정책에 회의적입니다.</p>`,
+<p>MZ세대가 오른에 공감하는 가장 큰 이유는 '공정성'입니다. 능력주의와 기회의 평등을 중시하는 이 세대는 결과의 평등을 강조하는 좌파 정책에 회의적입니다.</p>`,
         author: "오른스푼 에디터",
         publishedAt: "2026-04-05",
         readTime: "4분",

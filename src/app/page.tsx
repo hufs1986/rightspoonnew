@@ -41,8 +41,12 @@ export default async function Home() {
   // Helper: youtube ID 에서 slash 등 정리 (또는 DB에 잘못 저장된 전체 URL에서 ID 추출)
   const cleanYoutubeId = (id: string) => {
     if (!id) return '';
+    // Full URL → extract 11-char video ID
     const match = id.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
-    return match ? match[1] : id.replace(/[\/\\?#]+$/, '');
+    if (match) return match[1];
+    // Already a bare ID (possibly with trailing junk)
+    const cleaned = id.replace(/[\/?#&].*/g, '').trim();
+    return /^[\w-]{11}$/.test(cleaned) ? cleaned : '';
   };
 
   // Helper: HTML 태그 제거 (Rich Editor content에서 excerpt 추출)
@@ -78,10 +82,10 @@ export default async function Home() {
         <div className={styles.ticker__inner}>
           <span className={styles.ticker__label}>속보</span>
           <span className={styles.ticker__text}>
-            올바른 생각만 떠먹여 드립니다. 대한민국 보수 시각의 뉴스와 칼럼을 매일 전합니다. &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
+            올바른 생각만 떠먹여 드립니다. 대한민국 오른 시각의 뉴스와 칼럼을 매일 전합니다. &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
           </span>
           <span className={styles.ticker__text}>
-            올바른 생각만 떠먹여 드립니다. 대한민국 보수 시각의 뉴스와 칼럼을 매일 전합니다. &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
+            올바른 생각만 떠먹여 드립니다. 대한민국 오른 시각의 뉴스와 칼럼을 매일 전합니다. &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
           </span>
         </div>
       </div>

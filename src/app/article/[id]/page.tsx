@@ -39,7 +39,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const cleanYid = (id: string) => {
         if (!id) return '';
         const match = id.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
-        return match ? match[1] : id.replace(/[\/\\?#]+$/, '');
+        if (match) return match[1];
+        const cleaned = id.replace(/[\/?#&].*/g, '').trim();
+        return /^[\w-]{11}$/.test(cleaned) ? cleaned : '';
     };
     const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
 
@@ -113,7 +115,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     <div className={styles.article__meta}>
                         <div className={styles.article__author}>
                             <span className={styles["article__author-avatar"]}>
-                                <img src="/logo-v2.png" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="드럼통119" />
+                                <img src="/logo-character.jpg" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="드럼통119" />
                             </span>
                             <span className={styles["article__author-name"]}>
                                 {article.author}

@@ -13,7 +13,7 @@ export default function Header() {
                 {/* Logo */}
                 <Link href="/" className={styles.header__logo}>
                     <img
-                        src="/logo-v2.png"
+                        src="/logo-character.jpg"
                         alt="드럼통119"
                         className={styles["header__logo-icon"]}
                     />

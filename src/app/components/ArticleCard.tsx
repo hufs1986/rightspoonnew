@@ -17,7 +17,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
                     <img src={article.thumbnailUrl} alt={article.title} loading="lazy" />
                 ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-card)' }}>
-                        <img src="/logo-v2.png" alt="logo placeholder" style={{ width: '40%', opacity: 0.2, objectFit: 'contain' }} />
+                        <img src="/logo-character.jpg" alt="logo placeholder" style={{ width: '40%', opacity: 0.2, objectFit: 'contain' }} />
                     </div>
                 )}
                 {article.youtubeId && (
@@ -55,7 +55,7 @@ export function HeroArticle({ article }: ArticleCardProps) {
                     />
                 ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-card)' }}>
-                        <img src="/logo-v2.png" alt="logo placeholder" style={{ width: '20%', opacity: 0.1, objectFit: 'contain' }} />
+                        <img src="/logo-character.jpg" alt="logo placeholder" style={{ width: '20%', opacity: 0.1, objectFit: 'contain' }} />
                     </div>
                 )}
             </div>

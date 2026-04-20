@@ -4,19 +4,19 @@ import InstallPrompt from "./components/InstallPrompt";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "오른스푼 | Right Spoon — 대한민국 보수 미디어",
+  title: "오른스푼 | Right Spoon — 대한민국 오른 미디어",
   description:
-    "올바른 생각만 떠먹여 드립니다. 대한민국 보수 시각의 뉴스와 칼럼을 전합니다.",
-  keywords: "오른스푼, rightspoon, 보수 미디어, 우파 뉴스, 정치, 경제",
+    "올바른 생각만 떠먹여 드립니다. 대한민국 오른 시각의 뉴스와 칼럼을 전합니다.",
+  keywords: "오른스푼, rightspoon, 오른 미디어, 우파 뉴스, 정치, 경제",
   authors: [{ name: "오른스푼" }],
   openGraph: {
     type: "website",
     locale: "ko_KR",
     url: "https://www.rightspoon.co.kr",
     siteName: "오른스푼 - Right Spoon",
-    title: "오른스푼 | 대한민국 보수 미디어",
+    title: "오른스푼 | 대한민국 오른 미디어",
     description:
-      "대한민국 보수 시각의 뉴스와 칼럼. 유튜브 영상과 함께 깊이 있는 분석을 제공합니다.",
+      "대한민국 오른 시각의 뉴스와 칼럼. 유튜브 영상과 함께 깊이 있는 분석을 제공합니다.",
   },
   verification: {
     other: {

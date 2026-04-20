@@ -30,7 +30,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     const cleanYid = (id: string) => {
         if (!id) return '';
         const match = id.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
-        return match ? match[1] : id.replace(/[\/\\?#]+$/, '');
+        if (match) return match[1];
+        const cleaned = id.replace(/[\/?#&].*/g, '').trim();
+        return /^[\w-]{11}$/.test(cleaned) ? cleaned : '';
     };
     const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
 
@@ -58,7 +60,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                     <h1 className={styles.categoryTitle}>{categoryName}</h1>
                     <p className={styles.categoryDesc}>
                         {categoryName === "전체"
-                            ? "깊이 있는 보수 시각의 전체 뉴스 및 기사를 만나보세요."
+                            ? "깊이 있는 오른 시각의 전체 뉴스 및 기사를 만나보세요."
                             : `${categoryName} 분야의 최신 소식과 전문적인 깊이 있는 분석을 제공합니다.`}
                     </p>
                 </div>

@@ -4,7 +4,7 @@ import styles from "./about.module.css";
 
 export const metadata = {
     title: "소개 | 오른스푼 by 드럼통119",
-    description: "오른스푼 미디어의 소개 페이지입니다. 대한민국 보수 시각의 뉴스와 칼럼을 전합니다.",
+    description: "오른스푼 미디어의 소개 페이지입니다. 대한민국 오른 시각의 뉴스와 칼럼을 전합니다.",
 };
 
 export default function AboutPage() {
@@ -15,7 +15,7 @@ export default function AboutPage() {
             <section className={styles.hero}>
                 <div className={styles.heroInner}>
                     <img
-                        src="/logo-v2.png"
+                        src="/logo-character.jpg"
                         alt="드럼통119"
                         className={styles.heroLogo}
                     />
@@ -40,9 +40,9 @@ export default function AboutPage() {
                     </div>
                     <div className={styles.card}>
                         <span className={styles.cardIcon}>🎯</span>
-                        <h3 className={styles.cardTitle}>보수의 시각</h3>
+                        <h3 className={styles.cardTitle}>오른의 시각</h3>
                         <p className={styles.cardDesc}>
-                            정치, 경제 등 주요 이슈를 보수적 관점에서 분석하며,
+                            정치, 경제 등 주요 이슈를 오른 관점에서 분석하며,
                             사실에 기반한 균형 잡힌 시각을 지향합니다.
                         </p>
                     </div>

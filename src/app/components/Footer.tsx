@@ -9,7 +9,7 @@ export default function Footer() {
                 <div>
                     <div className={styles["footer__brand-name"]}>RIGHT SPOON</div>
                     <p className={styles["footer__brand-desc"]}>
-                        대한민국 보수 시각의 뉴스와 칼럼을 전합니다.
+                        대한민국 오른 시각의 뉴스와 칼럼을 전합니다.
                         깊이 있는 분석과 사실에 기반한 미디어를 지향합니다.
                     </p>
                     <div className={styles.footer__socials}>
