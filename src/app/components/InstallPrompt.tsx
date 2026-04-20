@@ -1,11 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 export default function InstallPrompt() {
-    const [isStandalone, setIsStandalone] = useState(true); // 기본을 true로 두어 초기 깜빡임 방지
+    const [isStandalone, setIsStandalone] = useState(true);
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [isVisible, setIsVisible] = useState(false);
+    const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(null);
+
+    // Portal 컨테이너를 body에 직접 생성 (모바일 fixed 포지셔닝 보장)
+    useEffect(() => {
+        const el = document.createElement("div");
+        el.id = "install-prompt-portal";
+        document.body.appendChild(el);
+        setPortalContainer(el);
+        return () => { document.body.removeChild(el); };
+    }, []);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -110,9 +121,9 @@ export default function InstallPrompt() {
         localStorage.setItem("pwa-install-never", "true");
     };
 
-    if (isStandalone) return null;
+    if (isStandalone || !portalContainer) return null;
 
-    return (
+    return createPortal(
         <>
             {isVisible && (
                 <div
@@ -326,6 +337,7 @@ export default function InstallPrompt() {
                     100% { opacity: 1; transform: translateY(0); }
                 }
             `}</style>
-        </>
+        </>,
+        portalContainer
     );
 }
