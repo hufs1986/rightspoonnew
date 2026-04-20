@@ -79,7 +79,7 @@ export default async function Home() {
 
       {/* Main Stream Ad Block */}
       <div className="container">
-        <AdSlot format="horizontal" />
+        <AdSlot format="auto" />
       </div>
 
       {/* Latest Articles */}
