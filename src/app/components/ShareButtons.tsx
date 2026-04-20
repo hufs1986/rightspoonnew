@@ -25,7 +25,7 @@ export default function ShareButtons({ title, description, thumbnailUrl }: Share
             if (window.Kakao) {
                 try {
                     if (!window.Kakao.isInitialized()) {
-                        window.Kakao.init("52979deca9d16fe9c0eb91b5e21a5b24");
+                        window.Kakao.init("3c3a1cf249d8957ccd1841d3865a1a31");
                     }
                     setKakaoReady(true);
                 } catch (e) {
