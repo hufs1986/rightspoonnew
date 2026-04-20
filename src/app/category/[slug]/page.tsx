@@ -43,7 +43,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         content: a.content,
         author: a.author,
         youtubeId: cleanYid(a.youtube_id),
-        thumbnailUrl: cleanYid(a.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(a.youtube_id)}/mqdefault.jpg` : "",
+        thumbnailUrl: cleanYid(a.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(a.youtube_id)}/0.jpg` : "",
         publishedAt: new Date(a.created_at).toLocaleDateString(),
         readTime: a.read_time,
         views: a.view_count,

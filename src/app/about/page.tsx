@@ -15,7 +15,7 @@ export default function AboutPage() {
             <section className={styles.hero}>
                 <div className={styles.heroInner}>
                     <img
-                        src="/drumtong119-logo.png"
+                        src="/logo-v2.png"
                         alt="드럼통119"
                         className={styles.heroLogo}
                     />

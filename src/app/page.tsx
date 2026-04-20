@@ -59,7 +59,7 @@ export default async function Home() {
     author: a.author,
     youtubeId: cleanYoutubeId(a.youtube_id),
     thumbnailUrl: cleanYoutubeId(a.youtube_id)
-      ? `https://img.youtube.com/vi/${cleanYoutubeId(a.youtube_id)}/mqdefault.jpg`
+      ? `https://img.youtube.com/vi/${cleanYoutubeId(a.youtube_id)}/0.jpg`
       : "",
     publishedAt: new Date(a.created_at).toLocaleDateString(),
     readTime: a.read_time,

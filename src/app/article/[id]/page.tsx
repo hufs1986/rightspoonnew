@@ -52,7 +52,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         content: dbArticle.content,
         author: dbArticle.author,
         youtubeId: cleanYid(dbArticle.youtube_id),
-        thumbnailUrl: cleanYid(dbArticle.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(dbArticle.youtube_id)}/mqdefault.jpg` : "",
+        thumbnailUrl: cleanYid(dbArticle.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(dbArticle.youtube_id)}/0.jpg` : "",
         publishedAt: new Date(dbArticle.created_at).toLocaleDateString(),
         readTime: dbArticle.read_time,
         views: dbArticle.view_count,
@@ -113,7 +113,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     <div className={styles.article__meta}>
                         <div className={styles.article__author}>
                             <span className={styles["article__author-avatar"]}>
-                                <img src="/drumtong119-logo.png" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="드럼통119" />
+                                <img src="/logo-v2.png" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="드럼통119" />
                             </span>
                             <span className={styles["article__author-name"]}>
                                 {article.author}

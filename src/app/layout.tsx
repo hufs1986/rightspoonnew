@@ -65,7 +65,7 @@ export default function RootLayout({
         />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#c81e1e" />
-        <link rel="apple-touch-icon" href="/drumtong119-logo.png" />
+        <link rel="apple-touch-icon" href="/logo-v2.png" />
       </head>
       <body>
         {children}

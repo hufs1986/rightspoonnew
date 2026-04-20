@@ -85,7 +85,7 @@ export default function InstallPrompt() {
             border: "1px solid var(--color-border)"
         }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <img src="/drumtong119-logo.png" alt="logo" style={{ width: 40, height: 40, borderRadius: 8 }} />
+                <img src="/logo-v2.png" alt="logo" style={{ width: 40, height: 40, borderRadius: 8 }} />
                 <div style={{ display: "flex", flexDirection: "column" }}>
                     <span style={{ fontWeight: "bold", fontSize: "14px", color: "var(--color-text-primary)" }}>오른스푼 앱 설치하기</span>
                     <span style={{ fontSize: "12px", color: "var(--color-text-secondary)" }}>바탕화면에 추가하여 더 빠르게 접속하세요!</span>
