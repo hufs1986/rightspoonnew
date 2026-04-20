@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 export default function InstallPrompt() {
-    const [isInstallable, setIsInstallable] = useState(false);
+    const [isStandalone, setIsStandalone] = useState(true); // 기본을 true로 두어 초기 깜빡임 방지
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -11,13 +11,19 @@ export default function InstallPrompt() {
         if (typeof window === "undefined") return;
 
         // 1) 이미 PWA로 실행 중이면 절대 표시 안 함
-        const isStandalone =
+        const checkStandalone =
             window.matchMedia("(display-mode: standalone)").matches ||
             (window.navigator as any).standalone === true;
-        if (isStandalone) return;
 
-        // 2) 이미 설치 완료한 유저는 절대 표시 안 함
-        if (localStorage.getItem("pwa-installed") === "true") return;
+        setIsStandalone(checkStandalone);
+
+        if (checkStandalone) return;
+
+        // 2) 이미 설치 완료한 유저
+        if (localStorage.getItem("pwa-installed") === "true") {
+            setIsStandalone(true); // 버튼 숨기기
+            return;
+        }
 
         // 3) 서비스 워커 등록
         if ("serviceWorker" in navigator) {
@@ -30,7 +36,6 @@ export default function InstallPrompt() {
         const handleBeforeInstallPrompt = (e: any) => {
             e.preventDefault();
             setDeferredPrompt(e);
-            setIsInstallable(true);
 
             // 큰 팝업 배너 표출 여부 결정 (쿨다운 체크)
             let shouldShowPopup = true;
@@ -55,7 +60,7 @@ export default function InstallPrompt() {
         window.addEventListener("appinstalled", () => {
             console.log("PWA 설치 완료");
             localStorage.setItem("pwa-installed", "true");
-            setIsInstallable(false);
+            setIsStandalone(true);
             setIsVisible(false);
             setDeferredPrompt(null);
         });
@@ -66,15 +71,24 @@ export default function InstallPrompt() {
     }, []);
 
     const handleInstallClick = async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === "accepted") {
-            localStorage.setItem("pwa-installed", "true");
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === "accepted") {
+                localStorage.setItem("pwa-installed", "true");
+                setIsStandalone(true);
+            }
+            setDeferredPrompt(null);
+            setIsVisible(false);
+        } else {
+            // iOS, 아이폰 사파리, 네이버/카카오톡 인앱 브라우저 등
+            alert(
+                "📱 기종별 앱 설치 가이드\n\n" +
+                "[아이폰 / 사파리]\n하단 가운데 [공유 ⤴] 아이콘을 누르고\n'홈 화면에 추가 ➕'를 선택하세요.\n\n" +
+                "[안드로이드 / 삼성인터넷 / 크롬]\n우측 상단 [설정 ⋮] 메뉴에서\n'홈 화면에 추가' 또는 '앱 설치'를 누르세요.\n\n" +
+                "※ 네이버, 카카오톡 앱에서는 우측 하단 탭을 눌러 '다른 브라우저로 열기'를 먼저 진행하셔야 합니다."
+            );
         }
-        setDeferredPrompt(null);
-        setIsInstallable(false);
-        setIsVisible(false);
     };
 
     const handleDismiss = () => {
@@ -87,7 +101,7 @@ export default function InstallPrompt() {
         localStorage.setItem("pwa-install-never", "true");
     };
 
-    if (!isInstallable) return null;
+    if (isStandalone) return null;
 
     return (
         <>
