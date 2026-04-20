@@ -66,8 +66,7 @@ export default async function Home() {
         <div className={styles.ticker__inner}>
           <span className={styles.ticker__label}>속보</span>
           <span className={styles.ticker__text}>
-            오른스푼 미디어 사이트가 새롭게 리뉴얼되었습니다! 보수 시각의 깊이
-            있는 분석을 매일 전합니다.
+            올바른 생각만 떠먹여 드립니다. 대한민국 보수 시각의 뉴스와 칼럼을 매일 전합니다.
           </span>
         </div>
       </div>

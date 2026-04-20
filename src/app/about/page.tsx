@@ -22,7 +22,7 @@ export default function AboutPage() {
                     <h1 className={styles.heroTitle}>오른스푼 미디어</h1>
                     <p className={styles.heroSub}>by 드럼통119</p>
                     <p className={styles.heroDesc}>
-                        대한민국 보수 시각의 뉴스와 칼럼을 전합니다.<br />
+                        "올바른 생각만 떠먹여 드립니다"<br />
                         유튜브 영상과 함께 깊이 있는 분석을 제공하는 미디어 플랫폼입니다.
                     </p>
                 </div>
