@@ -14,9 +14,9 @@ export default function AdminGate({ children }: AdminGateProps) {
     useEffect(() => {
         const checkAuth = async () => {
             const supabase = createClient();
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { user } } = await supabase.auth.getUser();
 
-            if (session) {
+            if (user) {
                 setIsAuthed(true);
             } else {
                 // 로그인 안 되어 있으면 로그인 페이지로 이동
