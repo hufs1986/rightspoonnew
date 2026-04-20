@@ -33,8 +33,12 @@ export default function PushPermission() {
             return;
         }
 
-        // 이미 거부한 사용자는 표시하지 않음
-        if (localStorage.getItem("push-dismissed") === "true") return;
+        // 이미 거부한 사용자 - 1일 쿨다운 (영구 거부 방지)
+        const dismissedAt = localStorage.getItem("push-dismissed-at");
+        if (dismissedAt) {
+            const hoursSince = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60);
+            if (hoursSince < 24) return;
+        }
 
         // 브라우저가 알림을 지원하지 않으면 표시하지 않음
         if (!("Notification" in window) || !("serviceWorker" in navigator)) return;
@@ -94,7 +98,7 @@ export default function PushPermission() {
 
     function handleDismiss() {
         setShowPrompt(false);
-        localStorage.setItem("push-dismissed", "true");
+        localStorage.setItem("push-dismissed-at", Date.now().toString());
     }
 
     if (!showPrompt || isSubscribed) return null;
