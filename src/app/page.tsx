@@ -97,7 +97,7 @@ export default async function Home() {
       </section>
 
       {/* Main Stream Ad Block */}
-      <div className="container" style={{ marginTop: "32px", marginBottom: "16px" }}>
+      <div className="container">
         <AdSlot format="auto" />
       </div>
 
