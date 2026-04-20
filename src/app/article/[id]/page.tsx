@@ -1,7 +1,8 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { ArticleCard } from "../../components/ArticleCard";
+import AdSlot from "../../components/AdSlot";
+import ShareButtons from "../../components/ShareButtons";
 import { ArticleCard } from "../../components/ArticleCard";
 import AdSlot from "../../components/AdSlot";
 import styles from "./page.module.css";
@@ -141,18 +142,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 <AdSlot />
 
                 {/* Share */}
-                <div className={styles.article__share}>
-                    <span className={styles["article__share-label"]}>공유하기</span>
-                    <button className={styles["article__share-btn"]} aria-label="카카오톡 공유">
-                        💬
-                    </button>
-                    <button className={styles["article__share-btn"]} aria-label="X 공유">
-                        𝕏
-                    </button>
-                    <button className={styles["article__share-btn"]} aria-label="링크 복사">
-                        🔗
-                    </button>
-                </div>
+                <ShareButtons title={article.title} />
             </article>
 
             {/* Related Articles */}
