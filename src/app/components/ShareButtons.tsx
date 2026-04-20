@@ -20,24 +20,24 @@ export default function ShareButtons({ title, description, thumbnailUrl }: Share
     const [kakaoReady, setKakaoReady] = useState(false);
 
     useEffect(() => {
-        // 카카오 SDK 로드
-        if (window.Kakao?.isInitialized?.()) {
-            setKakaoReady(true);
-            return;
-        }
-
-        const script = document.createElement("script");
-        script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
-        script.integrity = "sha384-DKYJZ8NLiK8MN4/C5P2dtSmLQ4KwPaoqAfyA/DfmEc1VDxu4yyC7wy6K1Ber32n";
-        script.crossOrigin = "anonymous";
-        script.async = true;
-        script.onload = () => {
-            if (window.Kakao && !window.Kakao.isInitialized()) {
-                window.Kakao.init("52979deca9d16fe9c0eb91b5e21a5b24");
+        let timer: NodeJS.Timeout;
+        const checkKakao = () => {
+            if (window.Kakao) {
+                try {
+                    if (!window.Kakao.isInitialized()) {
+                        window.Kakao.init("52979deca9d16fe9c0eb91b5e21a5b24");
+                    }
+                    setKakaoReady(true);
+                } catch (e) {
+                    console.error("Kakao init error:", e);
+                }
+            } else {
+                timer = setTimeout(checkKakao, 500);
             }
-            setKakaoReady(true);
         };
-        document.head.appendChild(script);
+        checkKakao();
+
+        return () => clearTimeout(timer);
     }, []);
 
     const handleCopy = () => {

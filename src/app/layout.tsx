@@ -42,6 +42,12 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="lazyOnload"
         />
+        {/* Kakao JS SDK (Global Load) */}
+        <Script
+          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
+          strategy="lazyOnload"
+          crossOrigin="anonymous"
+        />
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-V3G7L9KHW7"
