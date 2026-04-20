@@ -46,7 +46,7 @@ export default function AdminEditPage({ params }: EditPageProps) {
 
     const getYoutubeId = (url: string) => {
         if (!url) return null;
-        const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/) || url.match(/shorts\/([^?]+)/);
+        const match = url.match(/[?&]v=([^&#]+)/) || url.match(/youtu\.be\/([^?#\/]+)/) || url.match(/shorts\/([^?#\/]+)/);
         return match ? match[1] : null;
     };
     const videoId = getYoutubeId(youtubeUrl);
