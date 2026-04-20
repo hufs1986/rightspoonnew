@@ -8,6 +8,7 @@ export default function InstallBanner() {
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
     const [installed, setInstalled] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+    const [showGuideModal, setShowGuideModal] = useState(false);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -113,14 +114,8 @@ export default function InstallBanner() {
             }
             setDeferredPrompt(null);
         } else {
-            // iOS / 삼성인터넷 등 beforeinstallprompt 미지원 브라우저
-            alert(
-                "📱 앱 설치 가이드\n\n" +
-                "[아이폰 / 사파리]\n하단 가운데 공유(⤴) → '홈 화면에 추가'\n\n" +
-                "[안드로이드 / 크롬]\n우측 상단 메뉴(⋮) → '홈 화면에 추가' 또는 '앱 설치'\n\n" +
-                "[삼성 인터넷]\n우측 하단 메뉴(≡) → '현재 페이지 추가' → '홈 화면'\n\n" +
-                "※ 네이버·카카오 앱 내에서는 '다른 브라우저로 열기' 후 진행"
-            );
+            // iOS / 인앱 브라우저 등 자동설치 미지원 환경
+            setShowGuideModal(true);
         }
     };
 
@@ -313,6 +308,58 @@ export default function InstallBanner() {
                     나중에 할게요
                 </button>
             </div>
+
+            {/* iOS 등 수동 설치 가이드 오버레이 */}
+            {showGuideModal && (
+                <div style={{
+                    position: "fixed",
+                    inset: 0,
+                    zIndex: 10000,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "20px"
+                }}>
+                    <div onClick={() => setShowGuideModal(false)} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.8)" }} />
+                    <div style={{
+                        position: "relative",
+                        background: "#161b22",
+                        width: "100%",
+                        maxWidth: "340px",
+                        borderRadius: "16px",
+                        padding: "24px",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        boxShadow: "0 10px 40px rgba(0,0,0,0.8)",
+                        zIndex: 1,
+                        animation: "installFadeIn 0.3s ease"
+                    }}>
+                        <h3 style={{ fontSize: "18px", color: "white", marginBottom: "16px", textAlign: "center" }}>📱 홈 화면에 추가하기</h3>
+
+                        <div style={{ background: "rgba(255,255,255,0.05)", padding: "16px", borderRadius: "12px", marginBottom: "12px" }}>
+                            <div style={{ color: "#8b949e", fontSize: "13px", marginBottom: "8px" }}>아이폰 (Safari)</div>
+                            <div style={{ color: "white", fontSize: "14px", lineHeight: 1.5 }}>
+                                화면 하단 중앙의 <b>공유 <span style={{ fontSize: "16px" }}>⍗</span></b> 버튼을 누른 후, 살짝 올려서 <b>'홈 화면에 추가'</b>를 선택하세요.
+                            </div>
+                        </div>
+
+                        <div style={{ background: "rgba(255,255,255,0.05)", padding: "16px", borderRadius: "12px", marginBottom: "20px" }}>
+                            <div style={{ color: "#8b949e", fontSize: "13px", marginBottom: "8px" }}>삼성 인터넷 / 카카오톡</div>
+                            <div style={{ color: "white", fontSize: "14px", lineHeight: 1.5 }}>
+                                우측 하단 <b>메뉴 (☰) / 우측 상단 (⋮)</b>를 누르고 <b>'홈 화면에 추가'</b> 또는 <b>'다른 브라우저로 열기'</b>를 선택하세요.
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setShowGuideModal(false)}
+                            style={{
+                                width: "100%", padding: "14px", background: "#d32f2f", color: "white",
+                                border: "none", borderRadius: "10px", fontSize: "15px", fontWeight: "bold"
+                            }}>
+                            확인했습니다
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <style>{`
                 @keyframes installSlideUp {
