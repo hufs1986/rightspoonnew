@@ -51,6 +51,20 @@ export default function AdminWritePage() {
         if (error) {
             alert("등록에 실패했습니다: " + error.message);
         } else {
+            // 푸시 알림 전송 (실패해도 글 등록은 성공)
+            try {
+                await fetch("/api/push/send", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        title: "🔔 오른스푼 새 글",
+                        body: title,
+                        url: "/",
+                    }),
+                });
+            } catch (pushErr) {
+                console.error("푸시 알림 전송 실패:", pushErr);
+            }
             alert("성공적으로 등록되었습니다!");
             setTitle("");
             setYoutubeUrl("");

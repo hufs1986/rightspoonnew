@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import InstallPrompt from "./components/InstallPrompt";
+import PushPermission from "./components/PushPermission";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -70,6 +71,7 @@ export default function RootLayout({
       <body>
         {children}
         <InstallPrompt />
+        <PushPermission />
       </body>
     </html>
   );
