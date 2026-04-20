@@ -56,10 +56,20 @@ export default function ShareButtons({ title, description, thumbnailUrl }: Share
     };
 
     const handleKakaoShare = () => {
-        if (!window.Kakao?.Share) {
-            // SDK 로드 실패 시 링크 복사 폴백
-            navigator.clipboard.writeText(window.location.href);
-            alert("카카오톡 연동 준비 중입니다. 링크가 복사되었으니 카카오톡에 직접 붙여넣기 해주세요!");
+        if (!window.Kakao) {
+            alert("카카오 SDK가 로드되지 않았습니다. 광고 차단기 등을 확인해주세요.");
+            return;
+        }
+        if (!window.Kakao.isInitialized()) {
+            try {
+                window.Kakao.init("52979deca9d16fe9c0eb91b5e21a5b24");
+            } catch (e) {
+                alert(`초기화 실패 (도메인 미동록 가능성): ${e}`);
+                return;
+            }
+        }
+        if (!window.Kakao.Share) {
+            alert("카카오 공유 기능(Share)을 찾을 수 없습니다.");
             return;
         }
 
