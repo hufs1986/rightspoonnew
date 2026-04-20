@@ -10,6 +10,12 @@
     padding: var(--space-8) var(--space-6);
 }
 
+@media (max-width: 768px) {
+    .article__container {
+        padding: var(--space-6) var(--space-4);
+    }
+}
+
 /* Header area */
 .article__header {
     margin-bottom: var(--space-8);
