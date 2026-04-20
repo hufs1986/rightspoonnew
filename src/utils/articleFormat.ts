@@ -30,5 +30,6 @@ export const formatArticle = (dbRow: any): Article => {
         publishedAt: new Date(dbRow.created_at).toLocaleDateString(),
         readTime: dbRow.read_time || "5", // Fallback if missing
         views: dbRow.view_count || 0,
+        likes: dbRow.like_count || 0,
     };
 };

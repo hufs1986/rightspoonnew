@@ -1,0 +1,73 @@
+.likeButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    /* 약간 투명한 다크 백그라운드 */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.likeButton:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(230, 57, 70, 0.5);
+    /* 액센트 컬러 힌트 */
+}
+
+.likeButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.likeButton.liked {
+    background: rgba(230, 57, 70, 0.1);
+    /* 눌렀을 때 배경 붉은 톤 */
+    border-color: rgba(230, 57, 70, 0.3);
+    cursor: default;
+}
+
+.icon {
+    font-size: 20px;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.icon.pop {
+    animation: popAndRotate 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.count {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.liked .count {
+    color: #e63946;
+    /* 액센트 컬러로 숫자 강조 */
+}
+
+@keyframes popAndRotate {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: scale(1.4) rotate(-10deg);
+    }
+
+    75% {
+        transform: scale(0.9) rotate(5deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}

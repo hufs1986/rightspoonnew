@@ -36,7 +36,10 @@ export function ArticleCard({ article }: ArticleCardProps) {
                         <span className={styles["card__meta-dot"]}>·</span>
                         <span>{article.readTime} 읽기</span>
                     </span>
-                    <span>👁 {article.views.toLocaleString()}</span>
+                    <span style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                        <span>👁 {article.views.toLocaleString()}</span>
+                        <span style={{ color: "rgba(230, 57, 70, 0.9)" }}>❤️ {article.likes.toLocaleString()}</span>
+                    </span>
                 </div>
             </div>
         </Link>
@@ -82,6 +85,8 @@ export function HeroArticle({ article }: ArticleCardProps) {
                     <span>{article.publishedAt}</span>
                     <span>·</span>
                     <span>{article.readTime} 읽기</span>
+                    <span>·</span>
+                    <span style={{ color: "rgba(230, 57, 70, 0.9)" }}>❤️ {article.likes.toLocaleString()}</span>
                 </div>
             </div>
         </Link>

@@ -4,6 +4,7 @@ import Footer from "../../components/Footer";
 import { ArticleCard } from "../../components/ArticleCard";
 import ShareButtons from "../../components/ShareButtons";
 import ViewCounter from "../../components/ViewCounter";
+import LikeButton from "../../components/LikeButton";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
@@ -140,6 +141,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                             : article.content.replace(/\n/g, '<br/>')
                     }}
                 />
+
+                {/* Like Button */}
+                <div style={{ display: 'flex', justifyContent: 'center', margin: '40px 0' }}>
+                    <LikeButton articleId={article.id} initialLikes={article.likes} />
+                </div>
 
                 {/* Share */}
                 <ShareButtons title={article.title} />

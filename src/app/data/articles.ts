@@ -13,6 +13,7 @@ export interface Article {
     publishedAt: string;
     readTime: string;
     views: number;
+    likes: number;
 }
 
 export const CATEGORIES: Record<Category, { label: string; color: string }> = {
@@ -49,6 +50,7 @@ export const mockArticles: Article[] = [
         publishedAt: "2026-04-07",
         readTime: "5분",
         views: 3240,
+        likes: 0,
     },
     {
         id: "2",
@@ -68,6 +70,7 @@ export const mockArticles: Article[] = [
         publishedAt: "2026-04-06",
         readTime: "7분",
         views: 2180,
+        likes: 0,
     },
     {
         id: "3",
@@ -85,6 +88,7 @@ export const mockArticles: Article[] = [
         publishedAt: "2026-04-05",
         readTime: "4분",
         views: 4560,
+        likes: 0,
     },
     {
         id: "4",
@@ -100,6 +104,7 @@ export const mockArticles: Article[] = [
         publishedAt: "2026-04-04",
         readTime: "6분",
         views: 1890,
+        likes: 0,
     },
     {
         id: "5",
@@ -115,6 +120,7 @@ export const mockArticles: Article[] = [
         publishedAt: "2026-04-03",
         readTime: "5분",
         views: 2750,
+        likes: 0,
     },
     {
         id: "6",
@@ -130,5 +136,6 @@ export const mockArticles: Article[] = [
         publishedAt: "2026-04-02",
         readTime: "5분",
         views: 1430,
+        likes: 0,
     },
 ];
