@@ -9,6 +9,12 @@
   padding: 0;
 }
 
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 :root {
   /* Dark Theme Colors */
   --color-bg: #0d1117;
