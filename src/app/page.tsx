@@ -83,10 +83,10 @@ export default async function Home() {
         <div className={styles.ticker__inner}>
           <span className={styles.ticker__label}>긴급</span>
           <span className={styles.ticker__text}>
-            대한민국 보수의 심장, 오른스푼 론칭! 올바른 시각의 소식을 매일 전해드립니다. 유튜브 채널을 구독하고 더 많은 소식을 받아보세요! &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
+            오른스푼 론칭! 올바른 시각의 소식을 매일 전해드립니다. 유튜브 채널을 구독하고 더 많은 소식을 받아보세요! &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
           </span>
           <span className={styles.ticker__text}>
-            대한민국 보수의 심장, 오른스푼 론칭! 올바른 시각의 소식을 매일 전해드립니다. 유튜브 채널을 구독하고 더 많은 소식을 받아보세요! &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
+            오른스푼 론칭! 올바른 시각의 소식을 매일 전해드립니다. 유튜브 채널을 구독하고 더 많은 소식을 받아보세요! &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
           </span>
         </div>
       </div>
