@@ -7,6 +7,7 @@ import ViewCounter from "../../components/ViewCounter";
 import LikeButton from "../../components/LikeButton";
 import ReadingProgressBar from "../../components/ReadingProgressBar";
 import NextArticleCTA from "../../components/NextArticleCTA";
+import Comments from "../../components/Comments";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
