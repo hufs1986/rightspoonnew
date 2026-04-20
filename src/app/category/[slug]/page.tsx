@@ -7,6 +7,7 @@ import { getCategoryValue } from "../../data/articles";
 
 import { Metadata } from "next";
 import { formatArticle } from "@/utils/articleFormat";
+import LoadMore from "../../components/LoadMore";
 
 export const revalidate = 60; // Cache for 60 seconds
 
@@ -38,7 +39,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
     const supabase = await createClient();
 
-    let query = supabase.from("articles").select("*").order("created_at", { ascending: false });
+    let query = supabase.from("articles").select("*").order("created_at", { ascending: false }).limit(9);
 
     if (categoryName !== "전체") {
         query = query.eq("category", categoryName);
@@ -77,6 +78,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                         {formattedArticles.map((article) => (
                             <ArticleCard key={article.id} article={article} />
                         ))}
+                        <LoadMore initialOffset={9} category={categoryName} />
                     </div>
                 )}
             </section>

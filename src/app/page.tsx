@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/server";
 import { getCategoryValue } from "./data/articles";
 
 import { formatArticle } from "@/utils/articleFormat";
+import LoadMore from "./components/LoadMore";
 
 export const revalidate = 60; // Cache for 60 seconds
 
@@ -18,7 +19,8 @@ export default async function Home() {
   const { data: dbArticles, error } = await supabase
     .from("articles")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(10);
 
   if (error) {
     console.error("데이터 불러오기 실패:", error);
@@ -98,9 +100,12 @@ export default async function Home() {
         {/* Articles Grid */}
         <div className={`${styles.grid} stagger`}>
           {latestArticles.length > 0 ? (
-            latestArticles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))
+            <>
+              {latestArticles.map((article) => (
+                <ArticleCard key={article.id} article={article} />
+              ))}
+              <LoadMore initialOffset={10} category="전체" />
+            </>
           ) : (
             <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "100px 20px", background: "var(--color-bg-card)", borderRadius: "var(--radius-lg)", border: "1px solid var(--color-border)", minHeight: "300px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
               <img src="/logo-character.jpg" alt="character" style={{ width: "100px", borderRadius: "50%", margin: "0 auto 20px", border: "2px solid var(--color-accent)", opacity: 0.8 }} />
