@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import InstallPrompt from "./components/InstallPrompt";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -56,8 +57,14 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Bebas+Neue&display=swap"
           rel="stylesheet"
         />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#c81e1e" />
+        <link rel="apple-touch-icon" href="/drumtong119-logo.png" />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <InstallPrompt />
+      </body>
     </html>
   );
 }

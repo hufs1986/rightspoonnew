@@ -1,0 +1,21 @@
+{
+  "name": "오른스푼 Media",
+  "short_name": "오른스푼",
+  "description": "대한민국 보수 시각의 뉴스와 칼럼을 제공하는 미디어 플랫폼",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#c81e1e",
+  "icons": [
+    {
+      "src": "/drumtong119-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/drumtong119-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
