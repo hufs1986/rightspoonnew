@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { ArticleCard, HeroArticle } from "./components/ArticleCard";
+import PopularArticles from "./components/PopularArticles";
 
 import styles from "./page.module.css";
 import Link from "next/link";
@@ -115,6 +116,9 @@ export default async function Home() {
           )}
         </div>
       </section>
+
+      {/* Popular Articles Ranking */}
+      <PopularArticles />
 
       {/* Join CTA */}
       <section className={styles.cta}>

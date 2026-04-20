@@ -5,6 +5,8 @@ import { ArticleCard } from "../../components/ArticleCard";
 import ShareButtons from "../../components/ShareButtons";
 import ViewCounter from "../../components/ViewCounter";
 import LikeButton from "../../components/LikeButton";
+import ReadingProgressBar from "../../components/ReadingProgressBar";
+import NextArticleCTA from "../../components/NextArticleCTA";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
@@ -76,11 +78,22 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
     const relatedArticles = (relatedDb || []).map(formatArticle);
 
+    // 다음 기사 가져오기 (현재 기사보다 이전에 작성된 기사 중 가장 최신)
+    const { data: nextDb } = await supabase
+        .from('articles')
+        .select('*')
+        .lt('created_at', dbArticle.created_at)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+    const nextArticle = nextDb && nextDb.length > 0 ? formatArticle(nextDb[0]) : null;
+
     const badgeClass = `badge--${article.category}`;
 
     return (
         <div className={styles.article}>
             <Header />
+            <ReadingProgressBar />
             <ViewCounter articleId={article.id} />
 
             <article className={styles.article__container}>
@@ -148,8 +161,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 </div>
 
                 {/* Share */}
-                <ShareButtons title={article.title} />
+                <ShareButtons title={article.title} description={article.excerpt} thumbnailUrl={article.thumbnailUrl} />
             </article>
+
+            {/* Next Article CTA */}
+            <NextArticleCTA nextArticle={nextArticle} />
 
             {/* Related Articles */}
             {relatedArticles.length > 0 && (
