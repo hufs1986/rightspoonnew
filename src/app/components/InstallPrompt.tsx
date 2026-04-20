@@ -10,6 +10,15 @@ export default function InstallPrompt() {
     useEffect(() => {
         if (typeof window === "undefined") return;
 
+        // 🔧 v2 마이그레이션: 이전 버전에서 잘못 저장된 localStorage 값 정리
+        if (!localStorage.getItem("pwa-v2-migrated")) {
+            localStorage.removeItem("pwa-installed");
+            localStorage.removeItem("pwa-install-never");
+            localStorage.removeItem("pwa-install-dismissed-at");
+            localStorage.removeItem("push-dismissed");
+            localStorage.setItem("pwa-v2-migrated", "true");
+        }
+
         // 1) 이미 PWA로 실행 중이면 절대 표시 안 함
         const checkStandalone =
             window.matchMedia("(display-mode: standalone)").matches ||
