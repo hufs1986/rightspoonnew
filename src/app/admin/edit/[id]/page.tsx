@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
+import RichEditor from "../../../components/RichEditor";
 import styles from "../../write/page.module.css"; // 글쓰기 스타일 재사용
 
 interface EditPageProps {
@@ -45,7 +46,7 @@ export default function AdminEditPage({ params }: EditPageProps) {
 
     const getYoutubeId = (url: string) => {
         if (!url) return null;
-        const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/);
+        const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/) || url.match(/shorts\/([^?]+)/);
         return match ? match[1] : null;
     };
     const videoId = getYoutubeId(youtubeUrl);
@@ -147,13 +148,11 @@ export default function AdminEditPage({ params }: EditPageProps) {
                             </div>
                         </div>
 
-                        <div className={styles.formGroup}>
+                        <div className={styles.formGroup} style={{ marginBottom: "60px" }}>
                             <label className={styles.label}>기사 본문</label>
-                            <textarea
-                                className={styles.textarea}
+                            <RichEditor
                                 value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                required
+                                onChange={setContent}
                             />
                         </div>
 
@@ -185,7 +184,7 @@ export default function AdminEditPage({ params }: EditPageProps) {
                             </div>
                             <div className={styles.previewContent}>
                                 {content ? (
-                                    <p>{content.substring(0, 200)}...</p>
+                                    <div dangerouslySetInnerHTML={{ __html: content }} />
                                 ) : (
                                     <p className={styles.previewEmptyText}>본문 내용이 여기에 표시됩니다.</p>
                                 )}

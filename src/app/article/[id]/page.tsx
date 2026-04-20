@@ -136,7 +136,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 {/* Article Content */}
                 <div
                     className={styles.article__body}
-                    dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br/>') }}
+                    dangerouslySetInnerHTML={{
+                        __html: article.content.includes('<p>') || article.content.includes('<h')
+                            ? article.content
+                            : article.content.replace(/\n/g, '<br/>')
+                    }}
                 />
 
                 {/* AdSlot Bottom */}

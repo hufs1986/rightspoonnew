@@ -4,6 +4,7 @@ import { useState } from "react";
 import styles from "./page.module.css";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import RichEditor from "../../components/RichEditor";
 import { createClient } from "@/utils/supabase/client";
 
 export default function AdminWritePage() {
@@ -22,7 +23,7 @@ export default function AdminWritePage() {
     // Preview YouTube ID extraction
     const getYoutubeId = (url: string) => {
         if (!url) return null;
-        const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/);
+        const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?]+)/) || url.match(/shorts\/([^?]+)/);
         return match ? match[1] : null;
     };
     const videoId = getYoutubeId(youtubeUrl);
@@ -121,14 +122,11 @@ export default function AdminWritePage() {
                             </div>
                         </div>
 
-                        <div className={styles.formGroup}>
+                        <div className={styles.formGroup} style={{ marginBottom: "60px" }}>
                             <label className={styles.label}>기사 본문</label>
-                            <textarea
-                                className={styles.textarea}
+                            <RichEditor
                                 value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                placeholder="유튜브 영상에 대한 설명, 의견 또는 기사 내용을 적어주세요. 마크다운이나 일반 텍스트로 작성합니다."
-                                required
+                                onChange={setContent}
                             />
                         </div>
 
