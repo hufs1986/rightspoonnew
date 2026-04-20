@@ -304,31 +304,41 @@ export default function InstallPrompt() {
                 </div>
             )}
 
+
+
+
             {!isVisible && (
-                <button
-                    onClick={handleInstallClick}
+                <div
                     style={{
                         position: "fixed",
-                        bottom: "24px",
-                        right: "24px",
+                        bottom: "80px",
+                        left: "50%",
+                        transform: "translateX(-50%)",
                         zIndex: 9998,
-                        padding: "12px 20px",
-                        background: "linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%)",
-                        color: "white",
-                        border: "1px solid rgba(255,255,255,0.2)",
-                        borderRadius: "30px",
-                        fontSize: "15px",
-                        fontWeight: "900",
-                        cursor: "pointer",
-                        boxShadow: "0 6px 20px rgba(211,47,47,0.5)",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
                         animation: "slideUpFade 0.4s ease-out",
                     }}
                 >
-                    <span style={{ fontSize: "18px" }}>📲</span> 다운로드
-                </button>
+                    <button
+                        onClick={handleInstallClick}
+                        style={{
+                            padding: "14px 28px",
+                            background: "linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%)",
+                            color: "white",
+                            border: "2px solid rgba(255,255,255,0.3)",
+                            borderRadius: "50px",
+                            fontSize: "16px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                            boxShadow: "0 8px 32px rgba(211,47,47,0.6), 0 0 0 4px rgba(211,47,47,0.15)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        <span style={{ fontSize: "20px" }}>📲</span> 앱 다운로드
+                    </button>
+                </div>
             )}
 
             <style>{`
