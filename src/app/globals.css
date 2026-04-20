@@ -1,4 +1,4 @@
-/* ===== DESIGN SYSTEM — 오른스푼 미디어 ===== */
+/* ===== DESIGN SYSTEM — 오른스푼 미디어 (Light Theme) ===== */
 
 /* --- Reset & Base --- */
 *,
@@ -10,29 +10,31 @@
 }
 
 :root {
-  /* Colors */
-  --color-bg: #0d0d0d;
-  --color-bg-alt: #141414;
-  --color-bg-card: #1a1a1a;
-  --color-bg-card-hover: #222222;
-  --color-surface: #252525;
-  --color-border: #2a2a2a;
-  --color-border-light: #333333;
+  /* Light Theme Colors */
+  --color-bg: #f8f9fa;
+  --color-bg-alt: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-card-hover: #ffffff;
+  --color-surface: #f1f3f5;
+  --color-border: #e9ecef;
+  --color-border-light: #dee2e6;
 
-  --color-text-primary: #f0f0f0;
-  --color-text-secondary: #999999;
-  --color-text-muted: #666666;
+  --color-text-primary: #121212;
+  --color-text-secondary: #495057;
+  --color-text-muted: #868e96;
 
-  --color-accent: #e63946;
-  --color-accent-hover: #ff4757;
-  --color-accent-soft: rgba(230, 57, 70, 0.15);
+  --color-accent: #d32f2f;
+  /* Professional, trustworthy red */
+  --color-accent-hover: #b71c1c;
+  --color-accent-soft: rgba(211, 47, 47, 0.08);
 
   --color-white: #ffffff;
   --color-black: #000000;
 
   /* Category colors */
-  --color-cat-politics: #e63946;
-  --color-cat-economy: #2196f3;
+  --color-cat-politics: #d32f2f;
+  --color-cat-economy: #1976d2;
+  /* Professional blue */
 
   /* Typography */
   --font-sans: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -82,10 +84,10 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20px rgba(230, 57, 70, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 15px rgba(211, 47, 47, 0.2);
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -163,6 +165,7 @@ ol {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
 }
 
 .badge--politics {
@@ -191,22 +194,24 @@ ol {
 .btn--primary {
   background: var(--color-accent);
   color: var(--color-white);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn--primary:hover {
   background: var(--color-accent-hover);
-  box-shadow: var(--shadow-glow);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .btn--outline {
   background: transparent;
   color: var(--color-text-primary);
-  border: 1px solid var(--color-border-light);
+  border: 1px solid var(--color-border);
 }
 
 .btn--outline:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  border-color: var(--color-text-primary);
+  background: var(--color-surface);
 }
 
 /* --- Animations --- */
@@ -215,27 +220,10 @@ ol {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
   }
 }
 
@@ -243,28 +231,48 @@ ol {
   animation: fadeInUp 0.5s ease both;
 }
 
-/* Stagger children */
-.stagger > * {
+.stagger>* {
   animation: fadeInUp 0.5s ease both;
 }
-.stagger > *:nth-child(1) { animation-delay: 0.05s; }
-.stagger > *:nth-child(2) { animation-delay: 0.1s; }
-.stagger > *:nth-child(3) { animation-delay: 0.15s; }
-.stagger > *:nth-child(4) { animation-delay: 0.2s; }
-.stagger > *:nth-child(5) { animation-delay: 0.25s; }
-.stagger > *:nth-child(6) { animation-delay: 0.3s; }
+
+.stagger>*:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.stagger>*:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.stagger>*:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.stagger>*:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.stagger>*:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.stagger>*:nth-child(6) {
+  animation-delay: 0.3s;
+}
 
 /* --- Scrollbar --- */
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--color-bg);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--color-border-light);
   border-radius: var(--radius-full);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
 }

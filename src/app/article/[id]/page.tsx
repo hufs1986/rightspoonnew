@@ -3,8 +3,8 @@ import Link from "next/link";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ArticleCard } from "../../components/ArticleCard";
-import { mockArticles } from "../../data/articles";
 import styles from "./page.module.css";
+import { createClient } from "@/utils/supabase/server";
 
 interface ArticlePageProps {
     params: Promise<{ id: string }>;
@@ -12,15 +12,62 @@ interface ArticlePageProps {
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
     const { id } = await params;
-    const article = mockArticles.find((a) => a.id === id);
+    const supabase = await createClient();
 
-    if (!article) {
-        notFound();
+    const { data: dbArticle, error } = await supabase
+        .from('articles')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (!dbArticle || error) {
+        return (
+            <div className={styles.article}>
+                <Header />
+                <div style={{ padding: "150px 20px", textAlign: "center" }}>
+                    <h2>존재하지 않거나 삭제된 콘텐츠입니다.</h2>
+                    <br />
+                    <Link href="/" className="btn btn--primary">홈으로 돌아가기</Link>
+                </div>
+                <Footer />
+            </div>
+        );
     }
 
-    const relatedArticles = mockArticles
-        .filter((a) => a.id !== article.id && a.category === article.category)
-        .slice(0, 3);
+    const article = {
+        id: dbArticle.id,
+        title: dbArticle.title,
+        excerpt: typeof dbArticle.content === 'string' ? dbArticle.content.substring(0, 100) + '...' : '',
+        category: dbArticle.category === "정치" ? "politics" : "economy",
+        categoryLabel: dbArticle.category,
+        content: dbArticle.content,
+        author: dbArticle.author,
+        youtubeId: dbArticle.youtube_id,
+        publishedAt: new Date(dbArticle.created_at).toLocaleDateString(),
+        readTime: dbArticle.read_time,
+        views: dbArticle.view_count,
+    };
+
+    const { data: relatedDb } = await supabase
+        .from('articles')
+        .select('*')
+        .neq('id', id)
+        .eq('category', dbArticle.category)
+        .limit(3);
+
+    const relatedArticles = (relatedDb || []).map((a) => ({
+        id: a.id,
+        title: a.title,
+        excerpt: typeof a.content === 'string' ? a.content.substring(0, 100) + '...' : '',
+        category: a.category === "정치" ? "politics" : "economy",
+        categoryLabel: a.category,
+        content: a.content,
+        author: a.author,
+        youtubeId: a.youtube_id,
+        publishedAt: new Date(a.created_at).toLocaleDateString(),
+        readTime: a.read_time,
+        views: a.view_count,
+    }));
 
     const badgeClass =
         article.category === "politics" ? "badge--politics" : "badge--economy";
@@ -50,17 +97,18 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     </div>
 
                     <h1 className={styles.article__title}>{article.title}</h1>
-                    <p className={styles.article__excerpt}>{article.excerpt}</p>
 
                     <div className={styles.article__meta}>
                         <div className={styles.article__author}>
-                            <span className={styles["article__author-avatar"]}>R</span>
+                            <span className={styles["article__author-avatar"]}>
+                                <img src="/drumtong119-logo.png" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} alt="드럼통119" />
+                            </span>
                             <span className={styles["article__author-name"]}>
                                 {article.author}
                             </span>
                         </div>
                         <span>{article.publishedAt}</span>
-                        <span>{article.readTime} 읽기</span>
+                        <span>{article.readTime}분 읽기</span>
                         <span>👁 {article.views.toLocaleString()}</span>
                     </div>
                 </header>
@@ -80,7 +128,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 {/* Article Content */}
                 <div
                     className={styles.article__body}
-                    dangerouslySetInnerHTML={{ __html: article.content }}
+                    dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br/>') }}
                 />
 
                 {/* Share */}

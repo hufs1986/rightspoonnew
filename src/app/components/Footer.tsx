@@ -63,9 +63,6 @@ export default function Footer() {
                         <Link href="/about" className={styles.footer__link}>
                             소개
                         </Link>
-                        <Link href="/register" className={styles.footer__link}>
-                            가입 신청
-                        </Link>
                     </div>
                 </div>
 

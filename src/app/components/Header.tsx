@@ -9,9 +9,13 @@ export default function Header() {
             <div className={styles.header__inner}>
                 {/* Logo */}
                 <Link href="/" className={styles.header__logo}>
-                    <span className={styles["header__logo-icon"]}>R</span>
+                    <img
+                        src="/drumtong119-logo.png"
+                        alt="드럼통119"
+                        className={styles["header__logo-icon"]}
+                    />
                     <span className={styles["header__logo-text"]}>RIGHT SPOON</span>
-                    <span className={styles["header__logo-sub"]}>미디어</span>
+                    <span className={styles["header__logo-sub"]}>by 드럼통119</span>
                 </Link>
 
                 {/* Navigation */}
@@ -35,12 +39,6 @@ export default function Header() {
 
                 {/* Actions */}
                 <div className={styles.header__actions}>
-                    <Link href="/login" className={styles["header__login-btn"]}>
-                        로그인
-                    </Link>
-                    <Link href="/register" className={styles["header__register-btn"]}>
-                        가입 신청
-                    </Link>
                     <button
                         className={styles["header__menu-toggle"]}
                         aria-label="메뉴 열기"
