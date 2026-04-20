@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import SearchBar from "./SearchBar";
 import styles from "./Header.module.css";
 
 export default function Header() {
@@ -44,8 +45,9 @@ export default function Header() {
                     </Link>
                 </nav>
 
-                {/* Mobile Menu Toggle */}
+                {/* Actions: Search + Mobile Menu */}
                 <div className={styles.header__actions}>
+                    <SearchBar />
                     <button
                         className={styles["header__menu-toggle"]}
                         aria-label={menuOpen ? "메뉴 닫기" : "메뉴 열기"}
