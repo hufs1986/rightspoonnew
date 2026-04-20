@@ -19,17 +19,7 @@ export default function InstallPrompt() {
         // 2) 이미 설치 완료한 유저는 절대 표시 안 함
         if (localStorage.getItem("pwa-installed") === "true") return;
 
-        // 3) "다시 보지 않기"를 선택한 유저
-        if (localStorage.getItem("pwa-install-never") === "true") return;
-
-        // 4) 닫기만 누른 경우: 7일 쿨다운
-        const dismissedAt = localStorage.getItem("pwa-install-dismissed-at");
-        if (dismissedAt) {
-            const daysSince = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
-            if (daysSince < 7) return;
-        }
-
-        // 서비스 워커 등록
+        // 3) 서비스 워커 등록
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker
                 .register("/sw.js")
@@ -41,8 +31,23 @@ export default function InstallPrompt() {
             e.preventDefault();
             setDeferredPrompt(e);
             setIsInstallable(true);
-            // 약간의 딜레이 후 부드럽게 등장
-            setTimeout(() => setIsVisible(true), 1500);
+
+            // 큰 팝업 배너 표출 여부 결정 (쿨다운 체크)
+            let shouldShowPopup = true;
+            if (localStorage.getItem("pwa-install-never") === "true") {
+                shouldShowPopup = false;
+            } else {
+                const dismissedAt = localStorage.getItem("pwa-install-dismissed-at");
+                if (dismissedAt) {
+                    const daysSince = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60 * 24);
+                    if (daysSince < 7) shouldShowPopup = false;
+                }
+            }
+
+            if (shouldShowPopup) {
+                // 약간의 딜레이 후 부드럽게 등장
+                setTimeout(() => setIsVisible(true), 1500);
+            }
         };
 
         window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
