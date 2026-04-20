@@ -60,9 +60,16 @@ export function HeroArticle({ article }: ArticleCardProps) {
                 )}
             </div>
             <div className={styles.hero__overlay} />
+            {article.youtubeId && (
+                <div className={styles["hero__play-btn"]}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </div>
+            )}
             <div className={styles.hero__content}>
                 <div className={styles.hero__label}>
-                    🔴 {article.categoryLabel} · 최신 콘텐츠
+                    {article.categoryLabel} · 최신 콘텐츠
                 </div>
                 <h2 className={styles.hero__title}>{article.title}</h2>
                 <p className={styles.hero__excerpt}>{article.excerpt}</p>

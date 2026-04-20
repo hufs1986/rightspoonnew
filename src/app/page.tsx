@@ -80,12 +80,12 @@ export default async function Home() {
       {/* Breaking News Ticker */}
       <div className={styles.ticker}>
         <div className={styles.ticker__inner}>
-          <span className={styles.ticker__label}>속보</span>
+          <span className={styles.ticker__label}>긴급</span>
           <span className={styles.ticker__text}>
-            올바른 생각만 떠먹여 드립니다. 대한민국 오른 시각의 뉴스와 칼럼을 매일 전합니다. &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
+            대한민국 보수의 심장, 오른스푼 론칭! 올바른 시각의 소식을 매일 전해드립니다. 유튜브 채널을 구독하고 더 많은 소식을 받아보세요! &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
           </span>
           <span className={styles.ticker__text}>
-            올바른 생각만 떠먹여 드립니다. 대한민국 오른 시각의 뉴스와 칼럼을 매일 전합니다. &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
+            대한민국 보수의 심장, 오른스푼 론칭! 올바른 시각의 소식을 매일 전해드립니다. 유튜브 채널을 구독하고 더 많은 소식을 받아보세요! &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
           </span>
         </div>
       </div>
@@ -96,7 +96,7 @@ export default async function Home() {
       </section>
 
       {/* Main Stream Ad Block */}
-      <div className="container">
+      <div className="container" style={{ marginTop: "32px", marginBottom: "16px" }}>
         <AdSlot format="auto" />
       </div>
 
@@ -107,9 +107,11 @@ export default async function Home() {
             <span className={styles["section__title-accent"]} />
             최신 콘텐츠
           </h2>
-          <Link href="/category/all" className={styles.section__more}>
-            전체보기 →
-          </Link>
+          {latestArticles.length > 0 && (
+            <Link href="/category/all" className={styles.section__more}>
+              전체보기 →
+            </Link>
+          )}
         </div>
 
         {/* Category Filter */}
@@ -126,26 +128,39 @@ export default async function Home() {
 
         {/* Articles Grid */}
         <div className={`${styles.grid} stagger`}>
-          {latestArticles.map((article) => (
-            <ArticleCard key={article.id} article={article} />
-          ))}
+          {latestArticles.length > 0 ? (
+            latestArticles.map((article) => (
+              <ArticleCard key={article.id} article={article} />
+            ))
+          ) : (
+            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "60px 20px", background: "var(--color-bg-card)", borderRadius: "var(--radius-lg)", border: "1px solid var(--color-border)" }}>
+              <img src="/logo-character.jpg" alt="character" style={{ width: "80px", borderRadius: "50%", margin: "0 auto 16px", border: "2px solid var(--color-accent)", opacity: 0.8 }} />
+              <h3 style={{ color: "var(--color-text-primary)", fontSize: "20px", marginBottom: "8px" }}>더 많은 콘텐츠가 준비 중입니다!</h3>
+              <p style={{ color: "var(--color-text-secondary)" }}>불 드럼통119 캐릭터와 함께하는 다양한 우파 콘텐츠가 곧 업로드됩니다.</p>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Join CTA */}
       <section className={styles.cta}>
         <div className={styles.cta__inner}>
-          <h2 className={styles.cta__title}>
-            오른스푼과 함께하세요
-          </h2>
-          <p className={styles.cta__desc}>
-            같은 가치관을 가진 사람들과 소통하고, 깊이 있는 콘텐츠를 먼저
-            만나보세요.
-          </p>
-          <div className={styles.cta__actions}>
-            <Link href="/about" className="btn btn--outline">
-              더 알아보기
-            </Link>
+          <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <img src="/logo-character.jpg" alt="드럼통119" style={{ width: "100px", height: "100px", borderRadius: "50%", border: "3px solid #d32f2f", boxShadow: "0 0 20px rgba(211,47,47,0.5)", marginBottom: "20px" }} />
+            <h2 className={styles.cta__title}>
+              대한민국 보수의 목소리, 유튜브에서!
+            </h2>
+            <p className={styles.cta__desc} style={{ fontSize: "16px" }}>
+              왜곡 없는 진실, 올바른 시각. 오른스푼 공식 채널을 구독하시면 최신 영상과 깊이 있는 분석을 가장 먼저 받아보실 수 있습니다.
+            </p>
+            <div className={styles.cta__actions}>
+              <a href="https://youtube.com/@right-spoon" target="_blank" rel="noopener noreferrer" className="btn btn--primary" style={{ padding: "12px 24px", fontSize: "16px", borderRadius: "30px", background: "#FF0000" }}>
+                ▶ 유튜브 채널 구독하기
+              </a>
+              <Link href="/about" className="btn btn--outline" style={{ padding: "12px 24px", fontSize: "16px", borderRadius: "30px", color: "white", borderColor: "rgba(255,255,255,0.3)" }}>
+                사이트 소개
+              </Link>
+            </div>
           </div>
         </div>
       </section>

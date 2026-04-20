@@ -10,23 +10,23 @@
 }
 
 :root {
-  /* Light Theme Colors */
-  --color-bg: #f8f9fa;
-  --color-bg-alt: #ffffff;
-  --color-bg-card: #ffffff;
-  --color-bg-card-hover: #ffffff;
-  --color-surface: #f1f3f5;
-  --color-border: #e9ecef;
-  --color-border-light: #dee2e6;
+  /* Dark Theme Colors */
+  --color-bg: #0d1117; /* GitHub Dark minimal background */
+  --color-bg-alt: #161b22;
+  --color-bg-card: rgba(255, 255, 255, 0.04);
+  --color-bg-card-hover: rgba(255, 255, 255, 0.08);
+  --color-surface: #21262d;
+  --color-border: #30363d;
+  --color-border-light: #484f58;
 
-  --color-text-primary: #121212;
-  --color-text-secondary: #495057;
-  --color-text-muted: #868e96;
+  --color-text-primary: #f0f6fc;
+  --color-text-secondary: #c9d1d9;
+  --color-text-muted: #8b949e;
 
   --color-accent: #d32f2f;
   /* Professional, trustworthy red */
-  --color-accent-hover: #b71c1c;
-  --color-accent-soft: rgba(211, 47, 47, 0.08);
+  --color-accent-hover: #f44336;
+  --color-accent-soft: rgba(211, 47, 47, 0.15);
 
   --color-white: #ffffff;
   --color-black: #000000;
@@ -83,11 +83,12 @@
   --radius-xl: 16px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
-  --shadow-glow: 0 0 15px rgba(211, 47, 47, 0.2);
+  /* Shadows - Dark Mode Adjusted */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 20px rgba(211, 47, 47, 0.3);
+  --shadow-glass: inset 0 1px 1px rgba(255, 255, 255, 0.1);
 
   /* Transitions */
   --transition-fast: 150ms ease;
