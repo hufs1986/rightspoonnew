@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import styles from "./Header.module.css";
 
 export default function Header() {
+    const [menuOpen, setMenuOpen] = useState(false);
+
     return (
         <header className={styles.header}>
             <div className={styles.header__inner}>
@@ -18,12 +21,9 @@ export default function Header() {
                     <span className={styles["header__logo-sub"]}>by 드럼통119</span>
                 </Link>
 
-                {/* Navigation */}
+                {/* Desktop Navigation */}
                 <nav className={styles.header__nav}>
-                    <Link
-                        href="/"
-                        className={`${styles["header__nav-link"]} ${styles["header__nav-link--active"]}`}
-                    >
+                    <Link href="/" className={`${styles["header__nav-link"]} ${styles["header__nav-link--active"]}`}>
                         홈
                     </Link>
                     <Link href="/category/politics" className={styles["header__nav-link"]}>
@@ -37,16 +37,35 @@ export default function Header() {
                     </Link>
                 </nav>
 
-                {/* Actions */}
+                {/* Mobile Menu Toggle */}
                 <div className={styles.header__actions}>
                     <button
                         className={styles["header__menu-toggle"]}
-                        aria-label="메뉴 열기"
+                        aria-label={menuOpen ? "메뉴 닫기" : "메뉴 열기"}
+                        onClick={() => setMenuOpen(!menuOpen)}
                     >
-                        ☰
+                        {menuOpen ? "✕" : "☰"}
                     </button>
                 </div>
             </div>
+
+            {/* Mobile Drawer */}
+            {menuOpen && (
+                <div className={styles["header__mobile-drawer"]}>
+                    <Link href="/" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
+                        홈
+                    </Link>
+                    <Link href="/category/politics" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
+                        정치
+                    </Link>
+                    <Link href="/category/economy" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
+                        경제
+                    </Link>
+                    <Link href="/about" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
+                        소개
+                    </Link>
+                </div>
+            )}
         </header>
     );
 }

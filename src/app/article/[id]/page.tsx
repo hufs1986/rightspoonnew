@@ -4,6 +4,7 @@ import Footer from "../../components/Footer";
 import { ArticleCard } from "../../components/ArticleCard";
 import AdSlot from "../../components/AdSlot";
 import ShareButtons from "../../components/ShareButtons";
+import ViewCounter from "../../components/ViewCounter";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
 
@@ -78,6 +79,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     return (
         <div className={styles.article}>
             <Header />
+            <ViewCounter articleId={article.id} />
 
             <article className={styles.article__container}>
                 {/* Breadcrumb */}

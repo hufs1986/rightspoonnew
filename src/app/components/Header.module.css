@@ -140,3 +140,43 @@
         display: none;
     }
 }
+
+/* Mobile Drawer */
+.header__mobile-drawer {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-white);
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-4) var(--space-6);
+    box-shadow: var(--shadow-lg);
+    animation: slideDown 0.2s ease;
+}
+
+.header__mobile-link {
+    padding: var(--space-4) var(--space-4);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+    transition: color var(--transition-fast);
+}
+
+.header__mobile-link:last-child {
+    border-bottom: none;
+}
+
+.header__mobile-link:hover {
+    color: var(--color-accent);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
