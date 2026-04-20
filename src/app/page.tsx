@@ -96,11 +96,6 @@ export default async function Home() {
         <HeroArticle article={heroArticle} />
       </section>
 
-      {/* Main Stream Ad Block */}
-      <div className="container">
-        <AdSlot format="auto" />
-      </div>
-
       {/* Latest Articles */}
       <section className={styles.section}>
         <div className={styles.section__header}>
