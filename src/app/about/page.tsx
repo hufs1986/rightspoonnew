@@ -46,14 +46,6 @@ export default function AboutPage() {
                             사실에 기반한 균형 잡힌 시각을 지향합니다.
                         </p>
                     </div>
-                    <div className={styles.card}>
-                        <span className={styles.cardIcon}>🤝</span>
-                        <h3 className={styles.cardTitle}>함께하는 미디어</h3>
-                        <p className={styles.cardDesc}>
-                            인스타 1.7만 · 유튜브 1.5만 · 틱톡 1.6만 팔로워와 함께
-                            성장하고 있는 커뮤니티입니다.
-                        </p>
-                    </div>
                 </div>
 
                 <div className={styles.channels}>

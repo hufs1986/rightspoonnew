@@ -38,8 +38,12 @@ export default async function Home() {
     );
   }
 
-  // Helper: youtube ID 에서 slash 등 정리
-  const cleanYoutubeId = (id: string) => id ? id.replace(/[\/\\?#]+$/, '') : '';
+  // Helper: youtube ID 에서 slash 등 정리 (또는 DB에 잘못 저장된 전체 URL에서 ID 추출)
+  const cleanYoutubeId = (id: string) => {
+    if (!id) return '';
+    const match = id.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+    return match ? match[1] : id.replace(/[\/\\?#]+$/, '');
+  };
 
   // Helper: HTML 태그 제거 (Rich Editor content에서 excerpt 추출)
   const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
@@ -133,8 +137,6 @@ export default async function Home() {
           <p className={styles.cta__desc}>
             같은 가치관을 가진 사람들과 소통하고, 깊이 있는 콘텐츠를 먼저
             만나보세요.
-            <br />
-            인스타 1.7만 · 유튜브 1.5만 · 틱톡 1.6만 팔로워가 함께합니다.
           </p>
           <div className={styles.cta__actions}>
             <Link href="/about" className="btn btn--outline">

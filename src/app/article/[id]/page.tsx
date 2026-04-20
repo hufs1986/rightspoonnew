@@ -36,7 +36,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         );
     }
 
-    const cleanYid = (id: string) => id ? id.replace(/[\/\\?#]+$/, '') : '';
+    const cleanYid = (id: string) => {
+        if (!id) return '';
+        const match = id.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+        return match ? match[1] : id.replace(/[\/\\?#]+$/, '');
+    };
     const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
 
     const article = {

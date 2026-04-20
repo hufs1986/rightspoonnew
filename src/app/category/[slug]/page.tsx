@@ -27,16 +27,23 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         console.error("카테고리 불러오기 실패:", error);
     }
 
+    const cleanYid = (id: string) => {
+        if (!id) return '';
+        const match = id.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+        return match ? match[1] : id.replace(/[\/\\?#]+$/, '');
+    };
+    const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
+
     const formattedArticles = (dbArticles || []).map((a) => ({
         id: a.id,
         title: a.title,
-        excerpt: typeof a.content === 'string' ? a.content.substring(0, 100) + '...' : '',
+        excerpt: stripHtml(typeof a.content === 'string' ? a.content : '').substring(0, 100) + '...',
         category: (a.category === "정치" ? "politics" : "economy") as "politics" | "economy",
         categoryLabel: a.category,
         content: a.content,
         author: a.author,
-        youtubeId: a.youtube_id,
-        thumbnailUrl: a.youtube_id ? `https://img.youtube.com/vi/${a.youtube_id}/hqdefault.jpg` : "",
+        youtubeId: cleanYid(a.youtube_id),
+        thumbnailUrl: cleanYid(a.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(a.youtube_id)}/mqdefault.jpg` : "",
         publishedAt: new Date(a.created_at).toLocaleDateString(),
         readTime: a.read_time,
         views: a.view_count,
