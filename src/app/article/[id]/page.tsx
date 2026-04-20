@@ -163,6 +163,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
                 {/* Share */}
                 <ShareButtons title={article.title} description={article.excerpt} thumbnailUrl={article.thumbnailUrl} />
+
+                <Comments articleId={article.id} />
             </article>
 
             {/* Next Article CTA */}
