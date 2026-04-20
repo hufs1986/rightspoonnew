@@ -148,7 +148,7 @@ export default async function Home() {
               대한민국 오른 목소리, 유튜브에서!
             </h2>
             <p className={styles.cta__desc} style={{ fontSize: "16px" }}>
-              왜곡 없는 진실, 올바른 시각. 오른스푼 공식 채널을 구독하시면 최신 영상과 깊이 있는 분석을 가장 먼저 받아보실 수 있습니다.
+              오른스푼 공식 채널을 구독하시면 최신 영상과 깊이 있는 분석을 가장 먼저 받아보실 수 있습니다.
             </p>
             <div className={styles.cta__actions}>
               <a href="https://youtube.com/channel/UCzoap467OGtjhLk5qmU53OA?si=qKPByMpqOz1bq44J" target="_blank" rel="noopener noreferrer" className="btn btn--primary" style={{ padding: "12px 24px", fontSize: "16px", borderRadius: "30px", background: "#FF0000" }}>
