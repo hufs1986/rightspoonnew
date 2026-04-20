@@ -75,7 +75,7 @@
 /* Stats */
 .dashStats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--space-4);
     margin-bottom: var(--space-8);
 }
@@ -175,6 +175,10 @@
 
 .catEconomy {
     background: var(--color-cat-economy);
+}
+
+.catHistory {
+    background: var(--color-cat-history);
 }
 
 .actionCell {

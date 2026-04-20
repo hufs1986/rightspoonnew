@@ -7,6 +7,7 @@ import ShareButtons from "../../components/ShareButtons";
 import ViewCounter from "../../components/ViewCounter";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
+import { getCategoryValue } from "../../data/articles";
 
 interface ArticlePageProps {
     params: Promise<{ id: string }>;
@@ -49,7 +50,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         id: dbArticle.id,
         title: dbArticle.title,
         excerpt: stripHtml(typeof dbArticle.content === 'string' ? dbArticle.content : '').substring(0, 100) + '...',
-        category: (dbArticle.category === "정치" ? "politics" : "economy") as "politics" | "economy",
+        category: getCategoryValue(dbArticle.category),
         categoryLabel: dbArticle.category,
         content: dbArticle.content,
         author: dbArticle.author,
@@ -71,7 +72,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         id: a.id,
         title: a.title,
         excerpt: stripHtml(typeof a.content === 'string' ? a.content : '').substring(0, 100) + '...',
-        category: (a.category === "정치" ? "politics" : "economy") as "politics" | "economy",
+        category: getCategoryValue(a.category),
         categoryLabel: a.category,
         content: a.content,
         author: a.author,
@@ -82,8 +83,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         views: a.view_count,
     }));
 
-    const badgeClass =
-        article.category === "politics" ? "badge--politics" : "badge--economy";
+    const badgeClass = `badge--${article.category}`;
 
     return (
         <div className={styles.article}>

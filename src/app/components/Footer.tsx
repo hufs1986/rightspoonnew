@@ -53,6 +53,9 @@ export default function Footer() {
                         <Link href="/category/economy" className={styles.footer__link}>
                             경제
                         </Link>
+                        <Link href="/category/history" className={styles.footer__link}>
+                            역사
+                        </Link>
                     </div>
                 </div>
 

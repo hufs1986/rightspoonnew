@@ -11,7 +11,8 @@
 
 :root {
   /* Dark Theme Colors */
-  --color-bg: #0d1117; /* GitHub Dark minimal background */
+  --color-bg: #0d1117;
+  /* GitHub Dark minimal background */
   --color-bg-alt: #161b22;
   --color-bg-card: rgba(255, 255, 255, 0.04);
   --color-bg-card-hover: rgba(255, 255, 255, 0.08);
@@ -34,6 +35,8 @@
   /* Category colors */
   --color-cat-politics: #d32f2f;
   --color-cat-economy: #1976d2;
+  --color-cat-history: #e65100;
+  /* Deep orange */
   /* Professional blue */
 
   /* Typography */
@@ -176,6 +179,11 @@ ol {
 
 .badge--economy {
   background: var(--color-cat-economy);
+  color: var(--color-white);
+}
+
+.badge--history {
+  background: var(--color-cat-history);
   color: var(--color-white);
 }
 

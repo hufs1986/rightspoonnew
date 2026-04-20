@@ -5,6 +5,7 @@ import AdSlot from "./components/AdSlot";
 import styles from "./page.module.css";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
+import { getCategoryValue } from "./data/articles";
 
 export const revalidate = 0; // Disable cache for immediate refresh
 
@@ -57,7 +58,7 @@ export default async function Home() {
     id: a.id,
     title: a.title,
     excerpt: stripHtml(typeof a.content === 'string' ? a.content : '').substring(0, 100) + '...',
-    category: (a.category === "정치" ? "politics" : "economy") as "politics" | "economy",
+    category: getCategoryValue(a.category),
     categoryLabel: a.category,
     content: a.content,
     author: a.author,
@@ -124,6 +125,7 @@ export default async function Home() {
           </Link>
           <Link href="/category/politics" className={styles.filter__btn}>정치</Link>
           <Link href="/category/economy" className={styles.filter__btn}>경제</Link>
+          <Link href="/category/history" className={styles.filter__btn}>역사</Link>
         </div>
 
         {/* Articles Grid */}

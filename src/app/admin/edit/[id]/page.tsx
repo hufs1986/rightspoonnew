@@ -133,6 +133,7 @@ export default function AdminEditPage({ params }: EditPageProps) {
                                 >
                                     <option value="정치">정치</option>
                                     <option value="경제">경제</option>
+                                    <option value="역사">역사</option>
                                 </select>
                             </div>
 

@@ -42,7 +42,7 @@ export default function AboutPage() {
                         <span className={styles.cardIcon}>🎯</span>
                         <h3 className={styles.cardTitle}>오른의 시각</h3>
                         <p className={styles.cardDesc}>
-                            정치, 경제 등 주요 이슈를 오른 관점에서 분석하며,
+                            정치, 경제, 역사 등 주요 이슈를 오른 관점에서 분석하며,
                             사실에 기반한 균형 잡힌 시각을 지향합니다.
                         </p>
                     </div>

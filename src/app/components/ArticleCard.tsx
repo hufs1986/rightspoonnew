@@ -7,8 +7,7 @@ interface ArticleCardProps {
 }
 
 export function ArticleCard({ article }: ArticleCardProps) {
-    const badgeClass =
-        article.category === "politics" ? "badge--politics" : "badge--economy";
+    const badgeClass = `badge--${article.category}`;
 
     return (
         <Link href={`/article/${article.id}`} className={styles.card}>

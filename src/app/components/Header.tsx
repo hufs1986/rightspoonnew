@@ -32,6 +32,9 @@ export default function Header() {
                     <Link href="/category/economy" className={styles["header__nav-link"]}>
                         경제
                     </Link>
+                    <Link href="/category/history" className={styles["header__nav-link"]}>
+                        역사
+                    </Link>
                     <Link href="/about" className={styles["header__nav-link"]}>
                         소개
                     </Link>
@@ -60,6 +63,9 @@ export default function Header() {
                     </Link>
                     <Link href="/category/economy" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
                         경제
+                    </Link>
+                    <Link href="/category/history" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
+                        역사
                     </Link>
                     <Link href="/about" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
                         소개

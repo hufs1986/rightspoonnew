@@ -3,6 +3,7 @@ import Footer from "../../components/Footer";
 import { ArticleCard } from "../../components/ArticleCard";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
+import { getCategoryValue } from "../../data/articles";
 
 export const revalidate = 0; // Disable cache for immediate refresh
 
@@ -12,6 +13,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     let categoryName = "전체";
     if (slug === "politics") categoryName = "정치";
     else if (slug === "economy") categoryName = "경제";
+    else if (slug === "history") categoryName = "역사";
 
     const supabase = await createClient();
 
@@ -40,7 +42,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         id: a.id,
         title: a.title,
         excerpt: stripHtml(typeof a.content === 'string' ? a.content : '').substring(0, 100) + '...',
-        category: (a.category === "정치" ? "politics" : "economy") as "politics" | "economy",
+        category: getCategoryValue(a.category),
         categoryLabel: a.category,
         content: a.content,
         author: a.author,

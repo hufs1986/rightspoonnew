@@ -1,4 +1,4 @@
-export type Category = "politics" | "economy";
+export type Category = "politics" | "economy" | "history";
 
 export interface Article {
     id: string;
@@ -18,6 +18,14 @@ export interface Article {
 export const CATEGORIES: Record<Category, { label: string; color: string }> = {
     politics: { label: "정치", color: "var(--color-cat-politics)" },
     economy: { label: "경제", color: "var(--color-cat-economy)" },
+    history: { label: "역사", color: "var(--color-cat-history)" },
+};
+
+export const getCategoryValue = (label: string): Category => {
+    if (label === "정치") return "politics";
+    if (label === "경제") return "economy";
+    if (label === "역사") return "history";
+    return "politics"; // default fallback
 };
 
 // Mock articles for development

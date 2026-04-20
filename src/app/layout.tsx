@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "오른스푼 | Right Spoon — 대한민국 오른 미디어",
   description:
     "올바른 생각만 떠먹여 드립니다. 대한민국 오른 시각의 뉴스와 칼럼을 전합니다.",
-  keywords: "오른스푼, rightspoon, 오른 미디어, 우파 뉴스, 정치, 경제",
+  keywords: "오른스푼, rightspoon, 오른 미디어, 우파 뉴스, 정치, 경제, 역사",
   authors: [{ name: "오른스푼" }],
   openGraph: {
     type: "website",

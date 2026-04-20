@@ -91,6 +91,12 @@ export default function AdminDashboardPage() {
                         </span>
                         <span className={styles.statLabel}>경제</span>
                     </div>
+                    <div className={styles.statCard}>
+                        <span className={styles.statNumber}>
+                            {articles.filter((a) => a.category === "역사").length}
+                        </span>
+                        <span className={styles.statLabel}>역사</span>
+                    </div>
                 </div>
 
                 {isLoading ? (
@@ -125,8 +131,10 @@ export default function AdminDashboardPage() {
                                         <td>
                                             <span
                                                 className={`${styles.catBadge} ${article.category === "정치"
-                                                        ? styles.catPolitics
-                                                        : styles.catEconomy
+                                                    ? styles.catPolitics
+                                                    : article.category === "경제"
+                                                        ? styles.catEconomy
+                                                        : styles.catHistory
                                                     }`}
                                             >
                                                 {article.category}
