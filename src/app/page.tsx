@@ -135,10 +135,10 @@ export default async function Home() {
               <ArticleCard key={article.id} article={article} />
             ))
           ) : (
-            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "60px 20px", background: "var(--color-bg-card)", borderRadius: "var(--radius-lg)", border: "1px solid var(--color-border)" }}>
-              <img src="/logo-character.jpg" alt="character" style={{ width: "80px", borderRadius: "50%", margin: "0 auto 16px", border: "2px solid var(--color-accent)", opacity: 0.8 }} />
-              <h3 style={{ color: "var(--color-text-primary)", fontSize: "20px", marginBottom: "8px" }}>더 많은 콘텐츠가 준비 중입니다!</h3>
-              <p style={{ color: "var(--color-text-secondary)" }}>불 드럼통119 캐릭터와 함께하는 다양한 우파 콘텐츠가 곧 업로드됩니다.</p>
+            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "100px 20px", background: "var(--color-bg-card)", borderRadius: "var(--radius-lg)", border: "1px solid var(--color-border)", minHeight: "300px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+              <img src="/logo-character.jpg" alt="character" style={{ width: "100px", borderRadius: "50%", margin: "0 auto 20px", border: "2px solid var(--color-accent)", opacity: 0.8 }} />
+              <h3 style={{ color: "var(--color-text-primary)", fontSize: "24px", marginBottom: "12px", fontWeight: "bold" }}>더 많은 콘텐츠가 준비 중입니다!</h3>
+              <p style={{ color: "var(--color-text-secondary)", fontSize: "16px" }}>불 드럼통119 캐릭터와 함께하는 다양한 우파 콘텐츠가 곧 업로드됩니다.</p>
             </div>
           )}
         </div>
@@ -150,13 +150,13 @@ export default async function Home() {
           <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
             <img src="/logo-character.jpg" alt="드럼통119" style={{ width: "100px", height: "100px", borderRadius: "50%", border: "3px solid #d32f2f", boxShadow: "0 0 20px rgba(211,47,47,0.5)", marginBottom: "20px" }} />
             <h2 className={styles.cta__title}>
-              대한민국 보수의 목소리, 유튜브에서!
+              대한민국 오른 목소리, 유튜브에서!
             </h2>
             <p className={styles.cta__desc} style={{ fontSize: "16px" }}>
               왜곡 없는 진실, 올바른 시각. 오른스푼 공식 채널을 구독하시면 최신 영상과 깊이 있는 분석을 가장 먼저 받아보실 수 있습니다.
             </p>
             <div className={styles.cta__actions}>
-              <a href="https://youtube.com/@right-spoon" target="_blank" rel="noopener noreferrer" className="btn btn--primary" style={{ padding: "12px 24px", fontSize: "16px", borderRadius: "30px", background: "#FF0000" }}>
+              <a href="https://youtube.com/@drumtong119" target="_blank" rel="noopener noreferrer" className="btn btn--primary" style={{ padding: "12px 24px", fontSize: "16px", borderRadius: "30px", background: "#FF0000" }}>
                 ▶ 유튜브 채널 구독하기
               </a>
               <Link href="/about" className="btn btn--outline" style={{ padding: "12px 24px", fontSize: "16px", borderRadius: "30px", color: "white", borderColor: "rgba(255,255,255,0.3)" }}>
