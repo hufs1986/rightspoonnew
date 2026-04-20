@@ -13,7 +13,13 @@ export function ArticleCard({ article }: ArticleCardProps) {
     return (
         <Link href={`/article/${article.id}`} className={styles.card}>
             <div className={styles.card__thumbnail}>
-                <img src={article.thumbnailUrl} alt={article.title} loading="lazy" />
+                {article.thumbnailUrl ? (
+                    <img src={article.thumbnailUrl} alt={article.title} loading="lazy" />
+                ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-card)' }}>
+                        <img src="/logo-v2.png" alt="logo placeholder" style={{ width: '40%', opacity: 0.2, objectFit: 'contain' }} />
+                    </div>
+                )}
                 {article.youtubeId && (
                     <div className={styles["card__play-icon"]}>▶</div>
                 )}
@@ -41,11 +47,17 @@ export function HeroArticle({ article }: ArticleCardProps) {
     return (
         <Link href={`/article/${article.id}`} className={styles.hero}>
             <div className={styles["hero__img-wrapper"]}>
-                <img
-                    src={article.thumbnailUrl}
-                    alt={article.title}
-                    className={styles.hero__img}
-                />
+                {article.thumbnailUrl ? (
+                    <img
+                        src={article.thumbnailUrl}
+                        alt={article.title}
+                        className={styles.hero__img}
+                    />
+                ) : (
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-card)' }}>
+                        <img src="/logo-v2.png" alt="logo placeholder" style={{ width: '20%', opacity: 0.1, objectFit: 'contain' }} />
+                    </div>
+                )}
             </div>
             <div className={styles.hero__overlay} />
             <div className={styles.hero__content}>
