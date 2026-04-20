@@ -18,6 +18,11 @@ export const metadata: Metadata = {
     description:
       "대한민국 보수 시각의 뉴스와 칼럼. 유튜브 영상과 함께 깊이 있는 분석을 제공합니다.",
   },
+  verification: {
+    other: {
+      "naver-site-verification": "b0bbf34223bfeb61046576d2510344bb30594cad",
+    },
+  },
 };
 
 export default function RootLayout({
