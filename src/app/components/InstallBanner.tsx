@@ -235,14 +235,14 @@ export default function InstallBanner() {
                             color: "#f0f6fc",
                             lineHeight: 1.3,
                         }}>
-                            오른스푼 앱 설치
+                            홈 화면에 바로가기 추가
                         </div>
                         <div style={{
                             fontSize: "13px",
                             color: "#8b949e",
                             marginTop: "2px",
                         }}>
-                            무료 · 설치 3초 · 용량 0MB
+                            매번 브라우저를 열 필요 없이 바로 접속하세요
                         </div>
                     </div>
                 </div>
@@ -259,9 +259,8 @@ export default function InstallBanner() {
                     border: "1px solid rgba(255,255,255,0.06)",
                 }}>
                     {[
-                        { icon: "⚡", text: "새 기사 알림을 바로 받아보세요" },
-                        { icon: "🚀", text: "홈 화면에서 한 번에 바로 접속" },
-                        { icon: "📱", text: "앱처럼 깔끔한 전체화면 모드" },
+                        { icon: "📌", text: "홈 화면 아이콘으로 1초 만에 사이트 접속" },
+                        { icon: "📱", text: "앱과 동일한 넓은 화면 (선택 사항)" },
                     ].map((item, i) => (
                         <div key={i} style={{
                             display: "flex",
@@ -284,19 +283,17 @@ export default function InstallBanner() {
                     style={{
                         width: "100%",
                         padding: "16px 0",
-                        background: "linear-gradient(135deg, #d32f2f 0%, #c62828 50%, #b71c1c 100%)",
+                        background: "#d32f2f",
                         color: "white",
                         border: "none",
                         borderRadius: "14px",
                         fontSize: "16px",
                         fontWeight: 700,
                         cursor: "pointer",
-                        boxShadow: "0 4px 20px rgba(211,47,47,0.5), inset 0 1px 1px rgba(255,255,255,0.15)",
-                        letterSpacing: "0.5px",
-                        animation: "installPulse 2s ease-in-out infinite",
+                        transition: "background 0.2s",
                     }}
                 >
-                    📲 지금 설치하기
+                    홈 화면에 추가
                 </button>
 
                 {/* 나중에 버튼 */}
