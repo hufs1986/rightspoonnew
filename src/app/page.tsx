@@ -90,13 +90,14 @@ export default async function Home() {
 
         {/* Category Filter */}
         <div className={styles.filter}>
-          <button
+          <Link
+            href="/category/all"
             className={`${styles.filter__btn} ${styles["filter__btn--active"]}`}
           >
             전체
-          </button>
-          <button className={styles.filter__btn}>정치</button>
-          <button className={styles.filter__btn}>경제</button>
+          </Link>
+          <Link href="/category/politics" className={styles.filter__btn}>정치</Link>
+          <Link href="/category/economy" className={styles.filter__btn}>경제</Link>
         </div>
 
         {/* Articles Grid */}
