@@ -14,7 +14,7 @@ export default function Footer() {
                     </p>
                     <div className={styles.footer__socials}>
                         <a
-                            href="https://youtube.com"
+                            href="https://youtube.com/channel/UCzoap467OGtjhLk5qmU53OA?si=qKPByMpqOz1bq44J"
                             target="_blank"
                             rel="noopener noreferrer"
                             className={styles["footer__social-link"]}

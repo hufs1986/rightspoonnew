@@ -51,7 +51,7 @@ export default function AboutPage() {
                 <div className={styles.channels}>
                     <h2 className={styles.channelsTitle}>채널 안내</h2>
                     <div className={styles.channelGrid}>
-                        <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className={styles.channelLink}>
+                        <a href="https://youtube.com/channel/UCzoap467OGtjhLk5qmU53OA?si=qKPByMpqOz1bq44J" target="_blank" rel="noopener noreferrer" className={styles.channelLink}>
                             ▶ YouTube
                         </a>
                         <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={styles.channelLink}>
