@@ -33,7 +33,7 @@ export default function ShareButtons({ title, description, thumbnailUrl }: Share
         script.async = true;
         script.onload = () => {
             if (window.Kakao && !window.Kakao.isInitialized()) {
-                window.Kakao.init("04f589e4c1a32e6f97a925be2d4db84f");
+                window.Kakao.init("52979deca9d16fe9c0eb91b5e21a5b24");
             }
             setKakaoReady(true);
         };
