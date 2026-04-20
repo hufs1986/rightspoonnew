@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function InstallBanner() {
     const [show, setShow] = useState(false);
@@ -52,6 +53,9 @@ export default function InstallBanner() {
         window.addEventListener("appinstalled", () => {
             localStorage.setItem("pwa-installed", "true");
             setShow(false);
+            // 다운로드 수 카운트 (중복 방지)
+            const sb = createClient();
+            sb.rpc("increment_download_count");
         });
 
         // 무조건 배너 표시 (3초 후 부드럽게)
@@ -69,6 +73,9 @@ export default function InstallBanner() {
             if (outcome === "accepted") {
                 localStorage.setItem("pwa-installed", "true");
                 setShow(false);
+                // 다운로드 수 카운트
+                const sb = createClient();
+                sb.rpc("increment_download_count");
             }
             setDeferredPrompt(null);
         } else {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./Footer.module.css";
+import SiteStats from "./SiteStats";
 
 export default function Footer() {
     return (
@@ -66,6 +67,7 @@ export default function Footer() {
             </div>
 
             <div className={styles.footer__bottom}>
+                <SiteStats />
                 <span className={styles.footer__copyright}>
                     © 2026 오른스푼(Right Spoon). All rights reserved.
                 </span>

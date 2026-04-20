@@ -25,3 +25,30 @@ CREATE POLICY "Anyone can view articles" ON public.articles
 -- 실제 운영시에는 관리자만 작성 가능하게 수정해야 합니다. 
 CREATE POLICY "Anyone can insert articles (temporary limit needed later)" ON public.articles
   FOR INSERT WITH CHECK (true);
+
+-- ===== 사이트 전체 통계 =====
+
+-- site_stats 테이블: 방문자 수, 다운로드 수를 단일 행으로 관리
+CREATE TABLE public.site_stats (
+  id integer PRIMARY KEY DEFAULT 1,
+  visitor_count bigint DEFAULT 0,
+  download_count bigint DEFAULT 0,
+  CHECK (id = 1)
+);
+
+INSERT INTO public.site_stats (id, visitor_count, download_count) VALUES (1, 0, 0);
+
+ALTER TABLE public.site_stats ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can view site_stats" ON public.site_stats FOR SELECT USING (true);
+
+-- RPC: 방문자 수 +1
+CREATE OR REPLACE FUNCTION increment_visitor_count()
+RETURNS void AS $$
+  UPDATE public.site_stats SET visitor_count = visitor_count + 1 WHERE id = 1;
+$$ LANGUAGE sql SECURITY DEFINER;
+
+-- RPC: 다운로드 수 +1
+CREATE OR REPLACE FUNCTION increment_download_count()
+RETURNS void AS $$
+  UPDATE public.site_stats SET download_count = download_count + 1 WHERE id = 1;
+$$ LANGUAGE sql SECURITY DEFINER;
