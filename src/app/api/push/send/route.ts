@@ -3,14 +3,16 @@ import { createClient } from "@/utils/supabase/server";
 import webpush from "web-push";
 
 // VAPID 설정
-const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "BLl4wa7MIRXUj217MHJUNM0nKEniKWPnbjBfzIl7L_axXEQDc4G0rjHPLpjDaXVyWHpevSpVZGdoAmo_uI06l4Q";
-const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || "3nWyjrJx8vK0P-Cnq-RbTocwt_iiJQrGa4QUHHepwnU";
+const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
+const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY!;
 
-webpush.setVapidDetails(
-    "mailto:rightspoon@rightspoon.co.kr",
-    VAPID_PUBLIC_KEY,
-    VAPID_PRIVATE_KEY
-);
+if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
+    webpush.setVapidDetails(
+        "mailto:rightspoon@rightspoon.co.kr",
+        VAPID_PUBLIC_KEY,
+        VAPID_PRIVATE_KEY
+    );
+}
 
 export async function POST(request: NextRequest) {
     try {

@@ -1,13 +1,15 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { ArticleCard, HeroArticle } from "./components/ArticleCard";
-import AdSlot from "./components/AdSlot";
+
 import styles from "./page.module.css";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { getCategoryValue } from "./data/articles";
 
-export const revalidate = 0; // Disable cache for immediate refresh
+import { formatArticle } from "@/utils/articleFormat";
+
+export const revalidate = 60; // Cache for 60 seconds
 
 export default async function Home() {
   const supabase = await createClient();
@@ -39,37 +41,7 @@ export default async function Home() {
     );
   }
 
-  // Helper: youtube ID 에서 slash 등 정리 (또는 DB에 잘못 저장된 전체 URL에서 ID 추출)
-  const cleanYoutubeId = (id: string) => {
-    if (!id) return '';
-    // Full URL → extract 11-char video ID
-    const match = id.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
-    if (match) return match[1];
-    // Already a bare ID (possibly with trailing junk)
-    const cleaned = id.replace(/[\/?#&].*/g, '').trim();
-    return /^[\w-]{11}$/.test(cleaned) ? cleaned : '';
-  };
-
-  // Helper: HTML 태그 제거 (Rich Editor content에서 excerpt 추출)
-  const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
-
-  // 데이터 포맷팅 (DB -> 컴포넌트 프롭스 구조)
-  const formattedArticles = dbArticles.map((a) => ({
-    id: a.id,
-    title: a.title,
-    excerpt: stripHtml(typeof a.content === 'string' ? a.content : '').substring(0, 100) + '...',
-    category: getCategoryValue(a.category),
-    categoryLabel: a.category,
-    content: a.content,
-    author: a.author,
-    youtubeId: cleanYoutubeId(a.youtube_id),
-    thumbnailUrl: cleanYoutubeId(a.youtube_id)
-      ? `https://img.youtube.com/vi/${cleanYoutubeId(a.youtube_id)}/0.jpg`
-      : "",
-    publishedAt: new Date(a.created_at).toLocaleDateString(),
-    readTime: a.read_time,
-    views: a.view_count,
-  }));
+  const formattedArticles = dbArticles.map(formatArticle);
 
   const heroArticle = formattedArticles[0];
   const latestArticles = formattedArticles.slice(1);

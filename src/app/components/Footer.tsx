@@ -22,24 +22,6 @@ export default function Footer() {
                         >
                             ▶
                         </a>
-                        <a
-                            href="https://instagram.com"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles["footer__social-link"]}
-                            aria-label="Instagram"
-                        >
-                            📷
-                        </a>
-                        <a
-                            href="https://tiktok.com"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles["footer__social-link"]}
-                            aria-label="TikTok"
-                        >
-                            🎵
-                        </a>
                     </div>
                 </div>
 

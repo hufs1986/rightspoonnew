@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./ArticleCard.module.css";
 import type { Article } from "../data/articles";
 
@@ -13,10 +14,10 @@ export function ArticleCard({ article }: ArticleCardProps) {
         <Link href={`/article/${article.id}`} className={styles.card}>
             <div className={styles.card__thumbnail}>
                 {article.thumbnailUrl ? (
-                    <img src={article.thumbnailUrl} alt={article.title} loading="lazy" />
+                    <Image src={article.thumbnailUrl} alt={article.title} fill sizes="(max-width: 768px) 100vw, 33vw" />
                 ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-card)' }}>
-                        <img src="/logo-character.jpg" alt="logo placeholder" style={{ width: '40%', opacity: 0.2, objectFit: 'contain' }} />
+                        <Image src="/logo-character.jpg" alt="logo placeholder" width={100} height={100} style={{ width: '40%', height: 'auto', opacity: 0.2, objectFit: 'contain' }} />
                     </div>
                 )}
                 {article.youtubeId && (
@@ -47,14 +48,17 @@ export function HeroArticle({ article }: ArticleCardProps) {
         <Link href={`/article/${article.id}`} className={styles.hero}>
             <div className={styles["hero__img-wrapper"]}>
                 {article.thumbnailUrl ? (
-                    <img
+                    <Image
                         src={article.thumbnailUrl}
                         alt={article.title}
+                        fill
+                        sizes="100vw"
+                        priority
                         className={styles.hero__img}
                     />
                 ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-card)' }}>
-                        <img src="/logo-character.jpg" alt="logo placeholder" style={{ width: '20%', opacity: 0.1, objectFit: 'contain' }} />
+                        <Image src="/logo-character.jpg" alt="logo placeholder" width={200} height={200} style={{ width: '20%', height: 'auto', opacity: 0.1, objectFit: 'contain' }} />
                     </div>
                 )}
             </div>

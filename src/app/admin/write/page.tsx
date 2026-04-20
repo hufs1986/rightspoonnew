@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import RichEditor from "../../components/RichEditor";
+import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 
 export default function AdminWritePage() {
@@ -161,11 +162,14 @@ export default function AdminWritePage() {
 
                             <div className={styles.previewVideo}>
                                 {videoId ? (
-                                    <img
-                                        src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-                                        alt="YouTube Thumbnail"
-                                        className={styles.previewThumb}
-                                    />
+                                    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', borderRadius: 'var(--radius-md)' }}>
+                                        <Image
+                                            src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                                            alt="YouTube Thumbnail"
+                                            fill
+                                            style={{ objectFit: 'cover' }}
+                                        />
+                                    </div>
                                 ) : (
                                     <div className={styles.previewVideoPlaceholder}>
                                         유튜브 URL을 입력하면 썸네일이 나타납니다.

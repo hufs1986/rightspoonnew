@@ -2,15 +2,42 @@ import Link from "next/link";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { ArticleCard } from "../../components/ArticleCard";
-import AdSlot from "../../components/AdSlot";
 import ShareButtons from "../../components/ShareButtons";
 import ViewCounter from "../../components/ViewCounter";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
-import { getCategoryValue } from "../../data/articles";
+import { Metadata } from "next";
+import { formatArticle } from "@/utils/articleFormat";
 
 interface ArticlePageProps {
     params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
+    const { id } = await params;
+    const supabase = await createClient();
+    const { data } = await supabase.from('articles').select('*').eq('id', id).single();
+
+    if (!data) return { title: '콘텐츠를 찾을 수 없습니다 | 오른스푼' };
+
+    const article = formatArticle(data);
+
+    return {
+        title: `${article.title} | 오른스푼`,
+        description: article.excerpt,
+        openGraph: {
+            title: article.title,
+            description: article.excerpt,
+            images: [article.thumbnailUrl || '/api/og?title=' + encodeURIComponent(article.title)],
+            type: 'article',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: article.title,
+            description: article.excerpt,
+            images: [article.thumbnailUrl || '/api/og?title=' + encodeURIComponent(article.title)],
+        }
+    };
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
@@ -37,29 +64,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         );
     }
 
-    const cleanYid = (id: string) => {
-        if (!id) return '';
-        const match = id.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
-        if (match) return match[1];
-        const cleaned = id.replace(/[\/?#&].*/g, '').trim();
-        return /^[\w-]{11}$/.test(cleaned) ? cleaned : '';
-    };
-    const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
-
-    const article = {
-        id: dbArticle.id,
-        title: dbArticle.title,
-        excerpt: stripHtml(typeof dbArticle.content === 'string' ? dbArticle.content : '').substring(0, 100) + '...',
-        category: getCategoryValue(dbArticle.category),
-        categoryLabel: dbArticle.category,
-        content: dbArticle.content,
-        author: dbArticle.author,
-        youtubeId: cleanYid(dbArticle.youtube_id),
-        thumbnailUrl: cleanYid(dbArticle.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(dbArticle.youtube_id)}/0.jpg` : "",
-        publishedAt: new Date(dbArticle.created_at).toLocaleDateString(),
-        readTime: dbArticle.read_time,
-        views: dbArticle.view_count,
-    };
+    const article = formatArticle(dbArticle);
 
     const { data: relatedDb } = await supabase
         .from('articles')
@@ -68,20 +73,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         .eq('category', dbArticle.category)
         .limit(3);
 
-    const relatedArticles = (relatedDb || []).map((a) => ({
-        id: a.id,
-        title: a.title,
-        excerpt: stripHtml(typeof a.content === 'string' ? a.content : '').substring(0, 100) + '...',
-        category: getCategoryValue(a.category),
-        categoryLabel: a.category,
-        content: a.content,
-        author: a.author,
-        youtubeId: cleanYid(a.youtube_id),
-        thumbnailUrl: cleanYid(a.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(a.youtube_id)}/mqdefault.jpg` : "",
-        publishedAt: new Date(a.created_at).toLocaleDateString(),
-        readTime: a.read_time,
-        views: a.view_count,
-    }));
+    const relatedArticles = (relatedDb || []).map(formatArticle);
 
     const badgeClass = `badge--${article.category}`;
 
@@ -139,9 +131,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     </div>
                 )}
 
-                {/* AdSlot Top */}
-                <AdSlot />
-
                 {/* Article Content */}
                 <div
                     className={styles.article__body}
@@ -151,9 +140,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                             : article.content.replace(/\n/g, '<br/>')
                     }}
                 />
-
-                {/* AdSlot Bottom */}
-                <AdSlot />
 
                 {/* Share */}
                 <ShareButtons title={article.title} />

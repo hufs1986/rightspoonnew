@@ -5,7 +5,28 @@ import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { getCategoryValue } from "../../data/articles";
 
-export const revalidate = 0; // Disable cache for immediate refresh
+import { Metadata } from "next";
+import { formatArticle } from "@/utils/articleFormat";
+
+export const revalidate = 60; // Cache for 60 seconds
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    let categoryName = "전체";
+    if (slug === "politics") categoryName = "정치";
+    else if (slug === "economy") categoryName = "경제";
+    else if (slug === "history") categoryName = "역사";
+
+    return {
+        title: `${categoryName} | 오른스푼 - 대한민국 오른 미디어`,
+        description: `오른스푼 미디어의 ${categoryName} 콘텐츠 모아보기. 올바른 시각으로 세상을 분석합니다.`,
+        openGraph: {
+            title: `${categoryName} | 오른스푼`,
+            description: `오른스푼 미디어의 ${categoryName} 분야 최신 소식 및 전문적인 분석`,
+            images: ['/logo-character.jpg'],
+        }
+    };
+}
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -29,29 +50,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         console.error("카테고리 불러오기 실패:", error);
     }
 
-    const cleanYid = (id: string) => {
-        if (!id) return '';
-        const match = id.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
-        if (match) return match[1];
-        const cleaned = id.replace(/[\/?#&].*/g, '').trim();
-        return /^[\w-]{11}$/.test(cleaned) ? cleaned : '';
-    };
-    const stripHtml = (html: string) => html ? html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
-
-    const formattedArticles = (dbArticles || []).map((a) => ({
-        id: a.id,
-        title: a.title,
-        excerpt: stripHtml(typeof a.content === 'string' ? a.content : '').substring(0, 100) + '...',
-        category: getCategoryValue(a.category),
-        categoryLabel: a.category,
-        content: a.content,
-        author: a.author,
-        youtubeId: cleanYid(a.youtube_id),
-        thumbnailUrl: cleanYid(a.youtube_id) ? `https://img.youtube.com/vi/${cleanYid(a.youtube_id)}/0.jpg` : "",
-        publishedAt: new Date(a.created_at).toLocaleDateString(),
-        readTime: a.read_time,
-        views: a.view_count,
-    }));
+    const formattedArticles = (dbArticles || []).map(formatArticle);
 
     return (
         <div className={styles.main}>

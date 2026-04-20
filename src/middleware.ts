@@ -31,7 +31,16 @@ export async function middleware(request: NextRequest) {
     );
 
     // Refresh the auth token
-    await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Protect /admin routes
+    if (request.nextUrl.pathname.startsWith("/admin") && !request.nextUrl.pathname.startsWith("/admin-login")) {
+        if (!user) {
+            const redirectUrl = request.nextUrl.clone();
+            redirectUrl.pathname = "/admin-login";
+            return NextResponse.redirect(redirectUrl);
+        }
+    }
 
     return supabaseResponse;
 }
