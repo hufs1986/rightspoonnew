@@ -67,7 +67,7 @@ export default function PushPermission() {
             if (!installBannerVisible) {
                 setShowPrompt(true);
             }
-        }, isStandalone ? 2000 : 12000);
+        }, isStandalone ? 2000 : 20000);
 
         return () => {
             clearTimeout(timer);
