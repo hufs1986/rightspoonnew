@@ -38,7 +38,7 @@ export default function RootLayout({
         {/* 외부 스크립트 지연 로딩 (lazyOnload → 페이지 렌더 이후 로딩) */}
         <Script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3058080931936742"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9599627662073241"
           crossOrigin="anonymous"
           strategy="lazyOnload"
         />
