@@ -37,11 +37,11 @@ export default function AboutPage() {
                     </h2>
                     <div style={{ background: "var(--color-bg-card)", border: "1px solid var(--color-border)", borderRadius: "16px", padding: "28px", lineHeight: 1.8 }}>
                         <p style={{ color: "var(--color-text-secondary)", fontSize: "15px", marginBottom: "16px" }}>
-                            <strong style={{ color: "var(--color-text-primary)" }}>드럼통119</strong>은 정치·경제·역사 분야를 팩트 중심으로 분석하는 유튜브 크리에이터이자 1인 미디어 운영자입니다.
+                            <strong style={{ color: "var(--color-text-primary)" }}>드럼통119</strong>은 정치·경제·역사 분야를 깊이 있게 분석하는 유튜브 크리에이터이자 1인 미디어 운영자입니다.
                         </p>
                         <p style={{ color: "var(--color-text-secondary)", fontSize: "15px", marginBottom: "16px" }}>
                             주류 언론이 다루지 않는 시각, 데이터에 기반한 논리적 분석, 그리고 대한민국의 과거와 현재를 잇는 역사적 맥락을 콘텐츠에 담고 있습니다.
-                            &ldquo;올바른 정보가 올바른 판단을 만든다&rdquo;는 신념 아래, 복잡한 이슈를 누구나 이해할 수 있도록 쉽고 명쾌하게 전달하는 것을 목표로 합니다.
+                            &ldquo;올바른 시각이 올바른 판단을 만든다&rdquo;는 신념 아래, 복잡한 이슈를 누구나 이해할 수 있도록 쉽고 명쾌하게 전달하는 것을 목표로 합니다.
                         </p>
                         <p style={{ color: "var(--color-text-secondary)", fontSize: "15px" }}>
                             오른스푼은 유튜브 채널의 영상 콘텐츠를 텍스트 기사로 재구성하여, 영상을 볼 시간이 없는 분들도 핵심 내용을 빠르게 파악할 수 있도록 서비스하고 있습니다.
@@ -67,10 +67,10 @@ export default function AboutPage() {
                         </p>
                     </div>
                     <div className={styles.card}>
-                        <span className={styles.cardIcon}>📊</span>
-                        <h3 className={styles.cardTitle}>팩트 & 데이터</h3>
+                        <span className={styles.cardIcon}>🔍</span>
+                        <h3 className={styles.cardTitle}>근거 있는 분석</h3>
                         <p className={styles.cardDesc}>
-                            감정이 아닌 숫자와 통계로 말합니다.
+                            감정이 아닌 논리와 근거로 말합니다.
                             공식 자료에 기반한 분석으로 신뢰를 쌓아갑니다.
                         </p>
                     </div>
