@@ -35,6 +35,7 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <meta name="naver-site-verification" content="b0bbf34223bfeb61046576d2510344bb30594cad" />
+        <meta name="google-adsense-account" content="ca-pub-9599627662073241" />
         {/* AdSense: beforeInteractive → 크롤러가 HTML에서 바로 인식 가능 */}
         <Script
           async
