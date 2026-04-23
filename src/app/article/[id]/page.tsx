@@ -91,11 +91,47 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
     const badgeClass = `badge--${article.category}`;
 
+    // JSON-LD 구조화 데이터 (구글 검색 리치 결과용)
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "headline": article.title,
+        "description": article.excerpt,
+        "image": article.thumbnailUrl || `https://www.rightspoon.co.kr/logo-character.webp`,
+        "datePublished": dbArticle.created_at,
+        "dateModified": dbArticle.updated_at || dbArticle.created_at,
+        "author": {
+            "@type": "Person",
+            "name": article.author || "드럼통119",
+            "url": "https://www.rightspoon.co.kr/about"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "오른스푼",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.rightspoon.co.kr/logo-character.webp"
+            }
+        },
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": `https://www.rightspoon.co.kr/article/${id}`
+        },
+        "articleSection": article.categoryLabel,
+        "wordCount": article.content.replace(/<[^>]+>/g, '').length,
+    };
+
     return (
         <div className={styles.article}>
             <Header />
             <ReadingProgressBar />
             <ViewCounter articleId={article.id} />
+
+            {/* JSON-LD 구조화 데이터 */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
 
             <article className={styles.article__container}>
                 {/* Breadcrumb */}

@@ -51,8 +51,39 @@ export default async function Home() {
   const heroArticle = formattedArticles[0];
   const latestArticles = formattedArticles.slice(1);
 
+  // 홈페이지 JSON-LD (WebSite + Organization)
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "오른스푼",
+        "alternateName": "Right Spoon",
+        "url": "https://www.rightspoon.co.kr",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.rightspoon.co.kr/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "Organization",
+        "name": "오른스푼",
+        "url": "https://www.rightspoon.co.kr",
+        "logo": "https://www.rightspoon.co.kr/logo-character.webp",
+        "sameAs": [
+          "https://youtube.com/channel/UCzoap467OGtjhLk5qmU53OA"
+        ]
+      }
+    ]
+  };
+
   return (
     <div className={styles.main}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
 
       {/* Breaking News Ticker */}
