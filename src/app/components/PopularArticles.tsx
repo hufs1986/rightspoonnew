@@ -57,7 +57,7 @@ export default async function PopularArticles() {
                 {formatted.map((article, index) => (
                     <Link
                         key={article.id}
-                        href={`/article/${article.id}`}
+                        href={`/article/${article.linkId}`}
                         style={{
                             display: "flex",
                             alignItems: "center",

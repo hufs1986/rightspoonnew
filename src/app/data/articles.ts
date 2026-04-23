@@ -2,6 +2,9 @@ export type Category = "politics" | "economy" | "history";
 
 export interface Article {
     id: string;
+    slug?: string;
+    /** slug 우선, 없으면 id (링크용) */
+    linkId: string;
     title: string;
     excerpt: string;
     category: Category;
@@ -33,6 +36,7 @@ export const getCategoryValue = (label: string): Category => {
 export const mockArticles: Article[] = [
     {
         id: "1",
+        linkId: "1",
         title: "계엄령 논란, 헌법적 관점에서 바라본 진실",
         excerpt:
             "최근 계엄령을 둘러싼 논란이 커지고 있습니다. 헌법적 관점에서 무엇이 사실이고, 무엇이 왜곡인지 냉정하게 분석합니다.",
@@ -54,6 +58,7 @@ export const mockArticles: Article[] = [
     },
     {
         id: "2",
+        linkId: "2",
         title: "2026 한국 경제 전망: 오른 경제학의 관점",
         excerpt:
             "글로벌 경기 침체 속에서 한국 경제의 활로를 찾기 위한 오른 경제학적 정책 제안을 짚어봅니다.",
@@ -74,6 +79,7 @@ export const mockArticles: Article[] = [
     },
     {
         id: "3",
+        linkId: "3",
         title: "MZ세대 오른, 왜 늘어나고 있는가",
         excerpt:
             "젊은 세대에서 오른 가치관이 확산되는 현상의 배경과 의미를 분석합니다. 공정성에 대한 요구가 핵심입니다.",
@@ -92,6 +98,7 @@ export const mockArticles: Article[] = [
     },
     {
         id: "4",
+        linkId: "4",
         title: "부동산 정책의 실패: 규제가 만든 역설",
         excerpt:
             "부동산 시장에 대한 과도한 규제가 어떻게 역효과를 초래했는지 데이터로 살펴봅니다.",
@@ -108,6 +115,7 @@ export const mockArticles: Article[] = [
     },
     {
         id: "5",
+        linkId: "5",
         title: "안보 위기와 한미 동맹의 미래",
         excerpt:
             "북핵 위협과 변화하는 동아시아 안보 환경 속에서 한미동맹의 중요성과 발전 방향을 논합니다.",
@@ -124,6 +132,7 @@ export const mockArticles: Article[] = [
     },
     {
         id: "6",
+        linkId: "6",
         title: "자영업의 위기, 최저임금 정책을 재고해야",
         excerpt:
             "급격한 최저임금 인상이 자영업자에게 미친 영향과 현실적인 대안을 제시합니다.",

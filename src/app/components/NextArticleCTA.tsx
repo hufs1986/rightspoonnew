@@ -3,6 +3,7 @@ import Link from "next/link";
 interface NextArticleCTAProps {
     nextArticle: {
         id: string;
+        linkId: string;
         title: string;
         categoryLabel: string;
         thumbnailUrl: string;
@@ -14,7 +15,7 @@ export default function NextArticleCTA({ nextArticle }: NextArticleCTAProps) {
 
     return (
         <Link
-            href={`/article/${nextArticle.id}`}
+            href={`/article/${nextArticle.linkId}`}
             style={{
                 display: "block",
                 margin: "0 auto",

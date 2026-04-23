@@ -11,7 +11,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
     const badgeClass = `badge--${article.category}`;
 
     return (
-        <Link href={`/article/${article.id}`} className={styles.card}>
+        <Link href={`/article/${article.linkId}`} className={styles.card}>
             <div className={styles.card__thumbnail}>
                 {article.thumbnailUrl ? (
                     <Image src={article.thumbnailUrl} alt={article.title} fill sizes="(max-width: 768px) 100vw, 33vw" />
@@ -48,7 +48,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
 export function HeroArticle({ article }: ArticleCardProps) {
     return (
-        <Link href={`/article/${article.id}`} className={styles.hero}>
+        <Link href={`/article/${article.linkId}`} className={styles.hero}>
             <div className={styles["hero__img-wrapper"]}>
                 {article.thumbnailUrl ? (
                     <Image

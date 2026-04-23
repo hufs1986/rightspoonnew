@@ -7,6 +7,7 @@ import Footer from "../../components/Footer";
 import RichEditor from "../../components/RichEditor";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
+import { generateSlug } from "@/utils/slug";
 
 export default function AdminWritePage() {
     const [title, setTitle] = useState("");
@@ -40,6 +41,7 @@ export default function AdminWritePage() {
             .insert([
                 {
                     title,
+                    slug: generateSlug(title),
                     category,
                     youtube_id: videoId || "",
                     content,

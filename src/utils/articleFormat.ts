@@ -17,6 +17,8 @@ export const formatArticle = (dbRow: any): Article => {
     const yId = cleanYoutubeId(dbRow.youtube_id);
     return {
         id: dbRow.id,
+        slug: dbRow.slug || undefined,
+        linkId: dbRow.slug || dbRow.id,
         title: dbRow.title,
         excerpt: stripHtml(typeof dbRow.content === 'string' ? dbRow.content : '').substring(0, 100) + '...',
         category: getCategoryValue(dbRow.category),
@@ -25,10 +27,10 @@ export const formatArticle = (dbRow: any): Article => {
         author: dbRow.author,
         youtubeId: yId,
         thumbnailUrl: yId
-            ? `https://img.youtube.com/vi/${yId}/0.jpg` // MQ or HQ default can be used too, 0.jpg is full
+            ? `https://img.youtube.com/vi/${yId}/0.jpg`
             : "",
         publishedAt: new Date(dbRow.created_at).toLocaleDateString(),
-        readTime: dbRow.read_time || "5", // Fallback if missing
+        readTime: dbRow.read_time || "5",
         views: dbRow.view_count || 0,
         likes: dbRow.like_count || 0,
     };

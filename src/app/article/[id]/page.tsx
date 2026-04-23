@@ -17,10 +17,27 @@ interface ArticlePageProps {
     params: Promise<{ id: string }>;
 }
 
+// slug 또는 UUID로 기사 조회하는 헬퍼 함수
+async function fetchArticleByIdOrSlug(idOrSlug: string) {
+    const supabase = await createClient();
+    const decoded = decodeURIComponent(idOrSlug);
+
+    // UUID 패턴 체크
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decoded);
+
+    if (isUUID) {
+        const { data } = await supabase.from('articles').select('*').eq('id', decoded).single();
+        return data;
+    }
+
+    // slug로 조회
+    const { data } = await supabase.from('articles').select('*').eq('slug', decoded).single();
+    return data;
+}
+
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
     const { id } = await params;
-    const supabase = await createClient();
-    const { data } = await supabase.from('articles').select('*').eq('id', id).single();
+    const data = await fetchArticleByIdOrSlug(id);
 
     if (!data) return { title: '콘텐츠를 찾을 수 없습니다 | 오른스푼' };
 
@@ -48,13 +65,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const { id } = await params;
     const supabase = await createClient();
 
-    const { data: dbArticle, error } = await supabase
-        .from('articles')
-        .select('*')
-        .eq('id', id)
-        .single();
+    const dbArticle = await fetchArticleByIdOrSlug(id);
 
-    if (!dbArticle || error) {
+    if (!dbArticle) {
         return (
             <div className={styles.article}>
                 <Header />

@@ -6,6 +6,7 @@ import Link from "next/link";
 
 interface SearchResult {
     id: string;
+    slug?: string;
     title: string;
     categoryLabel: string;
     thumbnailUrl: string;
@@ -175,7 +176,7 @@ export default function SearchBar() {
                             {results.map((article) => (
                                 <Link
                                     key={article.id}
-                                    href={`/article/${article.id}`}
+                                    href={`/article/${article.slug || article.id}`}
                                     onClick={() => setIsOpen(false)}
                                     style={{
                                         display: "flex",
