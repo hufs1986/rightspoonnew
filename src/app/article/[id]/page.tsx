@@ -195,6 +195,46 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     </div>
                 )}
 
+                {/* 핵심 요약 (GEO/AI 검색 최적화) */}
+                {(() => {
+                    const plainText = article.content.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
+                    const sentences = plainText.match(/[^.!?。]+[.!?。]+/g) || [];
+                    const summary = sentences.slice(0, 3).join(' ').trim();
+                    if (!summary || summary.length < 30) return null;
+                    return (
+                        <div style={{
+                            background: 'linear-gradient(135deg, rgba(211,47,47,0.06) 0%, rgba(211,47,47,0.02) 100%)',
+                            border: '1px solid rgba(211,47,47,0.15)',
+                            borderLeft: '4px solid #d32f2f',
+                            borderRadius: '12px',
+                            padding: '20px 24px',
+                            margin: '24px 0 32px',
+                            lineHeight: 1.8,
+                        }}>
+                            <div style={{
+                                fontSize: '12px',
+                                fontWeight: 700,
+                                color: '#d32f2f',
+                                textTransform: 'uppercase',
+                                letterSpacing: '1px',
+                                marginBottom: '10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                            }}>
+                                📌 핵심 요약
+                            </div>
+                            <p style={{
+                                fontSize: '14.5px',
+                                color: 'var(--color-text-secondary)',
+                                margin: 0,
+                            }}>
+                                {summary}
+                            </p>
+                        </div>
+                    );
+                })()}
+
                 {/* Article Content */}
                 <div
                     className={styles.article__body}
