@@ -128,14 +128,13 @@ export default function AdminWritePage() {
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>유튜브 URL</label>
+                                <label className={styles.label}>유튜브 URL (선택)</label>
                                 <input
                                     type="url"
                                     className={styles.input}
                                     value={youtubeUrl}
                                     onChange={(e) => setYoutubeUrl(e.target.value)}
-                                    placeholder="https://www.youtube.com/watch?v=..."
-                                    required
+                                    placeholder="https://www.youtube.com/watch?v=... (없으면 비워두기)"
                                 />
                             </div>
                         </div>
