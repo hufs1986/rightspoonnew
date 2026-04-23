@@ -76,11 +76,13 @@
 
 .page__image {
     width: 100%;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center top;
-    /* Prevent drag saving */
+    height: auto;
+    display: block;
+    /* Prevent drag saving & selection */
     pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 }
 
 /* Transparent watermark overlay */

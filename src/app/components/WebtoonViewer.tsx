@@ -125,7 +125,7 @@ export default function WebtoonViewer({
                         }
                     });
                 },
-                { rootMargin: "200px" }
+                { rootMargin: "600px" } // Load a bit earlier
             );
             observer.observe(ref);
             observers.push(observer);
@@ -133,27 +133,6 @@ export default function WebtoonViewer({
 
         return () => observers.forEach((o) => o.disconnect());
     }, [signedUrls]);
-
-    // Calculate image dimensions for background-image rendering
-    const handleImageLoad = useCallback((index: number, url: string) => {
-        const img = new Image();
-        img.onload = () => {
-            const ref = pageRefs.current[index];
-            if (ref) {
-                const aspectRatio = img.height / img.width;
-                ref.style.paddingBottom = `${aspectRatio * 100}%`;
-            }
-        };
-        img.src = url;
-    }, []);
-
-    useEffect(() => {
-        signedUrls.forEach((url, index) => {
-            if (loadedPages.has(index)) {
-                handleImageLoad(index, url);
-            }
-        });
-    }, [signedUrls, loadedPages, handleImageLoad]);
 
     return (
         <div className={styles.viewer} ref={containerRef}>
@@ -211,21 +190,20 @@ export default function WebtoonViewer({
                         className={styles.page}
                         ref={(el) => { pageRefs.current[index] = el; }}
                     >
-                        {/* Render as CSS background-image instead of <img> for protection */}
-                        <div
-                            className={styles.page__image}
-                            style={
-                                loadedPages.has(index)
-                                    ? { backgroundImage: `url(${url})` }
-                                    : undefined
-                            }
-                        />
-                        {/* Transparent watermark overlay prevents right-click save */}
-                        <div className={styles.page__watermark} />
-                        {/* Loading placeholder */}
-                        {!loadedPages.has(index) && (
+                        {/* Render as native img but disabled pointer events */}
+                        {loadedPages.has(index) ? (
+                            <img 
+                                src={url} 
+                                alt={`Page ${index + 1}`} 
+                                className={styles.page__image} 
+                                onContextMenu={(e) => e.preventDefault()}
+                                onDragStart={(e) => e.preventDefault()}
+                            />
+                        ) : (
                             <div className={styles.page__loading} style={{ minHeight: "600px" }} />
                         )}
+                        {/* Transparent watermark overlay intercepts all clicks/long-presses */}
+                        <div className={styles.page__watermark} />
                     </div>
                 ))
             )}
