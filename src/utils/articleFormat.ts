@@ -28,7 +28,7 @@ export const formatArticle = (dbRow: any): Article => {
         youtubeId: yId,
         thumbnailUrl: yId
             ? `https://img.youtube.com/vi/${yId}/0.jpg`
-            : "",
+            : "/logo-character.webp",
         publishedAt: new Date(dbRow.created_at).toLocaleDateString(),
         readTime: dbRow.read_time || "5",
         views: dbRow.view_count || 0,
