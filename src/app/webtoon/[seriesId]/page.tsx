@@ -97,8 +97,9 @@ export default async function EpisodeListPage({ params }: EpisodeListProps) {
                     {episodes && episodes.length > 0 ? (
                         episodes.map((ep) => {
                             const pages = ep.pages as { path: string; order: number }[];
-                            const thumbUrl = pages?.[0]?.path
-                                ? `/api/webtoon/signed-urls?episodeId=${ep.id}`
+                            const firstPagePath = pages?.[0]?.path;
+                            const thumbUrl = firstPagePath
+                                ? `/api/webtoon/thumb?path=${encodeURIComponent(firstPagePath)}`
                                 : null;
 
                             // Check if episode is new (within 7 days)
@@ -110,9 +111,16 @@ export default async function EpisodeListPage({ params }: EpisodeListProps) {
                                     href={`/webtoon/${seriesId}/${ep.id}`}
                                     className={styles.episode}
                                 >
-                                    <div className={styles.episode__number}>
-                                        {ep.episode_number}
-                                    </div>
+                                    {thumbUrl ? (
+                                        <div className={styles.episode__thumbContainer}>
+                                            <img src={thumbUrl} alt={ep.title} className={styles.episode__thumb} />
+                                            <div className={styles.episode__numberOverlay}>{ep.episode_number}</div>
+                                        </div>
+                                    ) : (
+                                        <div className={styles.episode__number}>
+                                            {ep.episode_number}
+                                        </div>
+                                    )}
                                     <div className={styles.episode__info}>
                                         <div className={styles.episode__titleRow}>
                                             <h3 className={styles.episode__title}>{ep.title}</h3>

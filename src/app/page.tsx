@@ -25,6 +25,22 @@ export default async function Home() {
     .order("created_at", { ascending: false })
     .limit(10);
 
+  // Supabase에서 최신 웹툰 가져오기
+  const { data: webtoonEpisodes } = await supabase
+    .from("webtoon_episodes")
+    .select(`
+      id,
+      title,
+      episode_number,
+      created_at,
+      pages,
+      series_id,
+      webtoon_series!inner ( title )
+    `)
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(3);
+
   if (error) {
     console.error("데이터 불러오기 실패:", error);
   }
@@ -105,6 +121,54 @@ export default async function Home() {
       <section className={styles["hero-section"]}>
         <HeroArticle article={heroArticle} />
       </section>
+
+      {/* Latest Webtoons */}
+      {webtoonEpisodes && webtoonEpisodes.length > 0 && (
+        <section className={styles.section}>
+          <div className={styles.section__header}>
+            <h2 className={styles.section__title}>
+              <span className={styles["section__title-accent"]} />
+              역사를 만화로, 최신 웹툰
+            </h2>
+            <Link href="/webtoon" className={styles.section__more}>
+              웹툰 홈 가기 →
+            </Link>
+          </div>
+          
+          <div className={styles.webtoonGrid}>
+            {webtoonEpisodes.map((ep) => {
+              const pages = ep.pages as { path: string; order: number }[];
+              const firstPagePath = pages?.[0]?.path;
+              const thumbUrl = firstPagePath
+                ? `/api/webtoon/thumb?path=${encodeURIComponent(firstPagePath)}`
+                : null;
+              
+              // @ts-ignore - Handle joined relation array vs object issue
+              const seriesTitle = Array.isArray(ep.webtoon_series) ? ep.webtoon_series[0]?.title : ep.webtoon_series?.title;
+
+              return (
+                <Link key={ep.id} href={`/webtoon/${ep.series_id}/${ep.id}`} className={styles.webtoonCard}>
+                  <div className={styles.webtoonCard__thumbWrapper}>
+                    <span className={styles.webtoonCard__badge}>{ep.episode_number}</span>
+                    {thumbUrl ? (
+                      <img src={thumbUrl} alt={ep.title} className={styles.webtoonCard__thumb} />
+                    ) : (
+                      <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666'}}>No Image</div>
+                    )}
+                  </div>
+                  <div className={styles.webtoonCard__info}>
+                    <div className={styles.webtoonCard__series}>{seriesTitle || "웹툰 시리즈"}</div>
+                    <h3 className={styles.webtoonCard__title}>{ep.title}</h3>
+                    <div className={styles.webtoonCard__meta}>
+                      <span>{new Date(ep.created_at).toLocaleDateString("ko-KR")}</span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Latest Articles */}
       <section className={styles.section}>
