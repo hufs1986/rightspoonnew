@@ -110,6 +110,24 @@ export default function WebtoonViewer({
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const handleShare = async () => {
+        const shareData = {
+            title: `[오른스푼 웹툰] ${episodeTitle}`,
+            text: `${episodeTitle} - 제${episodeNumber}화를 확인해보세요!`,
+            url: window.location.href,
+        };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(window.location.href);
+                alert("링크가 복사되었습니다.");
+            }
+        } catch (err) {
+            console.error("공유 실패:", err);
+        }
+    };
+
     // Lazy load images using IntersectionObserver
     useEffect(() => {
         const observers: IntersectionObserver[] = [];
@@ -207,6 +225,14 @@ export default function WebtoonViewer({
                     </div>
                 ))
             )}
+
+            {/* Actions Bar (Share, Like, etc) */}
+            <div className={styles.viewer__actions}>
+                <button onClick={handleShare} className={styles.viewer__actionBtn}>
+                    <span className={styles.viewer__actionIcon}>📤</span>
+                    <span>공유하기</span>
+                </button>
+            </div>
 
             {/* Bottom Navigation */}
             <div className={styles.viewer__footer}>
