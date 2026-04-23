@@ -1,0 +1,173 @@
+.main { min-height: 100vh; background: var(--color-bg); }
+
+/* Series Hero */
+.hero {
+    background: linear-gradient(135deg, #1a0a00 0%, #0d1117 100%);
+    padding: 80px 20px 40px;
+    border-bottom: 2px solid var(--color-cat-history);
+}
+.hero__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+}
+.hero__cover {
+    width: 180px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    border: 2px solid rgba(230,81,0,0.3);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+}
+.hero__info { flex: 1; }
+.hero__title {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-weight-black);
+    color: var(--color-text-primary);
+    margin: 12px 0 8px;
+    line-height: var(--line-height-tight);
+}
+.hero__desc {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    margin-bottom: 16px;
+    line-height: var(--line-height-normal);
+}
+.hero__meta {
+    display: flex;
+    gap: 16px;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    flex-wrap: wrap;
+}
+.hero__status {
+    padding: 2px 10px;
+    background: rgba(230,81,0,0.15);
+    border-radius: var(--radius-full);
+    color: #ff9800;
+}
+
+/* Section */
+.section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+}
+.section__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin-bottom: 20px;
+}
+.section__accent {
+    width: 4px;
+    height: 24px;
+    background: var(--color-cat-history);
+    border-radius: var(--radius-full);
+}
+.section__count {
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-muted);
+    margin-left: auto;
+}
+
+/* Episode List */
+.episodeList {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.episode {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition-fast);
+}
+.episode:hover {
+    background: var(--color-bg-card-hover);
+    border-color: var(--color-cat-history);
+    transform: translateX(4px);
+}
+.episode__number {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-cat-history);
+    flex-shrink: 0;
+}
+.episode__info { flex: 1; min-width: 0; }
+.episode__titleRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.episode__title {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.episode__new {
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    background: var(--color-accent);
+    color: white;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+.episode__meta {
+    display: flex;
+    gap: 12px;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-top: 4px;
+}
+.episode__arrow {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+}
+.empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-text-muted);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+}
+
+@media (max-width: 768px) {
+    .hero { padding: 70px 16px 32px; }
+    .hero__inner { flex-direction: column; align-items: center; text-align: center; }
+    .hero__cover { width: 140px; height: 187px; }
+    .hero__title { font-size: var(--text-2xl); }
+    .hero__meta { justify-content: center; }
+    .episode { padding: 12px 16px; }
+}
