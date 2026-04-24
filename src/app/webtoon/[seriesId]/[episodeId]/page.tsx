@@ -1,5 +1,9 @@
 import Header from "../../../components/Header";
+import Footer from "../../../components/Footer";
 import WebtoonViewer from "../../../components/WebtoonViewer";
+import LikeButton from "../../../components/LikeButton";
+import Comments from "../../../components/Comments";
+import ArticlePushBar from "../../../components/ArticlePushBar";
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
 
@@ -80,6 +84,27 @@ export default async function ViewerPage({ params }: ViewerPageProps) {
                 nextEpisodeId={nextEp?.id || null}
                 totalPages={pages?.length || 0}
             />
+
+            {/* 좋아요 + 댓글 + 푸시 구독 */}
+            <div style={{
+                maxWidth: "720px",
+                margin: "0 auto",
+                padding: "32px 20px 0",
+                background: "var(--color-bg)",
+            }}>
+                {/* Like Button */}
+                <div style={{ display: "flex", justifyContent: "center", margin: "0 0 24px" }}>
+                    <LikeButton articleId={episodeId} initialLikes={0} />
+                </div>
+
+                {/* Push Subscription Bar */}
+                <ArticlePushBar />
+
+                {/* Comments */}
+                <Comments articleId={episodeId} />
+            </div>
+
+            <Footer />
         </div>
     );
 }
