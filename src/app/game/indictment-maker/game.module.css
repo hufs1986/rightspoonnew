@@ -1,0 +1,670 @@
+/* ===== 공소취소 메이커 — 게임 스타일 ===== */
+
+/* Import retro pixel font */
+@import url('https://fonts.googleapis.com/css2?family=Galmuri11&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ===== Main Container ===== */
+.gameContainer {
+    min-height: 100vh;
+    background: #0a0a12;
+    color: #e0e0e0;
+    font-family: 'Galmuri11', 'Press Start 2P', monospace;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ===== Scanline overlay (CRT retro effect) ===== */
+.gameContainer::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 999;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.05) 0px,
+        rgba(0, 0, 0, 0.05) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+}
+
+/* ===== Title Screen ===== */
+.titleScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 20px;
+    background: radial-gradient(ellipse at center, #1a0a2e 0%, #0a0a12 70%);
+    animation: titlePulse 4s ease-in-out infinite;
+}
+
+@keyframes titlePulse {
+    0%, 100% { background: radial-gradient(ellipse at center, #1a0a2e 0%, #0a0a12 70%); }
+    50% { background: radial-gradient(ellipse at center, #2a1040 0%, #0a0a12 70%); }
+}
+
+.titleLogo {
+    font-size: 72px;
+    margin-bottom: 20px;
+    animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.titleName {
+    font-size: 32px;
+    font-weight: 900;
+    color: #ff4444;
+    text-shadow: 0 0 20px rgba(255, 68, 68, 0.5), 2px 2px 0 #880000;
+    margin-bottom: 8px;
+    letter-spacing: 4px;
+}
+
+.titleSub {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 40px;
+    font-style: italic;
+}
+
+.startBtn {
+    padding: 16px 48px;
+    font-size: 18px;
+    font-family: 'Galmuri11', monospace;
+    font-weight: bold;
+    background: linear-gradient(180deg, #ff4444 0%, #cc0000 100%);
+    color: white;
+    border: 3px solid #ff6666;
+    border-radius: 4px;
+    cursor: pointer;
+    text-shadow: 1px 1px 0 #880000;
+    box-shadow: 0 4px 0 #880000, 0 0 30px rgba(255, 68, 68, 0.3);
+    transition: all 0.1s;
+    animation: startGlow 2s ease-in-out infinite;
+}
+
+@keyframes startGlow {
+    0%, 100% { box-shadow: 0 4px 0 #880000, 0 0 30px rgba(255, 68, 68, 0.3); }
+    50% { box-shadow: 0 4px 0 #880000, 0 0 50px rgba(255, 68, 68, 0.6); }
+}
+
+.startBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #880000, 0 0 40px rgba(255, 68, 68, 0.5);
+}
+
+.startBtn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #880000;
+}
+
+.titleCredits {
+    margin-top: 30px;
+    font-size: 11px;
+    color: #555;
+}
+
+/* ===== Game Layout ===== */
+.gameLayout {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+/* ===== Top HUD ===== */
+.hud {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    padding: 16px;
+    background: linear-gradient(180deg, #12121e 0%, #0e0e18 100%);
+    border: 2px solid #2a2a4a;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+}
+
+.hudLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.hudMonth {
+    font-size: 12px;
+    color: #888;
+}
+
+.hudMonthValue {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffaa00;
+}
+
+.hudCenter {
+    text-align: center;
+}
+
+.hudCharacter {
+    font-size: 48px;
+    display: block;
+    animation: charFloat 3s ease-in-out infinite;
+}
+
+@keyframes charFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.05); }
+}
+
+.hudCharName {
+    font-size: 12px;
+    color: #ff6688;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+.hudRight {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.hudLevel {
+    font-size: 11px;
+    color: #888;
+}
+
+.hudProgress {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ff4444;
+}
+
+/* ===== Stats Grid ===== */
+.statsPanel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 12px;
+    background: #0e0e1a;
+    border: 1px solid #222244;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.statLabel {
+    font-size: 10px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.statBarOuter {
+    width: 100%;
+    height: 10px;
+    background: #1a1a2e;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid #333;
+}
+
+.statBarInner {
+    height: 100%;
+    transition: width 0.5s ease, background-color 0.5s ease;
+    border-radius: 1px;
+}
+
+.statValue {
+    font-size: 10px;
+    color: #aaa;
+    text-align: right;
+}
+
+/* Stat colors */
+.statGood { background: linear-gradient(90deg, #22cc44, #44ff66); }
+.statBad { background: linear-gradient(90deg, #ff4444, #ff6666); }
+.statWarning { background: linear-gradient(90deg, #ffaa00, #ffcc44); }
+.statDanger { background: linear-gradient(90deg, #ff0044, #ff2266); }
+.statNeutral { background: linear-gradient(90deg, #4488ff, #66aaff); }
+
+/* ===== Trials Strip ===== */
+.trialsPanel {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #0e0e18;
+    border: 1px solid #222244;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+}
+
+.trialChip {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    background: #1a1a30;
+    border: 1px solid #333355;
+    border-radius: 4px;
+    font-size: 10px;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    transition: all 0.3s;
+}
+
+.trialChip--cancelled {
+    background: #330000;
+    border-color: #ff0000;
+    color: #ff4444;
+    text-decoration: line-through;
+    animation: trialDeath 0.5s ease;
+}
+
+@keyframes trialDeath {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.5; background: #ff0000; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== Actions Panel ===== */
+.actionsTitle {
+    font-size: 14px;
+    color: #ffaa00;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.actionsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.actionCard {
+    padding: 12px;
+    background: linear-gradient(135deg, #161628 0%, #1a1a30 100%);
+    border: 2px solid #2a2a50;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.actionCard:hover {
+    border-color: #ff4444;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 68, 68, 0.2);
+}
+
+.actionCard::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255, 68, 68, 0.03) 100%);
+    pointer-events: none;
+}
+
+.actionCard--locked {
+    opacity: 0.35;
+    cursor: not-allowed;
+    border-color: #222;
+}
+
+.actionCard--locked:hover {
+    transform: none;
+    border-color: #222;
+    box-shadow: none;
+}
+
+.actionCard--final {
+    border-color: #ff0000;
+    animation: finalPulse 1.5s ease-in-out infinite;
+    background: linear-gradient(135deg, #2a0000 0%, #1a0000 100%);
+}
+
+@keyframes finalPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
+}
+
+.actionEmoji {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.actionName {
+    font-size: 12px;
+    font-weight: bold;
+    color: #ddd;
+    margin-bottom: 4px;
+}
+
+.actionDesc {
+    font-size: 10px;
+    color: #777;
+    line-height: 1.4;
+}
+
+.actionLocked {
+    font-size: 9px;
+    color: #ff4444;
+    margin-top: 6px;
+}
+
+/* ===== News Ticker ===== */
+.newsTicker {
+    padding: 12px 16px;
+    background: linear-gradient(90deg, #1a0000 0%, #0e0e18 30%, #0e0e18 70%, #1a0000 100%);
+    border: 1px solid #332222;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.newsLabel {
+    font-size: 10px;
+    color: #ff4444;
+    font-weight: bold;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.newsText {
+    font-size: 12px;
+    color: #cccccc;
+    line-height: 1.5;
+}
+
+.newsHistory {
+    margin-top: 8px;
+    max-height: 60px;
+    overflow-y: auto;
+}
+
+.newsHistoryItem {
+    font-size: 10px;
+    color: #555;
+    padding: 2px 0;
+    border-top: 1px solid #1a1a2e;
+}
+
+/* ===== Event Modal ===== */
+.eventOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.eventModal {
+    background: linear-gradient(180deg, #1a1a30 0%, #12121e 100%);
+    border: 3px solid #ff4444;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    animation: modalPop 0.3s ease;
+    box-shadow: 0 0 60px rgba(255, 68, 68, 0.3);
+}
+
+@keyframes modalPop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.eventEmoji {
+    font-size: 56px;
+    margin-bottom: 16px;
+}
+
+.eventTitle {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff6666;
+    margin-bottom: 12px;
+}
+
+.eventDesc {
+    font-size: 13px;
+    color: #bbb;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.eventEffects {
+    padding: 12px;
+    background: #0a0a14;
+    border-radius: 6px;
+    margin: 12px 0;
+    font-size: 11px;
+}
+
+.effectPositive { color: #44ff66; }
+.effectNegative { color: #ff4444; }
+
+.eventBtn {
+    margin-top: 16px;
+    padding: 10px 30px;
+    font-family: 'Galmuri11', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    background: #ff4444;
+    color: white;
+    border: 2px solid #ff6666;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #880000;
+}
+
+.eventBtn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #880000;
+}
+
+/* ===== Ending Screen ===== */
+.endingScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 40px 20px;
+    background: radial-gradient(ellipse at center, #1a0020 0%, #0a0a12 70%);
+}
+
+.endingEmoji {
+    font-size: 80px;
+    margin-bottom: 24px;
+    animation: endingBounce 2s ease infinite;
+}
+
+@keyframes endingBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.endingLabel {
+    font-size: 12px;
+    color: #ff4444;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.endingTitle {
+    font-size: 24px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 24px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    line-height: 1.4;
+}
+
+.endingDesc {
+    font-size: 14px;
+    color: #aaa;
+    line-height: 2;
+    max-width: 400px;
+    margin-bottom: 32px;
+    white-space: pre-line;
+}
+
+.endingStats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.endingStat {
+    padding: 10px 8px;
+    background: #12121e;
+    border: 1px solid #2a2a4a;
+    border-radius: 6px;
+}
+
+.endingStatLabel {
+    font-size: 9px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.endingStatValue {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.endingStatValue--good { color: #44ff66; }
+.endingStatValue--bad { color: #ff4444; }
+
+.restartBtn {
+    padding: 14px 40px;
+    font-family: 'Galmuri11', monospace;
+    font-size: 16px;
+    font-weight: bold;
+    background: #333;
+    color: white;
+    border: 2px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #111;
+    transition: all 0.2s;
+}
+
+.restartBtn:hover {
+    background: #444;
+    border-color: #ff4444;
+}
+
+.shareBtn {
+    margin-top: 12px;
+    padding: 10px 30px;
+    font-family: 'Galmuri11', monospace;
+    font-size: 13px;
+    background: transparent;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* ===== Cancel Button Mega Effect ===== */
+.cancelOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #000;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: cancelFlash 3s ease forwards;
+}
+
+@keyframes cancelFlash {
+    0% { background: #fff; }
+    10% { background: #ff0000; }
+    30% { background: #000; }
+    100% { background: #0a0a12; }
+}
+
+.cancelText {
+    font-size: 28px;
+    color: #ff0000;
+    font-weight: 900;
+    text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+    animation: cancelTextFade 3s ease forwards;
+    text-align: center;
+    line-height: 2;
+}
+
+@keyframes cancelTextFade {
+    0% { opacity: 0; transform: scale(2); }
+    30% { opacity: 1; transform: scale(1); }
+    100% { opacity: 1; }
+}
+
+.cancelSubText {
+    font-size: 14px;
+    color: #666;
+    margin-top: 20px;
+    animation: cancelSubFade 3s ease forwards;
+    text-align: center;
+    line-height: 1.8;
+}
+
+@keyframes cancelSubFade {
+    0%, 50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+    .titleName { font-size: 24px; letter-spacing: 2px; }
+    .titleLogo { font-size: 56px; }
+    .hud { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+    .hudRight { align-items: center; }
+    .statsPanel { grid-template-columns: repeat(2, 1fr); }
+    .actionsGrid { grid-template-columns: 1fr; }
+    .trialsPanel { flex-wrap: wrap; }
+    .endingStats { grid-template-columns: repeat(2, 1fr); }
+    .cancelText { font-size: 20px; }
+}
