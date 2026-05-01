@@ -8,6 +8,7 @@ import LikeButton from "../../components/LikeButton";
 import ReadingProgressBar from "../../components/ReadingProgressBar";
 import NextArticleCTA from "../../components/NextArticleCTA";
 import Comments from "../../components/Comments";
+import ArticlePushBar from "../../components/ArticlePushBar";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
@@ -252,6 +253,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
                 {/* Share */}
                 <ShareButtons title={article.title} description={article.excerpt} thumbnailUrl={article.thumbnailUrl} />
+
+                {/* Push Subscription Bar */}
+                <ArticlePushBar />
 
                 <Comments articleId={article.id} />
             </article>

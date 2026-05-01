@@ -37,7 +37,7 @@ export default function PushPermission() {
         const dismissedAt = localStorage.getItem("push-dismissed-at");
         if (dismissedAt) {
             const hoursSince = (Date.now() - parseInt(dismissedAt)) / (1000 * 60 * 60);
-            if (hoursSince < 24) return;
+            if (hoursSince < 6) return;
         }
 
         // 브라우저가 알림을 지원하지 않으면 표시하지 않음
@@ -178,7 +178,7 @@ export default function PushPermission() {
                         marginBottom: "8px",
                     }}
                 >
-                    새 영상 알림을 받아보시겠어요?
+                    새 글, 놓치지 마세요
                 </h3>
 
                 <p
@@ -189,9 +189,9 @@ export default function PushPermission() {
                         marginBottom: "20px",
                     }}
                 >
-                    오른스푼에 새로운 콘텐츠가 올라오면
+                    새 칼럼 · 웹툰이 올라오면 바로 알려드립니다.
                     <br />
-                    가장 먼저 알려드립니다.
+                    <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px' }}>광고 없음 · 언제든 해제 가능</span>
                 </p>
 
                 <div style={{ display: "flex", gap: "10px" }}>

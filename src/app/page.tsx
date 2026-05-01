@@ -33,7 +33,6 @@ export default async function Home() {
       title,
       episode_number,
       created_at,
-      pages,
       series_id,
       webtoon_series!inner ( title )
     `)
@@ -134,15 +133,11 @@ export default async function Home() {
               웹툰 홈 가기 →
             </Link>
           </div>
-          
+
           <div className={styles.webtoonGrid}>
             {webtoonEpisodes.map((ep) => {
-              const pages = ep.pages as { path: string; order: number }[];
-              const firstPagePath = pages?.[0]?.path;
-              const thumbUrl = firstPagePath
-                ? `/api/webtoon/thumb?path=${encodeURIComponent(firstPagePath)}`
-                : null;
-              
+              const thumbUrl = `/api/webtoon/thumb?episodeId=${ep.id}`;
+
               // @ts-ignore - Handle joined relation array vs object issue
               const seriesTitle = Array.isArray(ep.webtoon_series) ? ep.webtoon_series[0]?.title : ep.webtoon_series?.title;
 
@@ -153,7 +148,7 @@ export default async function Home() {
                     {thumbUrl ? (
                       <img src={thumbUrl} alt={ep.title} className={styles.webtoonCard__thumb} />
                     ) : (
-                      <div style={{width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666'}}>No Image</div>
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>No Image</div>
                     )}
                   </div>
                   <div className={styles.webtoonCard__info}>
