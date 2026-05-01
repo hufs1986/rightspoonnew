@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { GAME_ENDINGS } from "./gameData";
+import { GAME_ACTIONS, GAME_ENDINGS } from "./gameData";
 import ModalShell from "./ModalShell";
-import type { SaveSlotSummary } from "./useIndictmentGame";
+import StoreCta from "./StoreCta";
+import type { PlayStatsDetails, PlayStatsSummary, SaveSlotSummary } from "./useIndictmentGame";
 import styles from "./game.module.css";
 
 interface TitleScreenProps {
@@ -13,6 +14,8 @@ interface TitleScreenProps {
     onContinue: () => void;
     onNewGame: () => void;
     onSelectSlot: (slotId: number) => void;
+    playStatsDetails: PlayStatsDetails;
+    playStatsSummary: PlayStatsSummary;
     saveSlotSummaries: SaveSlotSummary[];
     onShareGame: () => void;
 }
@@ -26,10 +29,19 @@ export default function TitleScreen({
     onContinue,
     onNewGame,
     onSelectSlot,
+    playStatsDetails,
+    playStatsSummary,
     saveSlotSummaries,
     onShareGame,
 }: TitleScreenProps) {
     const [showInfo, setShowInfo] = useState(false);
+    const [showStats, setShowStats] = useState(false);
+    const mostUsedAction = playStatsSummary.mostUsedActionId
+        ? GAME_ACTIONS.find((action) => action.id === playStatsSummary.mostUsedActionId) ?? null
+        : null;
+    const latestEnding = playStatsSummary.latestEndingId
+        ? GAME_ENDINGS.find((ending) => ending.id === playStatsSummary.latestEndingId) ?? null
+        : null;
 
     return (
         <div className={styles.gameContainer}>
@@ -53,6 +65,8 @@ export default function TitleScreen({
                         </>
                     )}
                 </div>
+
+                <StoreCta variant="title" />
 
                 <div className={styles.titleInfo}>
                     <span>모바일 최적화</span>
@@ -116,6 +130,41 @@ export default function TitleScreen({
                     </div>
                 </div>
 
+                <div className={styles.profilePanel}>
+                    <div className={styles.profileHeader}>
+                        <div className={styles.profileTitle}>플레이 기록</div>
+                        <button className={styles.profileOpenBtn} onClick={() => setShowStats(true)}>
+                            상세 보기
+                        </button>
+                    </div>
+                    <div className={styles.profileGrid}>
+                        <div className={styles.profileCard}>
+                            <span className={styles.profileLabel}>총 플레이</span>
+                            <strong className={styles.profileValue}>{playStatsSummary.totalSessions}</strong>
+                        </div>
+                        <div className={styles.profileCard}>
+                            <span className={styles.profileLabel}>총 행동 수</span>
+                            <strong className={styles.profileValue}>{playStatsSummary.totalActions}</strong>
+                        </div>
+                        <div className={styles.profileCard}>
+                            <span className={styles.profileLabel}>완주 횟수</span>
+                            <strong className={styles.profileValue}>{playStatsSummary.completedRuns}</strong>
+                        </div>
+                        <div className={styles.profileCard}>
+                            <span className={styles.profileLabel}>최다 사용 행동</span>
+                            <strong className={styles.profileValueSmall}>
+                                {mostUsedAction ? `${mostUsedAction.emoji} ${mostUsedAction.name}` : "기록 없음"}
+                            </strong>
+                        </div>
+                        <div className={styles.profileCard}>
+                            <span className={styles.profileLabel}>최근 엔딩</span>
+                            <strong className={styles.profileValueSmall}>
+                                {latestEnding ? `${latestEnding.emoji} ${latestEnding.name}` : "아직 없음"}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
                 <div className={styles.titleExtraActions} style={{ display: 'flex', gap: '8px', marginTop: '12px', width: '100%' }}>
                     <button className={styles.ghostBtn} onClick={() => setShowInfo(true)} style={{ flex: 1, padding: '12px 8px', fontSize: '0.85rem' }}>
                         📖 안내 및 목적
@@ -128,18 +177,6 @@ export default function TitleScreen({
                 {isHydrated && hasSavedGame && <div className={styles.saveBanner}>이전 플레이가 저장되어 있습니다.</div>}
 
                 <div className={styles.titleCredits}>정치 풍자 육성 시뮬레이션 · 오른스푼 제작</div>
-
-                <a 
-                    href="https://influencers.coupang.com/s/drumtong119" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className={styles.sponsorBannerTitle}
-                >
-                    <div className={styles.sponsorIcon}>💖</div>
-                    <div className={styles.sponsorText}>
-                        <span>클릭 한 번으로 콘텐츠 제작을 응원해주세요 (쿠팡 방문)</span>
-                    </div>
-                </a>
             </div>
 
             {showInfo && (
@@ -172,6 +209,61 @@ export default function TitleScreen({
                         <button className={styles.eventBtn} onClick={() => setShowInfo(false)}>
                             확인
                         </button>
+                </ModalShell>
+            )}
+
+            {showStats && (
+                <ModalShell
+                    className={`${styles.eduModal} ${styles.statsModal}`}
+                    labelledBy="title-stats-modal"
+                    onClose={() => setShowStats(false)}
+                >
+                    <div className={styles.eventEmoji}>📊</div>
+                    <h3 className={styles.eventTitle} id="title-stats-modal">플레이 통계 상세</h3>
+
+                    <div className={styles.eduSection}>
+                        <div className={styles.eduSectionTitle}>요약</div>
+                        <div className={styles.statsSummaryGrid}>
+                            <div className={styles.statsSummaryCard}>
+                                <span className={styles.profileLabel}>총 플레이</span>
+                                <strong className={styles.profileValue}>{playStatsSummary.totalSessions}</strong>
+                            </div>
+                            <div className={styles.statsSummaryCard}>
+                                <span className={styles.profileLabel}>완주율</span>
+                                <strong className={styles.profileValue}>{Math.round(playStatsDetails.completionRate * 100)}%</strong>
+                            </div>
+                            <div className={styles.statsSummaryCard}>
+                                <span className={styles.profileLabel}>해금 엔딩</span>
+                                <strong className={styles.profileValue}>{discoveredEndingIds.length}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={styles.eduSection}>
+                        <div className={styles.eduSectionTitle}>행동 사용 랭킹</div>
+                        <div className={styles.statsRanking}>
+                            {playStatsDetails.actionRanking.length > 0 ? (
+                                playStatsDetails.actionRanking.map((entry, index) => {
+                                    const action = GAME_ACTIONS.find((item) => item.id === entry.actionId);
+                                    return (
+                                        <div key={entry.actionId} className={styles.statsRankingItem}>
+                                            <span className={styles.statsRankingIndex}>{String(index + 1).padStart(2, "0")}</span>
+                                            <span className={styles.statsRankingName}>
+                                                {action ? `${action.emoji} ${action.name}` : entry.actionId}
+                                            </span>
+                                            <span className={styles.statsRankingCount}>{entry.count}회</span>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className={styles.statsEmpty}>아직 기록이 없습니다.</div>
+                            )}
+                        </div>
+                    </div>
+
+                    <button className={styles.eventBtn} onClick={() => setShowStats(false)}>
+                        닫기
+                    </button>
                 </ModalShell>
             )}
         </div>

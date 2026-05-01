@@ -1,4 +1,5 @@
 import { GAME_ENDINGS, type GameEnding, type GameStats } from "./gameData";
+import StoreCta from "./StoreCta";
 import styles from "./game.module.css";
 
 interface EndingScreenProps {
@@ -126,18 +127,7 @@ export default function EndingScreen({ discoveredEndingIds, endingData, onRestar
                     </button>
                 </div>
 
-                <a 
-                    href="https://influencers.coupang.com/s/drumtong119" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className={styles.sponsorBanner}
-                >
-                    <div className={styles.sponsorIcon}>💖</div>
-                    <div className={styles.sponsorText}>
-                        <strong>게임이 유익하셨나요?</strong>
-                        <span>클릭 한 번으로 제작자를 응원해주세요 (쿠팡 방문)</span>
-                    </div>
-                </a>
+                <StoreCta variant="ending" />
             </div>
         </div>
     );

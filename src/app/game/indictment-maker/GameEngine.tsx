@@ -4,6 +4,7 @@ import CancelAnimation from "./CancelAnimation";
 import EndingScreen from "./EndingScreen";
 import GameScreen from "./GameScreen";
 import TitleScreen from "./TitleScreen";
+import { trackGameEvent } from "./tracking";
 import { useIndictmentGame } from "./useIndictmentGame";
 
 export default function GameEngine() {
@@ -17,6 +18,8 @@ export default function GameEngine() {
         eventForecast,
         hasSavedGame,
         isHydrated,
+        playStatsDetails,
+        playStatsSummary,
         saveSlotSummaries,
         selectSlot,
         state,
@@ -35,6 +38,7 @@ export default function GameEngine() {
 
         try {
             if (navigator.share) {
+                trackGameEvent("indictment_share_result", { method: "native_share" });
                 await navigator.share({
                     title: "공소취소 메이커",
                     text,
@@ -43,6 +47,7 @@ export default function GameEngine() {
                 return;
             }
 
+            trackGameEvent("indictment_share_result", { method: "clipboard" });
             await navigator.clipboard.writeText(`${text}\n${window.location.href}`);
             window.alert("결과가 복사되었습니다!");
         } catch {
@@ -55,6 +60,7 @@ export default function GameEngine() {
         
         try {
             if (navigator.share) {
+                trackGameEvent("indictment_share_game", { method: "native_share" });
                 await navigator.share({
                     title: "공소취소 메이커",
                     text,
@@ -63,6 +69,7 @@ export default function GameEngine() {
                 return;
             }
 
+            trackGameEvent("indictment_share_game", { method: "clipboard" });
             await navigator.clipboard.writeText(`${text}\n${window.location.origin}${window.location.pathname}`);
             window.alert("게임 링크가 복사되었습니다!");
         } catch {
@@ -77,6 +84,8 @@ export default function GameEngine() {
                 isHydrated={isHydrated}
                 activeSlotId={activeSlotId}
                 discoveredEndingIds={discoveredEndingIds}
+                playStatsDetails={playStatsDetails}
+                playStatsSummary={playStatsSummary}
                 onClearSave={clearSave}
                 onContinue={continueSavedGame}
                 onNewGame={startNewGame}

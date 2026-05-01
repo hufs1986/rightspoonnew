@@ -23,6 +23,7 @@ export const INITIAL_STATS: GameStats = {
 export const LEGACY_SAVE_KEY = "indictment-maker-save-v2";
 export const SAVE_SLOTS_KEY = "indictment-maker-save-slots-v3";
 export const ENDING_COLLECTION_KEY = "indictment-maker-ending-collection-v1";
+export const PLAY_STATS_KEY = "indictment-maker-play-stats-v1";
 export const MAX_SAVE_SLOTS = 3;
 export const CANCEL_ANIMATION_MS = 3200;
 
@@ -84,6 +85,28 @@ export interface StoredSaveSlots {
 export interface EndingCollection {
     version: 1;
     endingIds: GameEnding["id"][];
+}
+
+export interface PlayStats {
+    version: 1;
+    totalSessions: number;
+    totalActions: number;
+    completedRuns: number;
+    actionCounts: Record<string, number>;
+    latestEndingId: GameEnding["id"] | null;
+    latestPlayedAt: string | null;
+}
+
+export function createInitialPlayStats(): PlayStats {
+    return {
+        version: 1,
+        totalSessions: 0,
+        totalActions: 0,
+        completedRuns: 0,
+        actionCounts: {},
+        latestEndingId: null,
+        latestPlayedAt: null,
+    };
 }
 
 export function createInitialSnapshot(): GameSnapshot {

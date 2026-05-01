@@ -1,6 +1,7 @@
 import { memo, useMemo, useState } from "react";
 import GameOverlay from "./GameOverlay";
-import { TRIALS, type GameAction, type GameStats, type RandomEvent } from "./gameData";
+import StoreCta from "./StoreCta";
+import { GAME_ACTIONS, TRIALS, type GameAction, type GameStats, type RandomEvent } from "./gameData";
 import type { EventForecast } from "./gameReducer";
 import { getActionEffects, getStatTone, MILESTONE_STAGES, STAT_LABELS } from "./gameLogic";
 import styles from "./game.module.css";
@@ -30,6 +31,27 @@ type OverlayState =
     | { type: "trial"; trialId: number }
     | { type: "cancel_confirm"; step: number };
 
+type ActionCategory = "media" | "institution" | "judicial" | "support" | "restraint" | "final";
+
+const ACTION_CATEGORY_META: Record<
+    ActionCategory,
+    { label: string; className: string }
+> = {
+    media: { label: "여론전", className: "actionBadge--media" },
+    institution: { label: "입법", className: "actionBadge--institution" },
+    judicial: { label: "사법개입", className: "actionBadge--judicial" },
+    support: { label: "방탄", className: "actionBadge--support" },
+    restraint: { label: "완화", className: "actionBadge--restraint" },
+    final: { label: "최종행동", className: "actionBadge--final" },
+};
+
+const ACTION_RISK_META = [
+    { max: 5, label: "보통", className: "actionBadge--riskLow", cardClassName: "actionCard--riskLow" },
+    { max: 15, label: "높음", className: "actionBadge--riskMedium", cardClassName: "actionCard--riskMedium" },
+    { max: 25, label: "위험", className: "actionBadge--riskHigh", cardClassName: "actionCard--riskHigh" },
+    { max: Number.POSITIVE_INFINITY, label: "치명적", className: "actionBadge--riskCritical", cardClassName: "actionCard--riskCritical" },
+] as const;
+
 function ActionDelta({ statKey, delta }: { statKey: keyof GameStats; delta: number }) {
     const info = STAT_LABELS[statKey];
 
@@ -39,6 +61,31 @@ function ActionDelta({ statKey, delta }: { statKey: keyof GameStats; delta: numb
             {delta}
         </span>
     );
+}
+
+function getActionCategory(action: GameAction): ActionCategory {
+    if (action.id === "cancel_indictment") return "final";
+    if (action.id === "do_nothing") return "restraint";
+    if (["frame_media", "play_recording", "press_conference"].includes(action.id)) return "media";
+    if (["launch_investigation", "adopt_report", "draft_special_counsel", "pass_special_counsel"].includes(action.id)) {
+        return "institution";
+    }
+    if (["summon_witnesses", "mass_indictments", "appoint_counsel", "transfer_cases", "seize_prosecution"].includes(action.id)) {
+        return "judicial";
+    }
+    return "support";
+}
+
+function getActionRisk(action: GameAction) {
+    if (action.id === "cancel_indictment") return ACTION_RISK_META[ACTION_RISK_META.length - 1];
+
+    const destabilizationScore = getActionEffects(action).reduce((score, [statKey, delta]) => {
+        if (delta >= 0) return score;
+        if (["lawRule", "separation", "judicialIndep", "publicTrust"].includes(statKey)) return score + Math.abs(delta);
+        return score;
+    }, 0);
+
+    return ACTION_RISK_META.find((item) => destabilizationScore <= item.max) ?? ACTION_RISK_META[0];
 }
 
 function GameScreenComponent({
@@ -61,6 +108,7 @@ function GameScreenComponent({
     isActionLocked,
 }: GameScreenProps) {
     const [overlay, setOverlay] = useState<OverlayState | null>(null);
+    const [turnCinematic, setTurnCinematic] = useState<{ actionId: string; month: number } | null>(null);
     const completedStages = new Set(milestones);
 
     const handleAction = (action: GameAction) => {
@@ -69,6 +117,8 @@ function GameScreenComponent({
             return;
         }
 
+        setTurnCinematic({ actionId: action.id, month: month + 1 });
+        window.setTimeout(() => setTurnCinematic(null), 1250);
         onAction(action);
         if (action.id !== "do_nothing") {
             setOverlay({ type: "education", actionId: action.id });
@@ -79,6 +129,8 @@ function GameScreenComponent({
         const action = actions.find((a) => a.id === "cancel_indictment");
         if (action) {
             setOverlay(null);
+            setTurnCinematic({ actionId: action.id, month: month + 1 });
+            window.setTimeout(() => setTurnCinematic(null), 1250);
             onAction(action);
             setOverlay({ type: "education", actionId: action.id });
         }
@@ -92,9 +144,23 @@ function GameScreenComponent({
         if (currentEvent) return { type: "event", event: currentEvent } as const;
         return null;
     }, [currentEvent, overlay]);
+    const latestActionId = recentActions[recentActions.length - 1] ?? null;
+    const latestAction = latestActionId ? GAME_ACTIONS.find((action) => action.id === latestActionId) ?? null : null;
 
     return (
         <div className={`${styles.gameContainer} ${isLawRuleAlarm ? styles["gameContainer--alarm"] : ""}`}>
+            {turnCinematic && latestAction && (
+                <div className={styles.turnCinematic} aria-hidden="true">
+                    <div className={styles.turnCinematicCard}>
+                        <div className={styles.turnCinematicLabel}>TURN ADVANCE</div>
+                        <div className={styles.turnCinematicAction}>
+                            <span>{latestAction.emoji}</span>
+                            <span>{latestAction.name}</span>
+                        </div>
+                        <div className={styles.turnCinematicMonth}>{turnCinematic.month}개월 차 돌입</div>
+                    </div>
+                </div>
+            )}
             <div className={styles.gameLayout}>
                 <section className={styles.hud}>
                     <div className={styles.hudLeft}>
@@ -237,6 +303,10 @@ function GameScreenComponent({
                     </section>
                 )}
 
+                <section className={styles.storeCtaSection} aria-label="운영자 실사용 아이템">
+                    <StoreCta variant="inGame" />
+                </section>
+
                 <section className={styles.actionsSection}>
                     <div className={styles.actionsTitle}>🎯 이번 달 행동을 선택하세요</div>
                     <div className={styles.actionsHint}>카드를 눌러 진행합니다. 선행 조건이 없는 행동부터 여세요.</div>
@@ -245,12 +315,15 @@ function GameScreenComponent({
                             const locked = isActionLocked(action);
                             const done = isActionDone(action);
                             const isFinalAction = action.id === "cancel_indictment" && !locked;
+                            const category = ACTION_CATEGORY_META[getActionCategory(action)];
+                            const risk = getActionRisk(action);
+                            const stage = MILESTONE_STAGES[Math.max(action.phase - 1, 0)];
 
                             return (
                                 <button
                                     key={action.id}
                                     type="button"
-                                    className={`${styles.actionCard} ${locked ? styles["actionCard--locked"] : ""} ${isFinalAction ? styles["actionCard--final"] : ""}`}
+                                    className={`${styles.actionCard} ${locked ? styles["actionCard--locked"] : ""} ${isFinalAction ? styles["actionCard--final"] : ""} ${styles[risk.cardClassName]} ${latestActionId === action.id ? styles["actionCard--recent"] : ""}`}
                                     onClick={() => handleAction(action)}
                                     disabled={locked}
                                     aria-disabled={locked}
@@ -258,6 +331,13 @@ function GameScreenComponent({
                                     <div className={styles.actionHeader}>
                                         <span className={styles.actionEmoji}>{action.emoji}</span>
                                         {done && <span className={styles.actionDone}>완료</span>}
+                                    </div>
+                                    <div className={styles.actionMeta}>
+                                        <span className={`${styles.actionBadge} ${styles[category.className]}`}>{category.label}</span>
+                                        <span className={`${styles.actionBadge} ${styles[risk.className]}`}>{risk.label}</span>
+                                        <span className={`${styles.actionBadge} ${styles["actionBadge--phase"]}`}>
+                                            {stage?.emoji ?? "📍"} PHASE {action.phase}
+                                        </span>
                                     </div>
                                     <div className={styles.actionName}>{action.name}</div>
                                     <div className={styles.actionDesc}>{action.description}</div>

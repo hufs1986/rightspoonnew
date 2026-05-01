@@ -6,6 +6,7 @@ import { gameReducer, getEventForecast, rollRandomEvent } from "./gameReducer";
 import {
     CANCEL_ANIMATION_MS,
     createInitialSnapshot,
+    createInitialPlayStats,
     ENDING_COLLECTION_KEY,
     getAvailableActions,
     getCharacterLevel,
@@ -14,8 +15,10 @@ import {
     isActionLocked,
     LEGACY_SAVE_KEY,
     MAX_SAVE_SLOTS,
+    PLAY_STATS_KEY,
     SAVE_SLOTS_KEY,
     type EndingCollection,
+    type PlayStats,
     type SaveSlotRecord,
     type StoredGameState,
     type StoredSaveSlots,
@@ -44,6 +47,19 @@ function isEndingCollection(value: unknown): value is EndingCollection {
     return candidate.version === 1 && Array.isArray(candidate.endingIds);
 }
 
+function isPlayStats(value: unknown): value is PlayStats {
+    if (!value || typeof value !== "object") return false;
+
+    const candidate = value as Partial<PlayStats>;
+    return (
+        candidate.version === 1 &&
+        typeof candidate.totalSessions === "number" &&
+        typeof candidate.totalActions === "number" &&
+        typeof candidate.completedRuns === "number" &&
+        typeof candidate.actionCounts === "object"
+    );
+}
+
 export interface SaveSlotSummary {
     slotId: number;
     hasSave: boolean;
@@ -53,13 +69,28 @@ export interface SaveSlotSummary {
     endingId: string | null;
 }
 
+export interface PlayStatsSummary {
+    totalSessions: number;
+    totalActions: number;
+    completedRuns: number;
+    mostUsedActionId: string | null;
+    latestEndingId: string | null;
+}
+
+export interface PlayStatsDetails {
+    actionRanking: Array<{ actionId: string; count: number }>;
+    completionRate: number;
+}
+
 export function useIndictmentGame() {
     const [state, dispatch] = useReducer(gameReducer, undefined, createInitialSnapshot);
     const [isHydrated, setIsHydrated] = useState(false);
     const [activeSlotId, setActiveSlotId] = useState(1);
     const [saveSlots, setSaveSlots] = useState<SaveSlotRecord[]>([]);
     const [discoveredEndingIds, setDiscoveredEndingIds] = useState<string[]>([]);
+    const [playStats, setPlayStats] = useState<PlayStats>(createInitialPlayStats);
     const cancelTimerRef = useRef<number | null>(null);
+    const countedEndingRef = useRef<string | null>(null);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -104,6 +135,14 @@ export function useIndictmentGame() {
                 const parsedCollection = JSON.parse(collectionRaw) as unknown;
                 if (isEndingCollection(parsedCollection)) {
                     setDiscoveredEndingIds(parsedCollection.endingIds);
+                }
+            }
+
+            const statsRaw = window.localStorage.getItem(PLAY_STATS_KEY);
+            if (statsRaw) {
+                const parsedStats = JSON.parse(statsRaw) as unknown;
+                if (isPlayStats(parsedStats)) {
+                    setPlayStats(parsedStats);
                 }
             }
         } catch {
@@ -171,6 +210,27 @@ export function useIndictmentGame() {
     }, [discoveredEndingIds, isHydrated, state.endingId]);
 
     useEffect(() => {
+        if (!isHydrated || !state.endingId) return;
+        if (countedEndingRef.current === state.endingId) return;
+
+        countedEndingRef.current = state.endingId;
+
+        setPlayStats((current) => {
+            return {
+                ...current,
+                completedRuns: current.completedRuns + 1,
+                latestEndingId: state.endingId,
+                latestPlayedAt: new Date().toISOString(),
+            };
+        });
+    }, [isHydrated, state.endingId]);
+
+    useEffect(() => {
+        if (!isHydrated || typeof window === "undefined") return;
+        window.localStorage.setItem(PLAY_STATS_KEY, JSON.stringify(playStats));
+    }, [isHydrated, playStats]);
+
+    useEffect(() => {
         if (state.phase !== "cancel_animation") return;
 
         cancelTimerRef.current = window.setTimeout(() => {
@@ -210,6 +270,22 @@ export function useIndictmentGame() {
     const characterLevel = getCharacterLevel(state.stats.cancelProgress);
     const endingData = getEndingById(state.endingId);
     const eventForecast = getEventForecast(state.month, state.stats, state.recentActions);
+    const mostUsedActionId =
+        Object.entries(playStats.actionCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+    const playStatsSummary: PlayStatsSummary = {
+        totalSessions: playStats.totalSessions,
+        totalActions: playStats.totalActions,
+        completedRuns: playStats.completedRuns,
+        mostUsedActionId,
+        latestEndingId: playStats.latestEndingId,
+    };
+    const playStatsDetails: PlayStatsDetails = {
+        actionRanking: Object.entries(playStats.actionCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 8)
+            .map(([actionId, count]) => ({ actionId, count })),
+        completionRate: playStats.totalSessions > 0 ? playStats.completedRuns / playStats.totalSessions : 0,
+    };
     const activeSlotRecord = saveSlots.find((slot) => slot.slotId === activeSlotId) ?? null;
     const saveSlotSummaries: SaveSlotSummary[] = Array.from({ length: MAX_SAVE_SLOTS }, (_, index) => {
         const slotId = index + 1;
@@ -248,6 +324,8 @@ export function useIndictmentGame() {
         eventForecast,
         hasSavedGame: Boolean(activeSlotRecord),
         isHydrated,
+        playStatsDetails,
+        playStatsSummary,
         saveSlotSummaries,
         state,
         selectSlot: (slotId: number) => setActiveSlotId(slotId),
@@ -259,6 +337,15 @@ export function useIndictmentGame() {
         executeAction: (action: GameAction) => {
             if (state.phase !== "playing") return;
             if (isActionLocked(action, state.milestones)) return;
+            setPlayStats((current) => ({
+                ...current,
+                totalActions: current.totalActions + 1,
+                actionCounts: {
+                    ...current.actionCounts,
+                    [action.id]: (current.actionCounts[action.id] ?? 0) + 1,
+                },
+                latestPlayedAt: new Date().toISOString(),
+            }));
             dispatch({ type: "execute_action", action });
         },
         getShareText: () => {
@@ -272,9 +359,18 @@ export function useIndictmentGame() {
         isActionDone: (action: GameAction) => isActionDone(action, state.milestones),
         isActionLocked: (action: GameAction) => isActionLocked(action, state.milestones),
         restart: () => {
+            countedEndingRef.current = null;
             clearSave();
             dispatch({ type: "restart" });
         },
-        startNewGame: () => dispatch({ type: "start_new_game" }),
+        startNewGame: () => {
+            countedEndingRef.current = null;
+            setPlayStats((current) => ({
+                ...current,
+                totalSessions: current.totalSessions + 1,
+                latestPlayedAt: new Date().toISOString(),
+            }));
+            dispatch({ type: "start_new_game" });
+        },
     };
 }
