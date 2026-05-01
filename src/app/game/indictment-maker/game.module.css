@@ -898,6 +898,243 @@
     line-height: 1.7;
 }
 
+/* ===== V2 Additions: Breaking News Interrupt ===== */
+.breakingNewsModal {
+    border-color: #ff3333;
+    box-shadow: 0 24px 70px rgba(255, 0, 0, 0.3);
+    animation: newsAlertPop 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.breakingNewsHeader {
+    background: #ff1d3d;
+    color: white;
+    padding: 12px 16px;
+    margin: -28px -28px 20px -28px;
+    border-radius: 23px 23px 0 0;
+    font-weight: 900;
+    font-size: 1.1rem;
+    text-align: center;
+    letter-spacing: 0.05em;
+    animation: blinkBg 1s infinite alternate;
+}
+
+/* ===== V2 Additions: Trial Dossier UI ===== */
+.trialsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.trialsTitle {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #ffd46a;
+}
+.trialsScroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+}
+.trialDossierTab {
+    flex-shrink: 0;
+    width: 140px;
+    height: 100px;
+    padding: 12px;
+    background: linear-gradient(135deg, #d3c4a4, #bca87b);
+    border: 2px solid #8e7d54;
+    border-radius: 4px 16px 4px 4px; /* File folder tab look */
+    position: relative;
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+    color: #2b2518;
+    overflow: hidden;
+}
+.trialDossierTab:hover {
+    transform: translateY(-4px);
+}
+.dossierBadge {
+    display: inline-block;
+    background: #a82020;
+    color: white;
+    font-size: 0.5rem;
+    font-weight: 900;
+    padding: 2px 4px;
+    border-radius: 2px;
+    margin-bottom: 6px;
+    letter-spacing: 0.1em;
+}
+.dossierTitle {
+    font-size: 0.8rem;
+    font-weight: 800;
+    line-height: 1.3;
+}
+.trialDossierTab--cancelled::after {
+    content: "VOID";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 0, 0, 0.7);
+    font-size: 2rem;
+    font-weight: 900;
+    transform: rotate(-25deg);
+    border: 4px solid rgba(255, 0, 0, 0.7);
+    border-radius: 8px;
+    margin: 10px;
+    pointer-events: none;
+    text-shadow: none;
+}
+.trialDossierTab--cancelled {
+    background: linear-gradient(135deg, #665b4c, #4a4032);
+    border-color: #332b21;
+    color: rgba(255,255,255,0.4);
+}
+
+.dossierModal {
+    background: #f0ead6; /* Paper color */
+    color: #1a1a1a;
+    border-radius: 8px;
+    border: 1px solid #d4c8ad;
+    position: relative;
+    overflow: hidden;
+}
+.dossierVoidStamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(200, 0, 0, 0.2);
+    border: 8px solid rgba(200, 0, 0, 0.2);
+    padding: 10px 20px;
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 0;
+}
+.dossierTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #333;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+}
+.dossierId {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+.dossierEmoji {
+    font-size: 2rem;
+}
+.dossierHeader {
+    font-size: 1.4rem;
+    font-weight: 900;
+    margin: 0 0 20px 0;
+    color: #1a1a1a;
+    position: relative;
+    z-index: 1;
+}
+.dossierGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+    background: rgba(0,0,0,0.05);
+    padding: 12px;
+    border-radius: 6px;
+    position: relative;
+    z-index: 1;
+}
+.dossierField {
+    display: flex;
+    flex-direction: column;
+}
+.dossierLabel {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+.dossierValue {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+.dossierSection {
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+}
+.dossierText {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* ===== V2 Additions: Law Rule Alarm ===== */
+.gameContainer--alarm {
+    animation: alarmPulse 2s infinite;
+}
+.gameContainer--alarm::after {
+    content: "CRITICAL: 법치주의 붕괴 위험";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    text-align: center;
+    padding: 4px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    z-index: 100;
+    pointer-events: none;
+}
+
+/* ===== V2 Additions: Critical Confirm Modal ===== */
+.criticalConfirmModal {
+    border: 2px solid #ff3333;
+    background: rgba(20, 0, 0, 0.95);
+}
+.criticalWarningText {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(255,0,0,0.1);
+    border-left: 4px solid #ff3333;
+    line-height: 1.6;
+}
+.criticalConfirmActions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+.criticalConfirmActions button {
+    flex: 1;
+}
+
+@keyframes newsAlertPop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes blinkBg {
+    from { background: #d90022; }
+    to { background: #ff3355; }
+}
+@keyframes alarmPulse {
+    0% { box-shadow: inset 0 0 0px 0px rgba(255, 0, 0, 0); }
+    50% { box-shadow: inset 0 0 30px 5px rgba(255, 0, 0, 0.4); }
+    100% { box-shadow: inset 0 0 0px 0px rgba(255, 0, 0, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -907,3 +1144,4 @@
         scroll-behavior: auto !important;
     }
 }
+

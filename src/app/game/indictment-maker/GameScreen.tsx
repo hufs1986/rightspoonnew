@@ -52,18 +52,37 @@ function GameScreenComponent({
 }: GameScreenProps) {
     const [eduModal, setEduModal] = useState<{ actionId: string } | null>(null);
     const [trialDetail, setTrialDetail] = useState<number | null>(null);
+    const [cancelConfirmStep, setCancelConfirmStep] = useState<number>(0);
     const completedStages = new Set(milestones);
 
     const handleAction = (action: GameAction) => {
+        if (action.id === "cancel_indictment") {
+            setCancelConfirmStep(1);
+            return;
+        }
+
         onAction(action);
         if (ACTION_EDUCATION[action.id] && action.id !== "do_nothing") {
             setEduModal({ actionId: action.id });
         }
     };
+
+    const confirmCancelAction = () => {
+        const action = actions.find((a) => a.id === "cancel_indictment");
+        if (action) {
+            setCancelConfirmStep(0);
+            onAction(action);
+            if (ACTION_EDUCATION[action.id]) {
+                setEduModal({ actionId: action.id });
+            }
+        }
+    };
+
     const currentStageIndex = MILESTONE_STAGES.findIndex((stage) => !completedStages.has(stage.id));
+    const isLawRuleAlarm = stats.lawRule <= 30 && !trialsCancelled;
 
     return (
-        <div className={styles.gameContainer}>
+        <div className={`${styles.gameContainer} ${isLawRuleAlarm ? styles["gameContainer--alarm"] : ""}`}>
             <div className={styles.gameLayout}>
                 <section className={styles.hud}>
                     <div className={styles.hudLeft}>
@@ -126,18 +145,23 @@ function GameScreenComponent({
                 </section>
 
                 <section className={styles.trialsPanel} aria-label="재판 목록">
-                    {TRIALS.map((trial) => (
-                        <button
-                            type="button"
-                            key={trial.id}
-                            className={`${styles.trialChip} ${trialsCancelled ? styles["trialChip--cancelled"] : ""}`}
-                            onClick={() => setTrialDetail(trial.id)}
-                            title="클릭하면 상세 정보를 볼 수 있습니다"
-                        >
-                            {trial.emoji} {trial.name}
-                        </button>
-                    ))}
-                    <div className={styles.trialHint}>👆 재판을 탭하면 실제 혐의를 확인할 수 있습니다</div>
+                    <div className={styles.trialsHeader}>
+                        <span className={styles.trialsTitle}>📂 기밀 사건 파일 (Trial Dossier)</span>
+                        <span className={styles.trialsHint}>👆 탭하여 상세 열람</span>
+                    </div>
+                    <div className={styles.trialsScroll}>
+                        {TRIALS.map((trial) => (
+                            <button
+                                type="button"
+                                key={trial.id}
+                                className={`${styles.trialDossierTab} ${trialsCancelled ? styles["trialDossierTab--cancelled"] : ""}`}
+                                onClick={() => setTrialDetail(trial.id)}
+                            >
+                                <span className={styles.dossierBadge}>TOP SECRET</span>
+                                <div className={styles.dossierTitle}>{trial.emoji} {trial.name}</div>
+                            </button>
+                        ))}
+                    </div>
                 </section>
 
                 {newsHistory.length > 0 && (
@@ -215,10 +239,11 @@ function GameScreenComponent({
                 </div>
             )}
 
-            {/* 교육 모달: 행동 실행 후 법적 해설 표시 */}
+            {/* 교육 모달 / 긴급 속보 인터럽트 */}
             {eduModal && ACTION_EDUCATION[eduModal.actionId] && (
                 <div className={styles.eventOverlay} onClick={() => setEduModal(null)}>
-                    <div className={styles.eduModal} onClick={(e) => e.stopPropagation()}>
+                    <div className={`${styles.eduModal} ${styles.breakingNewsModal}`} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.breakingNewsHeader}>🚨 긴급 속보 / 사법부 팩트체크</div>
                         <div className={styles.eduSection}>
                             <div className={styles.eduSectionTitle}>⚖️ 법률 해설</div>
                             <p className={styles.eduText}>{ACTION_EDUCATION[eduModal.actionId].legalComment}</p>
@@ -238,19 +263,39 @@ function GameScreenComponent({
                 </div>
             )}
 
-            {/* 재판 상세 모달 */}
+            {/* 기밀 사건 파일 (Trial Dossier) 상세 모달 */}
             {trialDetail !== null && TRIAL_DETAILS[trialDetail] && (
                 <div className={styles.eventOverlay} onClick={() => setTrialDetail(null)}>
-                    <div className={styles.eduModal} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.eventEmoji}>{TRIALS.find(t => t.id === trialDetail)?.emoji}</div>
-                        <h3 className={styles.eventTitle}>{TRIAL_DETAILS[trialDetail].summary}</h3>
-                        <div className={styles.eduSection}>
-                            <div className={styles.eduSectionTitle}>📋 혐의 요지</div>
-                            <p className={styles.eduText}>{TRIAL_DETAILS[trialDetail].stakes}</p>
+                    <div className={`${styles.eduModal} ${styles.dossierModal}`} onClick={(e) => e.stopPropagation()}>
+                        {trialsCancelled && <div className={styles.dossierVoidStamp}>VOID / 취소됨</div>}
+                        <div className={styles.dossierTop}>
+                            <div className={styles.dossierId}>CASE NO. {trialDetail}</div>
+                            <div className={styles.dossierEmoji}>{TRIALS.find(t => t.id === trialDetail)?.emoji}</div>
                         </div>
-                        <div className={styles.eduSection}>
-                            <div className={styles.eduSectionTitle}>🔍 핵심 증거</div>
-                            <p className={styles.eduText}>{TRIAL_DETAILS[trialDetail].evidence}</p>
+                        <h3 className={styles.dossierHeader}>{TRIAL_DETAILS[trialDetail].summary}</h3>
+                        
+                        <div className={styles.dossierGrid}>
+                            <div className={styles.dossierField}>
+                                <div className={styles.dossierLabel}>기소일자</div>
+                                <div className={styles.dossierValue}>{TRIAL_DETAILS[trialDetail].indictmentDate}</div>
+                            </div>
+                            <div className={styles.dossierField}>
+                                <div className={styles.dossierLabel}>적용 법조</div>
+                                <div className={styles.dossierValue}>{TRIAL_DETAILS[trialDetail].penalCode}</div>
+                            </div>
+                            <div className={styles.dossierField}>
+                                <div className={styles.dossierLabel}>예상 형량</div>
+                                <div className={styles.dossierValue}>{TRIAL_DETAILS[trialDetail].expectedSentence}</div>
+                            </div>
+                        </div>
+
+                        <div className={styles.dossierSection}>
+                            <div className={styles.dossierLabel}>📋 혐의 요지</div>
+                            <p className={styles.dossierText}>{TRIAL_DETAILS[trialDetail].stakes}</p>
+                        </div>
+                        <div className={styles.dossierSection}>
+                            <div className={styles.dossierLabel}>🔍 핵심 증거</div>
+                            <p className={styles.dossierText}>{TRIAL_DETAILS[trialDetail].evidence}</p>
                         </div>
                         {trialsCancelled && (
                             <div className={styles.eduSection}>
@@ -258,7 +303,47 @@ function GameScreenComponent({
                                 <p className={styles.eduCitizen}>이 재판의 모든 증거와 혐의는 법원의 판단 없이 영구히 봉인되었습니다.</p>
                             </div>
                         )}
-                        <button className={styles.eventBtn} onClick={() => setTrialDetail(null)}>닫기</button>
+                        <button className={styles.eventBtn} onClick={() => setTrialDetail(null)}>파일 덮기</button>
+                    </div>
+                </div>
+            )}
+
+            {/* 공소취소 최종 승인 절차 (3단계) */}
+            {cancelConfirmStep > 0 && (
+                <div className={styles.eventOverlay} onClick={(e) => e.stopPropagation()}>
+                    <div className={`${styles.eventModal} ${styles.criticalConfirmModal}`}>
+                        <div className={styles.eventEmoji}>⚠️</div>
+                        <h3 className={styles.eventTitle}>최종 승인 절차</h3>
+                        
+                        {cancelConfirmStep >= 1 && (
+                            <p className={styles.criticalWarningText}>정말로 공소를 취소하시겠습니까?</p>
+                        )}
+                        {cancelConfirmStep >= 2 && (
+                            <p className={styles.criticalWarningText}>이 버튼을 누르면 대장동 4,895억 배임과 대북송금 800만 달러의 실체적 진실은 영원히 법정에서 가려지지 못합니다. 그래도 진행하시겠습니까?</p>
+                        )}
+                        {cancelConfirmStep >= 3 && (
+                            <p className={styles.criticalWarningText} style={{color: '#ff4444', fontWeight: 900}}>이 결정은 대한민국 헌정사상 유례없는 사법권 침해로 기록될 것입니다. 역사의 심판을 감당하시겠습니까?</p>
+                        )}
+
+                        <div className={styles.criticalConfirmActions}>
+                            <button className={styles.ghostBtn} onClick={() => setCancelConfirmStep(0)}>
+                                취소
+                            </button>
+                            <button 
+                                className={styles.startBtn} 
+                                onClick={() => {
+                                    if (cancelConfirmStep < 3) {
+                                        setCancelConfirmStep(s => s + 1);
+                                    } else {
+                                        confirmCancelAction();
+                                    }
+                                }}
+                            >
+                                {cancelConfirmStep === 1 ? "네, 취소합니다" : 
+                                 cancelConfirmStep === 2 ? "진행합니다" : 
+                                 "역사의 심판을 받겠습니다"}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
