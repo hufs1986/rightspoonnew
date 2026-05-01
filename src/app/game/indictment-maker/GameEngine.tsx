@@ -8,12 +8,17 @@ import { useIndictmentGame } from "./useIndictmentGame";
 
 export default function GameEngine() {
     const {
+        activeSlotId,
         actions,
         characterLevel,
         continueSavedGame,
+        discoveredEndingIds,
         endingData,
+        eventForecast,
         hasSavedGame,
         isHydrated,
+        saveSlotSummaries,
+        selectSlot,
         state,
         dismissEvent,
         executeAction,
@@ -50,9 +55,13 @@ export default function GameEngine() {
             <TitleScreen
                 hasSavedGame={hasSavedGame}
                 isHydrated={isHydrated}
+                activeSlotId={activeSlotId}
+                discoveredEndingIds={discoveredEndingIds}
                 onClearSave={clearSave}
                 onContinue={continueSavedGame}
                 onNewGame={startNewGame}
+                onSelectSlot={selectSlot}
+                saveSlotSummaries={saveSlotSummaries}
             />
         );
     }
@@ -62,7 +71,15 @@ export default function GameEngine() {
     }
 
     if (state.phase === "ending" && endingData) {
-        return <EndingScreen endingData={endingData} onRestart={restart} onShare={handleShare} stats={state.stats} />;
+        return (
+            <EndingScreen
+                discoveredEndingIds={discoveredEndingIds}
+                endingData={endingData}
+                onRestart={restart}
+                onShare={handleShare}
+                stats={state.stats}
+            />
+        );
     }
 
     return (
@@ -72,7 +89,9 @@ export default function GameEngine() {
             characterLevel={characterLevel.level}
             characterName={characterLevel.name}
             currentEvent={state.currentEvent}
+            eventForecast={eventForecast}
             month={state.month}
+            recentActions={state.recentActions}
             newsHistory={state.newsHistory}
             onAction={executeAction}
             onDismissEvent={dismissEvent}

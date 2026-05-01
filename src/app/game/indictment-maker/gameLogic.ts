@@ -20,7 +20,10 @@ export const INITIAL_STATS: GameStats = {
     oppositionAnger: 15,
 };
 
-export const SAVE_KEY = "indictment-maker-save-v2";
+export const LEGACY_SAVE_KEY = "indictment-maker-save-v2";
+export const SAVE_SLOTS_KEY = "indictment-maker-save-slots-v3";
+export const ENDING_COLLECTION_KEY = "indictment-maker-ending-collection-v1";
+export const MAX_SAVE_SLOTS = 3;
 export const CANCEL_ANIMATION_MS = 3200;
 
 export type GamePhase = "title" | "playing" | "cancel_animation" | "ending";
@@ -54,6 +57,7 @@ export interface GameSnapshot {
     stats: GameStats;
     month: number;
     milestones: string[];
+    recentActions: string[];
     newsHistory: string[];
     currentEvent: RandomEvent | null;
     endingId: GameEnding["id"] | null;
@@ -65,12 +69,30 @@ export interface StoredGameState {
     snapshot: GameSnapshot;
 }
 
+export interface SaveSlotRecord {
+    slotId: number;
+    snapshot: GameSnapshot;
+    updatedAt: string;
+}
+
+export interface StoredSaveSlots {
+    version: 3;
+    activeSlotId: number;
+    slots: SaveSlotRecord[];
+}
+
+export interface EndingCollection {
+    version: 1;
+    endingIds: GameEnding["id"][];
+}
+
 export function createInitialSnapshot(): GameSnapshot {
     return {
         phase: "title",
         stats: INITIAL_STATS,
         month: 1,
         milestones: [],
+        recentActions: [],
         newsHistory: [],
         currentEvent: null,
         endingId: null,

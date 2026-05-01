@@ -248,6 +248,15 @@ export interface RandomEvent {
     probability: number; // 0~1
 }
 
+export interface ChainedEvent {
+    id: string;
+    title: string;
+    description: string;
+    effects: Partial<GameStats>;
+    newsHeadline: string;
+    triggerActionId: string;
+}
+
 export const RANDOM_EVENTS: RandomEvent[] = [
     {
         id: "constitutional_court_warning",
@@ -302,6 +311,49 @@ export const RANDOM_EVENTS: RandomEvent[] = [
         newsHeadline: "여당 지지층 \"민생이 먼저\" 내부 불만 표출",
         minMonth: 18,
         probability: 0.15,
+    },
+];
+
+export const CHAINED_EVENTS: ChainedEvent[] = [
+    {
+        id: "chain_echo_chamber",
+        triggerActionId: "rally_supporters",
+        title: "확증편향 생태계 강화",
+        description: "언론 프레임과 지지층 결집이 맞물리며 지지 기반은 단단해졌지만, 중도층 이탈이 빨라졌다.",
+        effects: { regimeShield: 6, publicTrust: -7, mediaControversy: 6 },
+        newsHeadline: "지지층 결집 성공... 그러나 중도층 '현실 검증은 사라졌다' 반발",
+    },
+    {
+        id: "chain_witness_chill",
+        triggerActionId: "mass_indictments",
+        title: "증인 위축 효과",
+        description: "대규모 고발 이후 수사 협조자와 참고인들이 발언을 꺼리기 시작했다. 진술 환경 전체가 얼어붙었다.",
+        effects: { judicialIndep: -7, oppositionAnger: 7, publicTrust: -5 },
+        newsHeadline: "핵심 참고인들 줄줄이 침묵... '다음은 나일 수 있다' 위축 확산",
+    },
+    {
+        id: "chain_legislative_fatigue",
+        triggerActionId: "pass_special_counsel",
+        title: "입법 피로 누적",
+        description: "강행 처리의 속도가 오르자 여당 내부에서도 '민생보다 방탄'이라는 불만이 새어나오기 시작했다.",
+        effects: { regimeShield: -4, publicTrust: -6, mediaControversy: 7 },
+        newsHeadline: "여당 내부서도 '입법 폭주 피로감'... 정권 핵심 의제 흔들림",
+    },
+    {
+        id: "chain_conflict_backlash",
+        triggerActionId: "appoint_counsel",
+        title: "이해충돌 역풍",
+        description: "정권이 추천한 특검이 정권 핵심 사건을 넘겨받는 구조에 대해 국내외 법조계 비판이 증폭됐다.",
+        effects: { publicTrust: -8, separation: -6, mediaControversy: 10 },
+        newsHeadline: "법조계 '피고인이 자기 사건 심판자를 고른 셈' 이해충돌 비판 확산",
+    },
+    {
+        id: "chain_late_normalization",
+        triggerActionId: "do_nothing",
+        title: "늦은 정상화 시도",
+        description: "정면 충돌을 멈추고 국정에 집중하자 일부 여론이 숨을 돌렸다. 다만 이미 손상된 신뢰를 회복하기엔 늦었다.",
+        effects: { lawRule: 4, publicTrust: 4, mediaControversy: -5, regimeShield: -3 },
+        newsHeadline: "정치 개입 멈추자 시장과 여론 일시 안정... '처음부터 이랬어야' 지적도",
     },
 ];
 

@@ -1,7 +1,8 @@
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
+import GameOverlay from "./GameOverlay";
 import { TRIALS, type GameAction, type GameStats, type RandomEvent } from "./gameData";
+import type { EventForecast } from "./gameReducer";
 import { getActionEffects, getStatTone, MILESTONE_STAGES, STAT_LABELS } from "./gameLogic";
-import { ACTION_EDUCATION, TRIAL_DETAILS } from "./educationData";
 import styles from "./game.module.css";
 
 interface GameScreenProps {
@@ -10,7 +11,9 @@ interface GameScreenProps {
     characterLevel: number;
     characterName: string;
     currentEvent: RandomEvent | null;
+    eventForecast: EventForecast[];
     month: number;
+    recentActions: string[];
     newsHistory: string[];
     onAction: (action: GameAction) => void;
     onDismissEvent: () => void;
@@ -21,6 +24,11 @@ interface GameScreenProps {
     isActionDone: (action: GameAction) => boolean;
     isActionLocked: (action: GameAction) => boolean;
 }
+
+type OverlayState =
+    | { type: "education"; actionId: string }
+    | { type: "trial"; trialId: number }
+    | { type: "cancel_confirm"; step: number };
 
 function ActionDelta({ statKey, delta }: { statKey: keyof GameStats; delta: number }) {
     const info = STAT_LABELS[statKey];
@@ -39,7 +47,9 @@ function GameScreenComponent({
     characterLevel,
     characterName,
     currentEvent,
+    eventForecast,
     month,
+    recentActions,
     newsHistory,
     onAction,
     onDismissEvent,
@@ -50,36 +60,38 @@ function GameScreenComponent({
     isActionDone,
     isActionLocked,
 }: GameScreenProps) {
-    const [eduModal, setEduModal] = useState<{ actionId: string } | null>(null);
-    const [trialDetail, setTrialDetail] = useState<number | null>(null);
-    const [cancelConfirmStep, setCancelConfirmStep] = useState<number>(0);
+    const [overlay, setOverlay] = useState<OverlayState | null>(null);
     const completedStages = new Set(milestones);
 
     const handleAction = (action: GameAction) => {
         if (action.id === "cancel_indictment") {
-            setCancelConfirmStep(1);
+            setOverlay({ type: "cancel_confirm", step: 1 });
             return;
         }
 
         onAction(action);
-        if (ACTION_EDUCATION[action.id] && action.id !== "do_nothing") {
-            setEduModal({ actionId: action.id });
+        if (action.id !== "do_nothing") {
+            setOverlay({ type: "education", actionId: action.id });
         }
     };
 
     const confirmCancelAction = () => {
         const action = actions.find((a) => a.id === "cancel_indictment");
         if (action) {
-            setCancelConfirmStep(0);
+            setOverlay(null);
             onAction(action);
-            if (ACTION_EDUCATION[action.id]) {
-                setEduModal({ actionId: action.id });
-            }
+            setOverlay({ type: "education", actionId: action.id });
         }
     };
 
     const currentStageIndex = MILESTONE_STAGES.findIndex((stage) => !completedStages.has(stage.id));
     const isLawRuleAlarm = stats.lawRule <= 30 && !trialsCancelled;
+    const recentActionPreview = recentActions.slice(-3);
+    const activeOverlay = useMemo(() => {
+        if (overlay) return overlay;
+        if (currentEvent) return { type: "event", event: currentEvent } as const;
+        return null;
+    }, [currentEvent, overlay]);
 
     return (
         <div className={`${styles.gameContainer} ${isLawRuleAlarm ? styles["gameContainer--alarm"] : ""}`}>
@@ -125,6 +137,40 @@ function GameScreenComponent({
                     </div>
                 </section>
 
+                {recentActionPreview.length > 0 && (
+                    <section className={styles.comboPanel} aria-label="최근 행동 흐름">
+                        <div className={styles.comboTitle}>최근 행동 흐름</div>
+                        <div className={styles.comboTrack}>
+                            {recentActionPreview.map((actionId, index) => {
+                                const action = actions.find((item) => item.id === actionId);
+
+                                return (
+                                    <div key={`${actionId}-${index}`} className={styles.comboChip}>
+                                        <span>{action?.emoji ?? "•"}</span>
+                                        <span>{action?.name ?? actionId}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
+
+                {eventForecast.length > 0 && (
+                    <section className={styles.riskPanel} aria-label="위험 예고">
+                        <div className={styles.riskTitle}>위험 예고</div>
+                        <div className={styles.riskList}>
+                            {eventForecast.map((forecast) => (
+                                <div key={forecast.eventId} className={styles.riskItem}>
+                                    <span>{forecast.title}</span>
+                                    <span className={styles.riskWeight}>
+                                        {Math.round(forecast.weight * 100)}%
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 <section className={styles.statsPanel} aria-label="게임 수치">
                     {(Object.entries(STAT_LABELS) as [keyof GameStats, (typeof STAT_LABELS)[keyof GameStats]][]).map(
                         ([key, info]) => (
@@ -155,7 +201,7 @@ function GameScreenComponent({
                                 type="button"
                                 key={trial.id}
                                 className={`${styles.trialDossierTab} ${trialsCancelled ? styles["trialDossierTab--cancelled"] : ""}`}
-                                onClick={() => setTrialDetail(trial.id)}
+                                onClick={() => setOverlay({ type: "trial", trialId: trial.id })}
                             >
                                 <span className={styles.dossierBadge}>TOP SECRET</span>
                                 <div className={styles.dossierTitle}>{trial.emoji} {trial.name}</div>
@@ -219,134 +265,26 @@ function GameScreenComponent({
                 </section>
             </div>
 
-            {currentEvent && (
-                <div className={styles.eventOverlay} onClick={onDismissEvent}>
-                    <div className={styles.eventModal} onClick={(event) => event.stopPropagation()}>
-                        <div className={styles.eventEmoji}>⚡</div>
-                        <h3 className={styles.eventTitle}>{currentEvent.title}</h3>
-                        <p className={styles.eventDesc}>{currentEvent.description}</p>
-                        <div className={styles.eventEffects}>
-                            {(Object.entries(currentEvent.effects) as [keyof GameStats, number][]).map(([key, value]) => (
-                                <div key={key}>
-                                    <ActionDelta statKey={key} delta={value} />
-                                </div>
-                            ))}
-                        </div>
-                        <button className={styles.eventBtn} onClick={onDismissEvent}>
-                            확인
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* 교육 모달 / 긴급 속보 인터럽트 */}
-            {eduModal && ACTION_EDUCATION[eduModal.actionId] && (
-                <div className={styles.eventOverlay} onClick={() => setEduModal(null)}>
-                    <div className={`${styles.eduModal} ${styles.breakingNewsModal}`} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.breakingNewsHeader}>🚨 긴급 속보 / 사법부 팩트체크</div>
-                        <div className={styles.eduSection}>
-                            <div className={styles.eduSectionTitle}>⚖️ 법률 해설</div>
-                            <p className={styles.eduText}>{ACTION_EDUCATION[eduModal.actionId].legalComment}</p>
-                        </div>
-                        <div className={styles.eduSection}>
-                            <div className={styles.eduSectionTitle}>🗣️ 시민의 목소리</div>
-                            <p className={styles.eduCitizen}>{ACTION_EDUCATION[eduModal.actionId].citizenVoice}</p>
-                        </div>
-                        {ACTION_EDUCATION[eduModal.actionId].historicalNote && (
-                            <div className={styles.eduSection}>
-                                <div className={styles.eduSectionTitle}>🌍 역사적 비교</div>
-                                <p className={styles.eduHistory}>{ACTION_EDUCATION[eduModal.actionId].historicalNote}</p>
-                            </div>
-                        )}
-                        <button className={styles.eventBtn} onClick={() => setEduModal(null)}>이해했습니다</button>
-                    </div>
-                </div>
-            )}
-
-            {/* 기밀 사건 파일 (Trial Dossier) 상세 모달 */}
-            {trialDetail !== null && TRIAL_DETAILS[trialDetail] && (
-                <div className={styles.eventOverlay} onClick={() => setTrialDetail(null)}>
-                    <div className={`${styles.eduModal} ${styles.dossierModal}`} onClick={(e) => e.stopPropagation()}>
-                        {trialsCancelled && <div className={styles.dossierVoidStamp}>VOID / 취소됨</div>}
-                        <div className={styles.dossierTop}>
-                            <div className={styles.dossierId}>CASE NO. {trialDetail}</div>
-                            <div className={styles.dossierEmoji}>{TRIALS.find(t => t.id === trialDetail)?.emoji}</div>
-                        </div>
-                        <h3 className={styles.dossierHeader}>{TRIAL_DETAILS[trialDetail].summary}</h3>
-                        
-                        <div className={styles.dossierGrid}>
-                            <div className={styles.dossierField}>
-                                <div className={styles.dossierLabel}>기소일자</div>
-                                <div className={styles.dossierValue}>{TRIAL_DETAILS[trialDetail].indictmentDate}</div>
-                            </div>
-                            <div className={styles.dossierField}>
-                                <div className={styles.dossierLabel}>적용 법조</div>
-                                <div className={styles.dossierValue}>{TRIAL_DETAILS[trialDetail].penalCode}</div>
-                            </div>
-                            <div className={styles.dossierField}>
-                                <div className={styles.dossierLabel}>예상 형량</div>
-                                <div className={styles.dossierValue}>{TRIAL_DETAILS[trialDetail].expectedSentence}</div>
-                            </div>
-                        </div>
-
-                        <div className={styles.dossierSection}>
-                            <div className={styles.dossierLabel}>📋 혐의 요지</div>
-                            <p className={styles.dossierText}>{TRIAL_DETAILS[trialDetail].stakes}</p>
-                        </div>
-                        <div className={styles.dossierSection}>
-                            <div className={styles.dossierLabel}>🔍 핵심 증거</div>
-                            <p className={styles.dossierText}>{TRIAL_DETAILS[trialDetail].evidence}</p>
-                        </div>
-                        {trialsCancelled && (
-                            <div className={styles.eduSection}>
-                                <div className={styles.eduSectionTitle} style={{color: '#ff0000'}}>❌ 공소취소됨</div>
-                                <p className={styles.eduCitizen}>이 재판의 모든 증거와 혐의는 법원의 판단 없이 영구히 봉인되었습니다.</p>
-                            </div>
-                        )}
-                        <button className={styles.eventBtn} onClick={() => setTrialDetail(null)}>파일 덮기</button>
-                    </div>
-                </div>
-            )}
-
-            {/* 공소취소 최종 승인 절차 (3단계) */}
-            {cancelConfirmStep > 0 && (
-                <div className={styles.eventOverlay} onClick={(e) => e.stopPropagation()}>
-                    <div className={`${styles.eventModal} ${styles.criticalConfirmModal}`}>
-                        <div className={styles.eventEmoji}>⚠️</div>
-                        <h3 className={styles.eventTitle}>최종 승인 절차</h3>
-                        
-                        {cancelConfirmStep >= 1 && (
-                            <p className={styles.criticalWarningText}>정말로 공소를 취소하시겠습니까?</p>
-                        )}
-                        {cancelConfirmStep >= 2 && (
-                            <p className={styles.criticalWarningText}>이 버튼을 누르면 대장동 4,895억 배임과 대북송금 800만 달러의 실체적 진실은 영원히 법정에서 가려지지 못합니다. 그래도 진행하시겠습니까?</p>
-                        )}
-                        {cancelConfirmStep >= 3 && (
-                            <p className={styles.criticalWarningText} style={{color: '#ff4444', fontWeight: 900}}>이 결정은 대한민국 헌정사상 유례없는 사법권 침해로 기록될 것입니다. 역사의 심판을 감당하시겠습니까?</p>
-                        )}
-
-                        <div className={styles.criticalConfirmActions}>
-                            <button className={styles.ghostBtn} onClick={() => setCancelConfirmStep(0)}>
-                                취소
-                            </button>
-                            <button 
-                                className={styles.startBtn} 
-                                onClick={() => {
-                                    if (cancelConfirmStep < 3) {
-                                        setCancelConfirmStep(s => s + 1);
-                                    } else {
-                                        confirmCancelAction();
-                                    }
-                                }}
-                            >
-                                {cancelConfirmStep === 1 ? "네, 취소합니다" : 
-                                 cancelConfirmStep === 2 ? "진행합니다" : 
-                                 "역사의 심판을 받겠습니다"}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <GameOverlay
+                actions={actions}
+                overlay={activeOverlay}
+                onClose={() => {
+                    if (overlay) {
+                        setOverlay(null);
+                        return;
+                    }
+                    onDismissEvent();
+                }}
+                onConfirmCancel={confirmCancelAction}
+                onNextCancelStep={() =>
+                    setOverlay((current) =>
+                        current?.type === "cancel_confirm"
+                            ? { type: "cancel_confirm", step: current.step + 1 }
+                            : current,
+                    )
+                }
+                trialsCancelled={trialsCancelled}
+            />
         </div>
     );
 }
