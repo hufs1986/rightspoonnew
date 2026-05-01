@@ -44,6 +44,9 @@ export default function Header() {
                     <Link href="/webtoon" className={styles["header__nav-link"]}>
                         웹툰
                     </Link>
+                    <Link href="/game/indictment-maker" className={styles["header__nav-link"]}>
+                        🎮 게임
+                    </Link>
                     <Link href="/about" className={styles["header__nav-link"]}>
                         소개
                     </Link>
@@ -80,6 +83,9 @@ export default function Header() {
                     </Link>
                     <Link href="/webtoon" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
                         📚 웹툰
+                    </Link>
+                    <Link href="/game/indictment-maker" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
+                        🎮 공소취소 메이커
                     </Link>
                     <Link href="/about" className={styles["header__mobile-link"]} onClick={() => setMenuOpen(false)}>
                         소개
