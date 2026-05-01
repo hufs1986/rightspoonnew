@@ -1,5 +1,16 @@
 import type { Metadata } from "next";
+import { Noto_Sans_KR, Press_Start_2P } from "next/font/google";
 import GameEngine from "./GameEngine";
+
+const notoSansKr = Noto_Sans_KR({
+    weight: ["400", "500", "700", "900"],
+});
+
+const pressStart = Press_Start_2P({
+    subsets: ["latin"],
+    variable: "--font-press-start",
+    weight: "400",
+});
 
 export const metadata: Metadata = {
     title: "공소취소 메이커 | 오른스푼",
@@ -11,5 +22,9 @@ export const metadata: Metadata = {
 };
 
 export default function IndictmentMakerPage() {
-    return <GameEngine />;
+    return (
+        <div className={`${notoSansKr.className} ${pressStart.variable}`}>
+            <GameEngine />
+        </div>
+    );
 }
