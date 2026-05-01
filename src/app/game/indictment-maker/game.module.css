@@ -2006,6 +2006,32 @@
     color: #ff9d9d;
 }
 
+/* ===== Social Links ===== */
+.socialLinks {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 12px;
+}
+.socialLink {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: var(--game-text);
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.socialLink:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
 @media (prefers-reduced-motion: reduce) {
     :global(*),
     :global(*::before),

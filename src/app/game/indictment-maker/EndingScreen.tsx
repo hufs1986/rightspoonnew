@@ -128,6 +128,16 @@ export default function EndingScreen({ discoveredEndingIds, endingData, onRestar
                 </div>
 
                 <StoreCta variant="ending" />
+
+                <div className={styles.titleCredits} style={{ marginTop: '24px' }}>정치 풍자 육성 시뮬레이션 · 오른스푼 × 드럼통119 제작</div>
+                <div className={styles.socialLinks}>
+                    <a href="https://www.youtube.com/@drumtong119" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                        ▶ 드럼통119 유튜브
+                    </a>
+                    <a href="https://www.instagram.com/drumtong119" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                        📸 드럼통119 인스타그램
+                    </a>
+                </div>
             </div>
         </div>
     );

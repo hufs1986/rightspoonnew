@@ -176,7 +176,16 @@ export default function TitleScreen({
 
                 {isHydrated && hasSavedGame && <div className={styles.saveBanner}>이전 플레이가 저장되어 있습니다.</div>}
 
-                <div className={styles.titleCredits}>정치 풍자 육성 시뮬레이션 · 오른스푼 제작</div>
+                <div className={styles.titleCredits}>정치 풍자 육성 시뮬레이션 · 오른스푼 × 드럼통119 제작</div>
+
+                <div className={styles.socialLinks}>
+                    <a href="https://www.youtube.com/@drumtong119" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                        ▶ 드럼통119 유튜브
+                    </a>
+                    <a href="https://www.instagram.com/drumtong119" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                        📸 드럼통119 인스타그램
+                    </a>
+                </div>
             </div>
 
             {showInfo && (
