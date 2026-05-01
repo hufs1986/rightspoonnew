@@ -14,6 +14,7 @@ interface TitleScreenProps {
     onNewGame: () => void;
     onSelectSlot: (slotId: number) => void;
     saveSlotSummaries: SaveSlotSummary[];
+    onShareGame: () => void;
 }
 
 export default function TitleScreen({
@@ -26,6 +27,7 @@ export default function TitleScreen({
     onNewGame,
     onSelectSlot,
     saveSlotSummaries,
+    onShareGame,
 }: TitleScreenProps) {
     const [showInfo, setShowInfo] = useState(false);
 
@@ -114,9 +116,14 @@ export default function TitleScreen({
                     </div>
                 </div>
 
-                <button className={styles.ghostBtn} onClick={() => setShowInfo(true)} style={{ marginTop: '8px' }}>
-                    📖 게임 안내 및 제작 목적
-                </button>
+                <div className={styles.titleExtraActions} style={{ display: 'flex', gap: '8px', marginTop: '12px', width: '100%' }}>
+                    <button className={styles.ghostBtn} onClick={() => setShowInfo(true)} style={{ flex: 1, padding: '12px 8px', fontSize: '0.85rem' }}>
+                        📖 안내 및 목적
+                    </button>
+                    <button className={styles.secondaryBtn} onClick={onShareGame} style={{ flex: 1, padding: '12px 8px', fontSize: '0.85rem' }}>
+                        📤 게임 공유하기
+                    </button>
+                </div>
 
                 {isHydrated && hasSavedGame && <div className={styles.saveBanner}>이전 플레이가 저장되어 있습니다.</div>}
 

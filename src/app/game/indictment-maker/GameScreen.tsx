@@ -212,13 +212,24 @@ function GameScreenComponent({
 
                 {newsHistory.length > 0 && (
                     <section className={styles.newsTicker} aria-live="polite">
-                        <div className={styles.newsLabel}>🔴 속보</div>
-                        <div className={styles.newsText}>{newsHistory[0]}</div>
+                        <div className={styles.newsTickerBar}>
+                            <div className={styles.newsLabel}>🔴 BREAKING</div>
+                            <div className={styles.newsMarquee}>
+                                <div className={styles.newsMarqueeTrack}>
+                                    <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
+                                    <span className={styles.newsMarqueeDivider}>•</span>
+                                    <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
+                                    <span className={styles.newsMarqueeDivider}>•</span>
+                                    <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
+                                </div>
+                            </div>
+                        </div>
                         {newsHistory.length > 1 && (
                             <div className={styles.newsHistory}>
                                 {newsHistory.slice(1).map((headline, index) => (
                                     <div key={`${headline}-${index}`} className={styles.newsHistoryItem}>
-                                        {headline}
+                                        <span className={styles.newsHistoryIndex}>{String(index + 1).padStart(2, "0")}</span>
+                                        <span>{headline}</span>
                                     </div>
                                 ))}
                             </div>

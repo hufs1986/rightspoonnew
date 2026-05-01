@@ -50,6 +50,26 @@ export default function GameEngine() {
         }
     };
 
+    const handleShareGame = async () => {
+        const text = "권력으로 재판을 덮으면 어떻게 될까?\n정치 풍자 육성 시뮬레이션 [공소취소 메이커]\n직접 체험해보세요!";
+        
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: "공소취소 메이커",
+                    text,
+                    url: window.location.origin + window.location.pathname,
+                });
+                return;
+            }
+
+            await navigator.clipboard.writeText(`${text}\n${window.location.origin}${window.location.pathname}`);
+            window.alert("게임 링크가 복사되었습니다!");
+        } catch {
+            // no-op
+        }
+    };
+
     if (state.phase === "title") {
         return (
             <TitleScreen
@@ -62,6 +82,7 @@ export default function GameEngine() {
                 onNewGame={startNewGame}
                 onSelectSlot={selectSlot}
                 saveSlotSummaries={saveSlotSummaries}
+                onShareGame={handleShareGame}
             />
         );
     }

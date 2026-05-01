@@ -18,16 +18,62 @@ const ENDING_STATS = [
     { key: "cancelProgress", label: "공소취소" },
 ] as const;
 
+const ENDING_PRESENTATION: Record<string, { kicker: string; accent: string; glow: string; summary: string }> = {
+    shield_success: {
+        kicker: "방탄은 성공했다",
+        accent: "#ffb3b3",
+        glow: "rgba(255, 73, 109, 0.38)",
+        summary: "법정은 닫혔고, 권력만 살아남았습니다.",
+    },
+    constitutional_block: {
+        kicker: "헌법이 마지막 문을 닫았다",
+        accent: "#ffe29f",
+        glow: "rgba(255, 209, 102, 0.28)",
+        summary: "제동은 늦었지만, 법의 선은 아직 남아 있습니다.",
+    },
+    public_rage: {
+        kicker: "거리의 온도가 먼저 폭발했다",
+        accent: "#ffb38d",
+        glow: "rgba(255, 125, 64, 0.34)",
+        summary: "정권은 버텼지만 시민 신뢰는 붕괴했습니다.",
+    },
+    law_collapse: {
+        kicker: "다음 권력도 이 방식을 배웠다",
+        accent: "#d2b3ff",
+        glow: "rgba(180, 113, 255, 0.34)",
+        summary: "이제 재판은 제도가 아니라 정치 기술이 되었습니다.",
+    },
+    term_ended: {
+        kicker: "시계는 멈춘 듯했지만 끝내 다시 갔다",
+        accent: "#a7d7ff",
+        glow: "rgba(86, 172, 255, 0.28)",
+        summary: "유예는 끝났고, 판단은 다시 법정으로 돌아갑니다.",
+    },
+};
+
 export default function EndingScreen({ discoveredEndingIds, endingData, onRestart, onShare, stats }: EndingScreenProps) {
     const isCollected = discoveredEndingIds.includes(endingData.id);
+    const presentation = ENDING_PRESENTATION[endingData.id] ?? ENDING_PRESENTATION.term_ended;
 
     return (
         <div className={styles.gameContainer}>
-            <div className={styles.endingScreen}>
-                <div className={styles.endingEmoji}>{endingData.emoji}</div>
-                <div className={styles.endingLabel}>— ENDING —</div>
+            <div
+                className={styles.endingScreen}
+                style={
+                    {
+                        "--ending-accent": presentation.accent,
+                        "--ending-glow": presentation.glow,
+                    } as React.CSSProperties
+                }
+            >
+                <div className={styles.endingHero}>
+                    <div className={styles.endingEmoji}>{endingData.emoji}</div>
+                    <div className={styles.endingLabel}>— ENDING —</div>
+                    <div className={styles.endingKicker}>{presentation.kicker}</div>
+                </div>
                 <h2 className={styles.endingTitle}>{endingData.title}</h2>
                 {isCollected && <div className={styles.newEndingBadge}>COLLECTED</div>}
+                <p className={styles.endingSummary}>{presentation.summary}</p>
                 <p className={styles.endingDesc}>{endingData.description}</p>
 
                 <div className={styles.endingStats}>
