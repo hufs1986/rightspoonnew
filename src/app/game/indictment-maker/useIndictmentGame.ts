@@ -369,10 +369,10 @@ export function useIndictmentGame() {
         },
         getShareText: () => {
             if (endingData) {
-                return `🎮 공소취소 메이커\n엔딩: ${endingData.title}\n${endingData.name}\n\n법치주의: ${state.stats.lawRule}\n공소취소: ${state.stats.cancelProgress}\n\n#공소취소메이커 #오른스푼`;
+                return `🚨 [공소취소 메이커] 플레이 결과\n"내 손으로 대한민국의 사법 시스템을 멈췄다."\n\n👑 나의 권력 등급: ${characterLevel.name}\n⚖️ 남아있는 법치주의: ${state.stats.lawRule}%\n💥 달성 엔딩: [${endingData.title}]\n\n현실보다 더 현실 같은 정치 블랙코미디 시뮬레이션.\n당신은 기소를 무사히 덮을 수 있을까? 직접 해보세요👇`;
             }
 
-            return "🎮 공소취소 메이커를 플레이해보세요! #공소취소메이커 #오른스푼";
+            return "⚖️ 재판은 멈추고, 권력은 자란다. 현실 100% 고증 블랙코미디 시뮬레이션 [공소취소 메이커] 👇";
         },
         clearSave,
         isActionDone: (action: GameAction) => isActionDone(action, state.milestones),

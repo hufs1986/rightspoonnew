@@ -76,8 +76,7 @@ export default function GameEngine() {
     }, [state.phase]);
 
     const handleShareGame = async () => {
-        const text = "권력으로 재판을 덮으면 어떻게 될까?\n정치 풍자 육성 시뮬레이션 [공소취소 메이커]\n직접 체험해보세요!";
-        
+        const text = "⚖️ 재판은 멈추고, 권력은 자란다.\n국회에서 특검법을 통과시키고, 지지자를 결집해 재판을 덮어버리세요!\n\n\"연어회 소주파티 가짜뉴스 유포부터, 350명 슈퍼특검법 발의까지...\"\n현실 정치를 100% 고증한 블랙코미디 시뮬레이션\n🎮 [공소취소 메이커] 당신의 선택은?👇";
         try {
             if (navigator.share) {
                 trackGameEvent("indictment_share_game", { method: "native_share" });
