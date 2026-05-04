@@ -58,6 +58,23 @@ export default function GameEngine() {
         }
     };
 
+    // 완주자 수 로딩
+    const [completionCount, setCompletionCount] = useState<number | null>(null);
+
+    useEffect(() => {
+        if (state.phase !== "ending") return;
+        const fetchCount = async () => {
+            try {
+                const supabase = createClient();
+                const { data } = await supabase.rpc("get_game_completion_count");
+                if (typeof data === "number") setCompletionCount(data);
+            } catch (err) {
+                // Ignore error
+            }
+        };
+        fetchCount();
+    }, [state.phase]);
+
     const handleShareGame = async () => {
         const text = "권력으로 재판을 덮으면 어떻게 될까?\n정치 풍자 육성 시뮬레이션 [공소취소 메이커]\n직접 체험해보세요!";
         
@@ -103,22 +120,7 @@ export default function GameEngine() {
         return <CancelAnimation />;
     }
 
-    // 완주자 수 로딩
-    const [completionCount, setCompletionCount] = useState<number | null>(null);
 
-    useEffect(() => {
-        if (state.phase !== "ending") return;
-        const fetchCount = async () => {
-            try {
-                const supabase = createClient();
-                const { data } = await supabase.rpc("get_game_completion_count");
-                if (typeof data === "number") setCompletionCount(data);
-            } catch (err) {
-                // Ignore error
-            }
-        };
-        fetchCount();
-    }, [state.phase]);
 
     if (state.phase === "ending" && endingData) {
         return (
