@@ -72,6 +72,7 @@ function GameScreenComponent({
     const [overlay, setOverlay] = useState<OverlayState | null>(null);
     const [activeDialogue, setActiveDialogue] = useState<string | null>(null);
     const [showDetails, setShowDetails] = useState(false);
+    const [seenDialogues, setSeenDialogues] = useState<Set<string>>(new Set());
 
     const bgUrl = getSceneBackground(milestones, month);
     const isLawRuleAlarm = stats.lawRule <= 30 && !trialsCancelled;
@@ -89,8 +90,10 @@ function GameScreenComponent({
 
         onAction(action);
 
-        // Show VN dialogue if available
-        if (ACTION_DIALOGUES[action.id]) {
+        // Show VN dialogue only the FIRST time an action is used (reduce fatigue)
+        // cancel_indictment always shows (handled separately above)
+        if (ACTION_DIALOGUES[action.id] && !seenDialogues.has(action.id)) {
+            setSeenDialogues((prev) => new Set(prev).add(action.id));
             setActiveDialogue(action.id);
         }
     };

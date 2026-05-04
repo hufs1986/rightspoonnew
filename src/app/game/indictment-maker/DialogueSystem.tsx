@@ -117,6 +117,15 @@ export default function DialogueSystem({ sequence, onComplete }: DialogueSystemP
             )}
             <div className={styles.vnBgOverlay} />
 
+            {/* Skip button */}
+            <button
+                className={styles.vnSkipBtn}
+                onClick={(e) => { e.stopPropagation(); onComplete(); }}
+                aria-label="대사 건너뛰기"
+            >
+                SKIP ▶▶
+            </button>
+
             {/* Characters */}
             <div className={styles.vnCharacters}>
                 {leftChar && leftChar.image && (
