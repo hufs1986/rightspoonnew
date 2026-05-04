@@ -1,0 +1,250 @@
+// ===== 역전재판 스타일 대사 시퀀스 데이터 =====
+
+export type CharacterId = "prosecutor" | "politician" | "judge" | "citizen" | "narrator";
+export type Expression = "normal" | "angry" | "shocked" | "confident" | "sad";
+export type Background = "courtroom" | "parliament" | "protest" | "dark";
+export type ScreenEffect = "shake" | "flash" | "slam" | "none";
+
+export interface DialogueLine {
+    character: CharacterId;
+    expression?: Expression;
+    text: string;
+    effect?: ScreenEffect;
+    background?: Background;
+}
+
+export interface DialogueSequence {
+    background: Background;
+    lines: DialogueLine[];
+}
+
+export const CHARACTER_META: Record<CharacterId, { name: string; image: string; position: "left" | "right" | "center" }> = {
+    prosecutor: { name: "검사", image: "/game/prosecutor.png", position: "left" },
+    politician: { name: "정치인", image: "/game/politician.png", position: "right" },
+    judge: { name: "재판장", image: "/game/judge.png", position: "center" },
+    citizen: { name: "시민", image: "/game/citizen.png", position: "left" },
+    narrator: { name: "", image: "", position: "center" },
+};
+
+export const BG_IMAGES: Record<Background, string> = {
+    courtroom: "/game/bg-courtroom.png",
+    parliament: "/game/bg-parliament.png",
+    protest: "/game/bg-protest.png",
+    dark: "",
+};
+
+// 행동별 대사 시퀀스
+export const ACTION_DIALOGUES: Record<string, DialogueSequence> = {
+    frame_media: {
+        background: "parliament",
+        lines: [
+            { character: "politician", expression: "confident", text: "이 기소는 정치적 조작이다! 국민 여러분, 눈을 떠야 합니다!" },
+            { character: "prosecutor", expression: "angry", text: "증거를 법정에서 다투지 않고 여론전으로 가겠다는 건가!", effect: "shake" },
+            { character: "citizen", expression: "normal", text: "나도 억울하게 기소된 적 있는데... 나는 법정에서 싸워야 했잖아요." },
+            { character: "narrator", text: "📺 '정치검찰 조작기소' 프레임이 대중에게 확산되기 시작했다." },
+        ],
+    },
+    rally_supporters: {
+        background: "protest",
+        lines: [
+            { character: "politician", expression: "confident", text: "부당한 기소에 맞서 함께 싸워주십시오!" },
+            { character: "citizen", expression: "angry", text: "수만 명이 '무죄'를 외치면 판사가 부담을 안 느낄까요? 이게 공정한 재판인가요?" },
+            { character: "narrator", text: "✊ 지지자 수만 명이 결집했지만, 사법부에 대한 압박이 거세지고 있다." },
+        ],
+    },
+    discredit_prosecutors: {
+        background: "courtroom",
+        lines: [
+            { character: "politician", expression: "confident", text: "이 검사의 과거를 보십시오! 이런 자가 수사한 결과를 어떻게 믿습니까!" },
+            { character: "prosecutor", expression: "shocked", text: "검사 개인의 하자로 사건 전체의 증거를 부정하는 것은 논리적 비약입니다!" },
+            { character: "citizen", text: "검사가 나빴으면 다른 검사가 수사하면 되잖아요. 왜 재판을 없애려 하죠?" },
+        ],
+    },
+    launch_investigation: {
+        background: "parliament",
+        lines: [
+            { character: "narrator", text: "🏛️ 국회 국조특위가 출범한다. 42일간의 집중 조사가 시작된다.", effect: "slam" },
+            { character: "politician", expression: "confident", text: "조작기소의 진상을 반드시 밝혀내겠습니다!" },
+            { character: "prosecutor", expression: "angry", text: "법원에 계류 중인 형사사건을 국회가 조사한다고? 이건 사법권 침해다!", effect: "shake" },
+            { character: "judge", expression: "normal", text: "헌법 제61조가 국정조사권을 보장하지만... 사법부 독립이 위협받고 있습니다." },
+        ],
+    },
+    summon_witnesses: {
+        background: "parliament",
+        lines: [
+            { character: "narrator", text: "📜 검사, 수사관, 참고인 등 219명에게 소환장이 발부된다.", effect: "slam" },
+            { character: "prosecutor", expression: "shocked", text: "219명?! 수사에 참여한 거의 모든 인원을 소환하겠다는 건가!", effect: "shake" },
+            { character: "citizen", text: "앞으로 검사들이 힘 있는 사람을 수사하면 국회에 끌려가는 거예요?" },
+        ],
+    },
+    play_recording: {
+        background: "parliament",
+        lines: [
+            { character: "politician", expression: "confident", text: "이 녹취록을 들어보십시오! '자백이 필요하다'... 검사의 육성입니다!", effect: "slam" },
+            { character: "prosecutor", expression: "angry", text: "수사 과정의 하자와 범죄 혐의의 실체는 별개의 문제입니다!" },
+            { character: "citizen", text: "검사가 잘못했으면 검사를 처벌하면 되죠. 왜 피고인의 재판까지 없애버리나요?" },
+        ],
+    },
+    adopt_report: {
+        background: "parliament",
+        lines: [
+            { character: "narrator", text: "📑 여당이 단독으로 '조작기소 확인' 결과보고서를 채택한다.", effect: "slam" },
+            { character: "prosecutor", expression: "angry", text: "야당 의견이 전혀 반영되지 않은 보고서! 이건 정파적 결론을 위한 도구다!" },
+            { character: "citizen", expression: "angry", text: "국회의원 절반이 반대하는 보고서로 재판을 없앤다고요? 그게 민주주의예요?" },
+        ],
+    },
+    mass_indictments: {
+        background: "parliament",
+        lines: [
+            { character: "narrator", text: "⚡ 국회가 청문회 증인 31명을 위증, 불출석 등 혐의로 일괄 고발한다.", effect: "shake" },
+            { character: "prosecutor", expression: "shocked", text: "증인을 고발한다고?! 진실을 말한 대가가 형사 처벌이란 말인가!", effect: "shake" },
+            { character: "citizen", expression: "sad", text: "증인이 사실대로 말했는데 고발당한다면... 다음에 누가 진실을 말하겠어요?" },
+        ],
+    },
+    draft_special_counsel: {
+        background: "parliament",
+        lines: [
+            { character: "narrator", text: "📝 350명 규모의 '슈퍼 특검법'이 국회에 전격 발의된다.", effect: "slam" },
+            { character: "citizen", expression: "angry", text: "350명짜리 특검이 수사를 하는 게 아니라 재판을 없애러 가는 거잖아요?" },
+            { character: "prosecutor", expression: "angry", text: "특검은 새로 수사하기 위한 제도다! 공소취소 권한을 부여하다니!" },
+        ],
+    },
+    pass_special_counsel: {
+        background: "parliament",
+        lines: [
+            { character: "narrator", text: "🗳️ 특검법이 본회의에서 여당 단독으로 강행 처리된다.", effect: "slam" },
+            { character: "judge", expression: "normal", text: "공소가 취소되면 법원은 유무죄를 판단할 기회를 완전히 잃게 됩니다..." },
+            { character: "citizen", text: "재판을 해서 무죄가 나오면 그게 진짜 무죄 아닌가요? 왜 재판 자체를 안 하려 하죠?" },
+        ],
+    },
+    appoint_counsel: {
+        background: "courtroom",
+        lines: [
+            { character: "narrator", text: "👤 여당 추천 후보가 대통령에 의해 특별검사로 임명된다.", effect: "slam" },
+            { character: "prosecutor", expression: "angry", text: "피고인이 자기 사건 검사를 고르는 나라가 어디 있습니까!", effect: "shake" },
+            { character: "judge", expression: "normal", text: "이것은 명백한 이해충돌입니다. 민주주의 역사에 유례가 없습니다." },
+        ],
+    },
+    transfer_cases: {
+        background: "courtroom",
+        lines: [
+            { character: "narrator", text: "📦 법원 계류 중인 5개 재판 기록 일체가 특검에 넘겨진다.", effect: "shake" },
+            { character: "judge", expression: "angry", text: "사법부의 관할에서 사건을 물리적으로 빼앗는 행위... 이건 전례가 없다!", effect: "shake" },
+            { character: "citizen", expression: "sad", text: "법원에서 재판하던 걸 갑자기 옮긴다고요? 피해자들은 어디서 정의를 찾아요?" },
+        ],
+    },
+    seize_prosecution: {
+        background: "courtroom",
+        lines: [
+            { character: "narrator", text: "🔑 특검이 기존 검찰의 공소유지 권한을 강제로 인수한다.", effect: "slam" },
+            { character: "prosecutor", expression: "shocked", text: "내가 유죄를 주장하던 사건을... 다른 검사가 와서 '없던 일'로 하겠다고?!", effect: "shake" },
+            { character: "citizen", text: "검사가 '유죄입니다' 하던 걸 다른 검사가 '없던 일로 합시다' 하면... 판사는 뭘 하는 거예요?" },
+        ],
+    },
+    cancel_indictment: {
+        background: "courtroom",
+        lines: [
+            { character: "narrator", text: "🔴 특검이 '조작기소로 판명'을 이유로 공소를 취소한다.", effect: "flash" },
+            { character: "narrator", text: "대장동 4,895억 배임... 대북송금 800만 달러... 성남FC 133억 뇌물...", effect: "shake" },
+            { character: "narrator", text: "법원은 이 사건들에 대해 유죄도, 무죄도 선고하지 못합니다." },
+            { character: "judge", expression: "sad", text: "진실은... 영원히 미궁 속에 갇히게 되었습니다.", effect: "shake" },
+            { character: "citizen", expression: "angry", text: "무죄면 무죄 판결을 받으면 되잖아요! 왜 재판 자체를 없애나요! 그건 무죄가 아닙니다. 그건 도망입니다!", effect: "shake" },
+        ],
+    },
+    do_nothing: {
+        background: "dark",
+        lines: [
+            { character: "narrator", text: "🏢 이번 달은 사법 이슈에 개입하지 않고 국정에 집중했다." },
+            { character: "citizen", expression: "normal", text: "정치인이 재판에 개입하지 않고 일을 하다니... 원래 이게 정상 아닌가요?" },
+        ],
+    },
+    press_conference: {
+        background: "parliament",
+        lines: [
+            { character: "politician", expression: "confident", text: "나는 정치검찰의 피해자입니다! 국민 여러분, 진실을 봐주십시오!" },
+            { character: "citizen", text: "대통령이 직접 '내 재판은 조작'이라고 하면, 판사가 자유롭게 판결할 수 있을까요?" },
+        ],
+    },
+};
+
+// 랜덤 이벤트별 대사
+export const EVENT_DIALOGUES: Record<string, DialogueSequence> = {
+    constitutional_court_warning: {
+        background: "courtroom",
+        lines: [
+            { character: "judge", expression: "angry", text: "헌법재판소는 입법부의 사법 개입에 대해 심각한 우려를 표명합니다!", effect: "slam" },
+            { character: "narrator", text: "⚖️ 헌재의 이례적 공식 성명이 발표되었다." },
+        ],
+    },
+    international_criticism: {
+        background: "dark",
+        lines: [
+            { character: "narrator", text: "🌍 미국 국무부와 EU가 공동 성명을 발표한다.", effect: "slam" },
+            { character: "narrator", text: "\"한국의 사법 독립성 훼손에 대해 심각한 우려를 표명합니다.\"" },
+        ],
+    },
+    public_protest: {
+        background: "protest",
+        lines: [
+            { character: "citizen", expression: "angry", text: "왜 한 사람만 예외인가! 법 앞에 평등하라!", effect: "shake" },
+            { character: "narrator", text: "🕯️ 국회 앞에 5만 명의 시민이 촛불을 들고 모였다." },
+        ],
+    },
+    judge_resignation: {
+        background: "courtroom",
+        lines: [
+            { character: "judge", expression: "angry", text: "우리는 사법부의 독립을 끝까지 수호할 것입니다!", effect: "slam" },
+            { character: "narrator", text: "⚖️ 현직 판사 200명이 '사법독립 사수' 긴급 성명을 발표했다." },
+        ],
+    },
+    economy_crisis: {
+        background: "dark",
+        lines: [
+            { character: "narrator", text: "📉 사법 혼란으로 외국인 투자자가 이탈하고, 환율이 급등하고 있다.", effect: "shake" },
+            { character: "citizen", expression: "sad", text: "원·달러 환율 1500원 돌파... 우리 경제는 어디로 가는 건가요?" },
+        ],
+    },
+    supporter_fatigue: {
+        background: "protest",
+        lines: [
+            { character: "citizen", expression: "angry", text: "사법 이슈만 하지 말고 민생을 챙겨라! 우리 삶은 누가 돌봐요?" },
+            { character: "narrator", text: "지지층 내부에서도 피로감과 불만이 확산되고 있다." },
+        ],
+    },
+    // 연쇄 이벤트
+    chain_echo_chamber: {
+        background: "dark",
+        lines: [
+            { character: "narrator", text: "🧩 언론 프레임과 지지층 결집이 맞물렸다." },
+            { character: "citizen", text: "지지 기반은 단단해졌지만... 중도층은 '현실 검증이 사라졌다'며 돌아서고 있다." },
+        ],
+    },
+    chain_witness_chill: {
+        background: "courtroom",
+        lines: [
+            { character: "narrator", text: "🧩 대규모 고발 이후 증언 환경이 얼어붙었다.", effect: "shake" },
+            { character: "citizen", expression: "sad", text: "핵심 참고인들이 줄줄이 침묵하기 시작했어요... '다음은 나일 수 있다'는 공포가 퍼지고 있습니다." },
+        ],
+    },
+    chain_legislative_fatigue: {
+        background: "parliament",
+        lines: [
+            { character: "narrator", text: "🧩 강행 처리의 속도가 올랐지만, 여당 내부에서도 균열이 보인다." },
+            { character: "politician", expression: "normal", text: "'민생보다 방탄'이라는 불만이... 우리 내부에서도 새어나오기 시작했다." },
+        ],
+    },
+    chain_conflict_backlash: {
+        background: "courtroom",
+        lines: [
+            { character: "narrator", text: "🧩 이해충돌 비판이 국내외 법조계에서 증폭되고 있다.", effect: "shake" },
+            { character: "prosecutor", expression: "angry", text: "피고인이 자기 사건 심판자를 고른 셈입니다. 이건 전 세계 어디서도 없는 일이다!" },
+        ],
+    },
+    chain_late_normalization: {
+        background: "dark",
+        lines: [
+            { character: "narrator", text: "🧩 정면 충돌을 멈추자 일부 여론이 숨을 돌렸다." },
+            { character: "citizen", expression: "normal", text: "처음부터 이랬어야죠... 다만 이미 손상된 신뢰를 회복하기엔 늦었을 수도 있어요." },
+        ],
+    },
+};

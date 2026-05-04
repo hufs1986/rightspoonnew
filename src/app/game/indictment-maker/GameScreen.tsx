@@ -1,9 +1,11 @@
 import { memo, useMemo, useState } from "react";
+import DialogueSystem from "./DialogueSystem";
 import GameOverlay from "./GameOverlay";
 import StoreCta from "./StoreCta";
+import { ACTION_DIALOGUES, EVENT_DIALOGUES, BG_IMAGES } from "./dialogueData";
 import { GAME_ACTIONS, TRIALS, type GameAction, type GameStats, type RandomEvent } from "./gameData";
 import type { EventForecast } from "./gameReducer";
-import { getActionEffects, getStatTone, MILESTONE_STAGES, STAT_LABELS } from "./gameLogic";
+import { getStatTone, MILESTONE_STAGES, STAT_LABELS } from "./gameLogic";
 import styles from "./game.module.css";
 
 interface GameScreenProps {
@@ -31,61 +33,21 @@ type OverlayState =
     | { type: "trial"; trialId: number }
     | { type: "cancel_confirm"; step: number };
 
-type ActionCategory = "media" | "institution" | "judicial" | "support" | "restraint" | "final";
+// Key stats to show in mini bar
+const MINI_STATS: { key: keyof GameStats; label: string; emoji: string }[] = [
+    { key: "lawRule", label: "법치주의", emoji: "⚖️" },
+    { key: "publicTrust", label: "국민신뢰", emoji: "👥" },
+    { key: "cancelProgress", label: "공소취소", emoji: "🔴" },
+    { key: "regimeShield", label: "정권방탄", emoji: "🛡️" },
+];
 
-const ACTION_CATEGORY_META: Record<
-    ActionCategory,
-    { label: string; className: string }
-> = {
-    media: { label: "여론전", className: "actionBadge--media" },
-    institution: { label: "입법", className: "actionBadge--institution" },
-    judicial: { label: "사법개입", className: "actionBadge--judicial" },
-    support: { label: "방탄", className: "actionBadge--support" },
-    restraint: { label: "완화", className: "actionBadge--restraint" },
-    final: { label: "최종행동", className: "actionBadge--final" },
-};
-
-const ACTION_RISK_META = [
-    { max: 5, label: "보통", className: "actionBadge--riskLow", cardClassName: "actionCard--riskLow" },
-    { max: 15, label: "높음", className: "actionBadge--riskMedium", cardClassName: "actionCard--riskMedium" },
-    { max: 25, label: "위험", className: "actionBadge--riskHigh", cardClassName: "actionCard--riskHigh" },
-    { max: Number.POSITIVE_INFINITY, label: "치명적", className: "actionBadge--riskCritical", cardClassName: "actionCard--riskCritical" },
-] as const;
-
-function ActionDelta({ statKey, delta }: { statKey: keyof GameStats; delta: number }) {
-    const info = STAT_LABELS[statKey];
-
-    return (
-        <span className={delta >= 0 ? styles.effectPositive : styles.effectNegative}>
-            {info.emoji} {info.label} {delta >= 0 ? "+" : ""}
-            {delta}
-        </span>
-    );
-}
-
-function getActionCategory(action: GameAction): ActionCategory {
-    if (action.id === "cancel_indictment") return "final";
-    if (action.id === "do_nothing") return "restraint";
-    if (["frame_media", "play_recording", "press_conference"].includes(action.id)) return "media";
-    if (["launch_investigation", "adopt_report", "draft_special_counsel", "pass_special_counsel"].includes(action.id)) {
-        return "institution";
-    }
-    if (["summon_witnesses", "mass_indictments", "appoint_counsel", "transfer_cases", "seize_prosecution"].includes(action.id)) {
-        return "judicial";
-    }
-    return "support";
-}
-
-function getActionRisk(action: GameAction) {
-    if (action.id === "cancel_indictment") return ACTION_RISK_META[ACTION_RISK_META.length - 1];
-
-    const destabilizationScore = getActionEffects(action).reduce((score, [statKey, delta]) => {
-        if (delta >= 0) return score;
-        if (["lawRule", "separation", "judicialIndep", "publicTrust"].includes(statKey)) return score + Math.abs(delta);
-        return score;
-    }, 0);
-
-    return ACTION_RISK_META.find((item) => destabilizationScore <= item.max) ?? ACTION_RISK_META[0];
+// Determine background for current game state
+function getSceneBackground(milestones: string[], month: number): string {
+    const ms = new Set(milestones);
+    if (ms.has("prosecution_seized") || ms.has("counsel_appointed")) return BG_IMAGES.courtroom;
+    if (ms.has("bill_passed") || ms.has("investigation_launched")) return BG_IMAGES.parliament;
+    if (month > 20) return BG_IMAGES.parliament;
+    return BG_IMAGES.courtroom;
 }
 
 function GameScreenComponent({
@@ -108,8 +70,16 @@ function GameScreenComponent({
     isActionLocked,
 }: GameScreenProps) {
     const [overlay, setOverlay] = useState<OverlayState | null>(null);
-    const [turnCinematic, setTurnCinematic] = useState<{ actionId: string; month: number } | null>(null);
+    const [activeDialogue, setActiveDialogue] = useState<string | null>(null);
+    const [showDetails, setShowDetails] = useState(false);
+
+    const bgUrl = getSceneBackground(milestones, month);
+    const isLawRuleAlarm = stats.lawRule <= 30 && !trialsCancelled;
     const completedStages = new Set(milestones);
+
+    // Latest action for character display
+    const latestActionId = recentActions[recentActions.length - 1] ?? null;
+    const latestAction = latestActionId ? GAME_ACTIONS.find((a) => a.id === latestActionId) ?? null : null;
 
     const handleAction = (action: GameAction) => {
         if (action.id === "cancel_indictment") {
@@ -117,11 +87,11 @@ function GameScreenComponent({
             return;
         }
 
-        setTurnCinematic({ actionId: action.id, month: month + 1 });
-        window.setTimeout(() => setTurnCinematic(null), 1250);
         onAction(action);
-        if (action.id !== "do_nothing") {
-            setOverlay({ type: "education", actionId: action.id });
+
+        // Show VN dialogue if available
+        if (ACTION_DIALOGUES[action.id]) {
+            setActiveDialogue(action.id);
         }
     };
 
@@ -129,155 +99,124 @@ function GameScreenComponent({
         const action = actions.find((a) => a.id === "cancel_indictment");
         if (action) {
             setOverlay(null);
-            setTurnCinematic({ actionId: action.id, month: month + 1 });
-            window.setTimeout(() => setTurnCinematic(null), 1250);
             onAction(action);
-            setOverlay({ type: "education", actionId: action.id });
+            if (ACTION_DIALOGUES[action.id]) {
+                setActiveDialogue(action.id);
+            }
         }
     };
 
-    const currentStageIndex = MILESTONE_STAGES.findIndex((stage) => !completedStages.has(stage.id));
-    const isLawRuleAlarm = stats.lawRule <= 30 && !trialsCancelled;
-    const recentActionPreview = recentActions.slice(-3);
+    const handleDialogueComplete = () => {
+        setActiveDialogue(null);
+    };
+
+    // Handle event dialogue
+    const handleEventDialogue = () => {
+        if (currentEvent) {
+            const seq = EVENT_DIALOGUES[currentEvent.id];
+            if (seq) {
+                setActiveDialogue(`event:${currentEvent.id}`);
+                return;
+            }
+        }
+        onDismissEvent();
+    };
+
     const activeOverlay = useMemo(() => {
         if (overlay) return overlay;
-        if (currentEvent) return { type: "event", event: currentEvent } as const;
+        if (currentEvent && !activeDialogue) return { type: "event", event: currentEvent } as const;
         return null;
-    }, [currentEvent, overlay]);
-    const latestActionId = recentActions[recentActions.length - 1] ?? null;
-    const latestAction = latestActionId ? GAME_ACTIONS.find((action) => action.id === latestActionId) ?? null : null;
+    }, [currentEvent, overlay, activeDialogue]);
+
+    // If dialogue is active, show VN dialogue system
+    if (activeDialogue) {
+        const isEvent = activeDialogue.startsWith("event:");
+        const dialogueId = isEvent ? activeDialogue.slice(6) : activeDialogue;
+        const seq = isEvent ? EVENT_DIALOGUES[dialogueId] : ACTION_DIALOGUES[dialogueId];
+
+        if (seq) {
+            return (
+                <div className={styles.gameContainer}>
+                    <DialogueSystem
+                        sequence={seq}
+                        onComplete={() => {
+                            handleDialogueComplete();
+                            if (isEvent) onDismissEvent();
+                        }}
+                    />
+                </div>
+            );
+        }
+    }
 
     return (
         <div className={`${styles.gameContainer} ${isLawRuleAlarm ? styles["gameContainer--alarm"] : ""}`}>
-            {turnCinematic && latestAction && (
-                <div className={styles.turnCinematic} aria-hidden="true">
-                    <div className={styles.turnCinematicCard}>
-                        <div className={styles.turnCinematicLabel}>TURN ADVANCE</div>
-                        <div className={styles.turnCinematicAction}>
-                            <span>{latestAction.emoji}</span>
-                            <span>{latestAction.name}</span>
-                        </div>
-                        <div className={styles.turnCinematicMonth}>{turnCinematic.month}개월 차 돌입</div>
+            <div className={styles.vnGameLayout}>
+                {/* Mini HUD */}
+                <div className={styles.vnHud}>
+                    <div className={styles.vnHudLeft}>
+                        <span className={styles.vnHudMonth}>{month}/60</span>
+                    </div>
+                    <div className={styles.vnHudCenter}>
+                        <span className={styles.vnHudEmoji}>{characterEmoji}</span>
+                        <span className={styles.vnHudName}>{characterName}</span>
+                    </div>
+                    <div className={styles.vnHudRight}>
+                        <span className={styles.vnHudProgress}>{stats.cancelProgress}%</span>
+                        {hasSavedGame && <span className={styles.vnHudSave}>💾</span>}
                     </div>
                 </div>
-            )}
-            <div className={styles.gameLayout}>
-                <section className={styles.hud}>
-                    <div className={styles.hudLeft}>
-                        <span className={styles.hudMonth}>임기</span>
-                        <span className={styles.hudMonthValue}>{month}개월 / 60</span>
-                    </div>
-                    <div className={styles.hudCenter}>
-                        <span className={styles.hudCharacter}>{characterEmoji}</span>
-                        <span className={styles.hudCharName}>{characterName}</span>
-                    </div>
-                    <div className={styles.hudRight}>
-                        <span className={styles.hudLevel}>Lv.{characterLevel}</span>
-                        <span className={styles.hudProgress}>공소취소 {stats.cancelProgress}%</span>
-                        {hasSavedGame && <span className={styles.hudSave}>자동 저장됨</span>}
-                    </div>
-                </section>
 
-                <section className={styles.stagePanel} aria-label="진행 단계">
-                    <div className={styles.stageHeader}>
-                        <div className={styles.stageTitle}>해금 단계</div>
-                        <div className={styles.stageMeta}>
-                            {Math.max(currentStageIndex, 0)}/{MILESTONE_STAGES.length} 완료
-                        </div>
+                {/* Visual Scene Area */}
+                <div className={styles.vnSceneArea}>
+                    {bgUrl && (
+                        <div className={styles.vnSceneBg} style={{ backgroundImage: `url(${bgUrl})` }} />
+                    )}
+                    <div className={styles.vnSceneOverlay} />
+
+                    {/* Character in scene */}
+                    <div className={styles.vnSceneChars}>
+                        {latestAction && (
+                            <img
+                                src={
+                                    latestAction.phase >= 4 ? "/game/judge.png"
+                                    : latestAction.id === "do_nothing" ? "/game/citizen.png"
+                                    : "/game/politician.png"
+                                }
+                                alt="character"
+                                className={styles.vnSceneCharImg}
+                            />
+                        )}
                     </div>
-                    <div className={styles.stageRail}>
-                        {MILESTONE_STAGES.map((stage, index) => {
-                            const done = completedStages.has(stage.id);
-                            const active = !done && index === currentStageIndex;
 
-                            return (
-                                <div
-                                    key={stage.id}
-                                    className={`${styles.stageNode} ${done ? styles["stageNode--done"] : ""} ${active ? styles["stageNode--active"] : ""}`}
-                                >
-                                    <span className={styles.stageEmoji}>{stage.emoji}</span>
-                                    <span className={styles.stageLabel}>{stage.label}</span>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </section>
-
-                {recentActionPreview.length > 0 && (
-                    <section className={styles.comboPanel} aria-label="최근 행동 흐름">
-                        <div className={styles.comboTitle}>최근 행동 흐름</div>
-                        <div className={styles.comboTrack}>
-                            {recentActionPreview.map((actionId, index) => {
-                                const action = actions.find((item) => item.id === actionId);
-
+                    {/* Stage progress overlay */}
+                    <div style={{ position: "relative", zIndex: 5, padding: "12px 16px" }}>
+                        <div style={{ display: "flex", gap: "4px", justifyContent: "center" }}>
+                            {MILESTONE_STAGES.map((stage) => {
+                                const done = completedStages.has(stage.id);
                                 return (
-                                    <div key={`${actionId}-${index}`} className={styles.comboChip}>
-                                        <span>{action?.emoji ?? "•"}</span>
-                                        <span>{action?.name ?? actionId}</span>
+                                    <div
+                                        key={stage.id}
+                                        style={{
+                                            padding: "4px 8px",
+                                            borderRadius: "8px",
+                                            fontSize: "0.7rem",
+                                            background: done ? "rgba(94,226,141,0.15)" : "rgba(255,255,255,0.05)",
+                                            border: `1px solid ${done ? "rgba(94,226,141,0.3)" : "rgba(255,255,255,0.08)"}`,
+                                            color: done ? "#b6f5ca" : "rgba(255,255,255,0.3)",
+                                        }}
+                                    >
+                                        {stage.emoji}
                                     </div>
                                 );
                             })}
                         </div>
-                    </section>
-                )}
-
-                {eventForecast.length > 0 && (
-                    <section className={styles.riskPanel} aria-label="위험 예고">
-                        <div className={styles.riskTitle}>위험 예고</div>
-                        <div className={styles.riskList}>
-                            {eventForecast.map((forecast) => (
-                                <div key={forecast.eventId} className={styles.riskItem}>
-                                    <span>{forecast.title}</span>
-                                    <span className={styles.riskWeight}>
-                                        {Math.round(forecast.weight * 100)}%
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                <section className={styles.statsPanel} aria-label="게임 수치">
-                    {(Object.entries(STAT_LABELS) as [keyof GameStats, (typeof STAT_LABELS)[keyof GameStats]][]).map(
-                        ([key, info]) => (
-                            <div key={key} className={styles.statItem}>
-                                <span className={styles.statLabel}>
-                                    {info.emoji} {info.label}
-                                </span>
-                                <div className={styles.statBarOuter} aria-hidden="true">
-                                    <div
-                                        className={`${styles.statBarInner} ${styles[`statTone--${getStatTone(key, stats[key])}`]}`}
-                                        style={{ width: `${stats[key]}%` }}
-                                    />
-                                </div>
-                                <span className={styles.statValue}>{stats[key]}</span>
-                            </div>
-                        ),
-                    )}
-                </section>
-
-                <section className={styles.trialsPanel} aria-label="재판 목록">
-                    <div className={styles.trialsHeader}>
-                        <span className={styles.trialsTitle}>📂 기밀 사건 파일 (Trial Dossier)</span>
-                        <span className={styles.trialsHint}>👆 탭하여 상세 열람</span>
                     </div>
-                    <div className={styles.trialsScroll}>
-                        {TRIALS.map((trial) => (
-                            <button
-                                type="button"
-                                key={trial.id}
-                                className={`${styles.trialDossierTab} ${trialsCancelled ? styles["trialDossierTab--cancelled"] : ""}`}
-                                onClick={() => setOverlay({ type: "trial", trialId: trial.id })}
-                            >
-                                <span className={styles.dossierBadge}>TOP SECRET</span>
-                                <div className={styles.dossierTitle}>{trial.emoji} {trial.name}</div>
-                            </button>
-                        ))}
-                    </div>
-                </section>
+                </div>
 
+                {/* News ticker */}
                 {newsHistory.length > 0 && (
-                    <section className={styles.newsTicker} aria-live="polite">
+                    <div className={styles.vnNewsTicker}>
                         <div className={styles.newsTickerBar}>
                             <div className={styles.newsLabel}>🔴 BREAKING</div>
                             <div className={styles.newsMarquee}>
@@ -285,84 +224,128 @@ function GameScreenComponent({
                                     <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
                                     <span className={styles.newsMarqueeDivider}>•</span>
                                     <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
-                                    <span className={styles.newsMarqueeDivider}>•</span>
-                                    <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
                                 </div>
                             </div>
                         </div>
-                        {newsHistory.length > 1 && (
-                            <div className={styles.newsHistory}>
-                                {newsHistory.slice(1).map((headline, index) => (
-                                    <div key={`${headline}-${index}`} className={styles.newsHistoryItem}>
-                                        <span className={styles.newsHistoryIndex}>{String(index + 1).padStart(2, "0")}</span>
-                                        <span>{headline}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </section>
+                    </div>
                 )}
 
-                <section className={styles.storeCtaSection} aria-label="운영자 실사용 아이템">
-                    <StoreCta variant="inGame" />
-                </section>
+                {/* Mini Stats Bar */}
+                <div className={styles.vnStatsBar}>
+                    {MINI_STATS.map(({ key, label, emoji }) => {
+                        const val = stats[key];
+                        const tone = getStatTone(key, val);
+                        const color = tone === "good" ? "#5ee28d" : tone === "warning" ? "#ffd166" : tone === "danger" ? "#ff6b6b" : "#70a2ff";
+                        return (
+                            <div key={key} className={styles.vnStatMini}>
+                                <div className={styles.vnStatMiniLabel}>{emoji} {label}</div>
+                                <div className={styles.vnStatMiniBar}>
+                                    <div className={styles.vnStatMiniFill} style={{ width: `${val}%`, background: color }} />
+                                </div>
+                                <div className={styles.vnStatMiniValue} style={{ color }}>{val}</div>
+                            </div>
+                        );
+                    })}
+                </div>
 
-                <section className={styles.actionsSection}>
-                    <div className={styles.actionsTitle}>🎯 이번 달 행동을 선택하세요</div>
-                    <div className={styles.actionsHint}>카드를 눌러 진행합니다. 선행 조건이 없는 행동부터 여세요.</div>
-                    <div className={styles.actionsGrid}>
+                {/* Details toggle - shows full stats, trials, etc */}
+                <div className={styles.vnDetailsToggle}>
+                    <button className={styles.vnDetailsBtn} onClick={() => setShowDetails(!showDetails)}>
+                        {showDetails ? "△ 상세 접기" : "▽ 상세 보기 (스탯/재판파일)"}
+                    </button>
+                </div>
+
+                {showDetails && (
+                    <>
+                        <section className={styles.statsPanel} aria-label="게임 수치">
+                            {(Object.entries(STAT_LABELS) as [keyof GameStats, (typeof STAT_LABELS)[keyof GameStats]][]).map(
+                                ([key, info]) => (
+                                    <div key={key} className={styles.statItem}>
+                                        <span className={styles.statLabel}>{info.emoji} {info.label}</span>
+                                        <div className={styles.statBarOuter}>
+                                            <div
+                                                className={`${styles.statBarInner} ${styles[`statTone--${getStatTone(key, stats[key])}`]}`}
+                                                style={{ width: `${stats[key]}%` }}
+                                            />
+                                        </div>
+                                        <span className={styles.statValue}>{stats[key]}</span>
+                                    </div>
+                                ),
+                            )}
+                        </section>
+
+                        <section className={styles.trialsPanel} aria-label="재판 목록">
+                            <div className={styles.trialsHeader}>
+                                <span className={styles.trialsTitle}>📂 기밀 사건 파일</span>
+                            </div>
+                            <div className={styles.trialsScroll}>
+                                {TRIALS.map((trial) => (
+                                    <button
+                                        type="button"
+                                        key={trial.id}
+                                        className={`${styles.trialDossierTab} ${trialsCancelled ? styles["trialDossierTab--cancelled"] : ""}`}
+                                        onClick={() => setOverlay({ type: "trial", trialId: trial.id })}
+                                    >
+                                        <span className={styles.dossierBadge}>TOP SECRET</span>
+                                        <div className={styles.dossierTitle}>{trial.emoji} {trial.name}</div>
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className={styles.storeCtaSection}>
+                            <StoreCta variant="inGame" />
+                        </section>
+                    </>
+                )}
+
+                {/* Action Selection - VN style choices */}
+                <div className={styles.vnActionsPanel}>
+                    <div className={styles.vnActionsTitle}>🎯 이번 달 행동을 선택하세요</div>
+                    <div className={styles.vnActionsGrid}>
                         {actions.map((action) => {
                             const locked = isActionLocked(action);
                             const done = isActionDone(action);
-                            const isFinalAction = action.id === "cancel_indictment" && !locked;
-                            const category = ACTION_CATEGORY_META[getActionCategory(action)];
-                            const risk = getActionRisk(action);
-                            const stage = MILESTONE_STAGES[Math.max(action.phase - 1, 0)];
+                            const isFinal = action.id === "cancel_indictment" && !locked;
 
                             return (
                                 <button
                                     key={action.id}
                                     type="button"
-                                    className={`${styles.actionCard} ${locked ? styles["actionCard--locked"] : ""} ${isFinalAction ? styles["actionCard--final"] : ""} ${styles[risk.cardClassName]} ${latestActionId === action.id ? styles["actionCard--recent"] : ""}`}
+                                    className={`${styles.vnActionBtn} ${locked ? styles["vnActionBtn--locked"] : ""} ${done ? styles["vnActionBtn--done"] : ""} ${isFinal ? styles["vnActionBtn--final"] : ""}`}
                                     onClick={() => handleAction(action)}
                                     disabled={locked}
-                                    aria-disabled={locked}
                                 >
-                                    <div className={styles.actionHeader}>
-                                        <span className={styles.actionEmoji}>{action.emoji}</span>
-                                        {done && <span className={styles.actionDone}>완료</span>}
+                                    <span className={styles.vnActionEmoji}>{action.emoji}</span>
+                                    <div className={styles.vnActionInfo}>
+                                        <div className={styles.vnActionName}>
+                                            {action.name}
+                                            {done && " ✓"}
+                                        </div>
+                                        <div className={styles.vnActionPhase}>
+                                            PHASE {action.phase}
+                                            {locked && " · 🔒 잠김"}
+                                        </div>
                                     </div>
-                                    <div className={styles.actionMeta}>
-                                        <span className={`${styles.actionBadge} ${styles[category.className]}`}>{category.label}</span>
-                                        <span className={`${styles.actionBadge} ${styles[risk.className]}`}>{risk.label}</span>
-                                        <span className={`${styles.actionBadge} ${styles["actionBadge--phase"]}`}>
-                                            {stage?.emoji ?? "📍"} PHASE {action.phase}
-                                        </span>
-                                    </div>
-                                    <div className={styles.actionName}>{action.name}</div>
-                                    <div className={styles.actionDesc}>{action.description}</div>
-                                    <div className={styles.actionEffects}>
-                                        {getActionEffects(action)
-                                            .slice(0, 4)
-                                            .map(([statKey, delta]) => (
-                                                <ActionDelta key={`${action.id}-${statKey}`} statKey={statKey} delta={delta} />
-                                            ))}
-                                    </div>
-                                    {locked && <div className={styles.actionLocked}>🔒 선행 조건 미충족</div>}
                                 </button>
                             );
                         })}
                     </div>
-                </section>
+                </div>
             </div>
 
             <GameOverlay
                 actions={actions}
                 overlay={activeOverlay}
                 onClose={() => {
-                    if (overlay) {
-                        setOverlay(null);
-                        return;
+                    if (overlay) { setOverlay(null); return; }
+                    // For events, try VN dialogue first
+                    if (currentEvent) {
+                        const seq = EVENT_DIALOGUES[currentEvent.id];
+                        if (seq) {
+                            setActiveDialogue(`event:${currentEvent.id}`);
+                            return;
+                        }
                     }
                     onDismissEvent();
                 }}
@@ -381,5 +364,4 @@ function GameScreenComponent({
 }
 
 const GameScreen = memo(GameScreenComponent);
-
 export default GameScreen;
