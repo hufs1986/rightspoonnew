@@ -90,11 +90,25 @@ function GameScreenComponent({
 
         onAction(action);
 
-        // Show VN dialogue only the FIRST time an action is used (reduce fatigue)
-        // cancel_indictment always shows (handled separately above)
-        if (ACTION_DIALOGUES[action.id] && !seenDialogues.has(action.id)) {
-            setSeenDialogues((prev) => new Set(prev).add(action.id));
-            setActiveDialogue(action.id);
+        let dialogueKey = action.id;
+
+        if (action.id === "discredit_prosecutors") {
+            if (!seenDialogues.has("discredit_prosecutors_1")) {
+                dialogueKey = "discredit_prosecutors_1";
+            } else if (!seenDialogues.has("discredit_prosecutors_2")) {
+                dialogueKey = "discredit_prosecutors_2";
+            } else {
+                return;
+            }
+        } else {
+            if (!ACTION_DIALOGUES[action.id] || seenDialogues.has(action.id)) {
+                return;
+            }
+        }
+
+        if (ACTION_DIALOGUES[dialogueKey]) {
+            setSeenDialogues((prev) => new Set(prev).add(dialogueKey));
+            setActiveDialogue(dialogueKey);
         }
     };
 

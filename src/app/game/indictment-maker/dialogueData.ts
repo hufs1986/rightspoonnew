@@ -52,12 +52,20 @@ export const ACTION_DIALOGUES: Record<string, DialogueSequence> = {
             { character: "narrator", text: "✊ 지지자 수만 명이 결집했지만, 사법부에 대한 압박이 거세지고 있다." },
         ],
     },
-    discredit_prosecutors: {
+    discredit_prosecutors_1: {
         background: "courtroom",
         lines: [
             { character: "politician", expression: "confident", text: "이 검사의 과거를 보십시오! 이런 자가 수사한 결과를 어떻게 믿습니까!" },
             { character: "prosecutor", expression: "shocked", text: "검사 개인의 하자로 사건 전체의 증거를 부정하는 것은 논리적 비약입니다!" },
             { character: "citizen", text: "검사가 나빴으면 다른 검사가 수사하면 되잖아요. 왜 재판을 없애려 하죠?" },
+        ],
+    },
+    discredit_prosecutors_2: {
+        background: "courtroom",
+        lines: [
+            { character: "politician", expression: "confident", text: "검찰청에서 연어회와 소주 파티를 열어 증인을 회유했다는 제보가 있습니다!" },
+            { character: "prosecutor", expression: "angry", text: "명백한 가짜뉴스입니다! 출입 기록과 영수증까지 모두 공개하지 않았습니까!", effect: "shake" },
+            { character: "citizen", expression: "normal", text: "글쎄요... 검찰청에서 파티를 한다는 게 상식적으로 말이 되나요?" },
         ],
     },
     launch_investigation: {
