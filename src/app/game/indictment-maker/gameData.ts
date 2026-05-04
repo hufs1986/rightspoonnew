@@ -487,10 +487,10 @@ export const GAME_ENDINGS: GameEnding[] = [
     },
     {
         id: "term_ended",
-        name: "임기 종료",
-        title: "\"5년이 지났다. 재판은 아직 거기 있다\"",
-        description: "60개월의 임기가 끝났습니다.\n\n공소취소에 실패했지만,\n재판은 5년간 멈춰 있었습니다.\n\n퇴임과 함께 법정의 시계가\n다시 째깍거리기 시작합니다.",
-        emoji: "⏰",
+        name: "개헌 연임 성공",
+        title: "\"임기는 끝났지만, 권력은 계속된다\"",
+        description: "60개월의 임기가 무사히 끝났습니다.\n\n특검으로 재판을 완전히 덮지는 못했지만,\n압도적 여석으로 4년 중임제 개헌안을 통과시켰습니다.\n\n당신은 다시 한 번 대통령에 당선되었습니다.\n사법부도 영구 권력 앞에서는 무력할 뿐입니다.",
+        emoji: "👑",
         condition: () => true, // fallback
         priority: 1,
     },
