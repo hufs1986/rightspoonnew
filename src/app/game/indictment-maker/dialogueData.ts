@@ -172,14 +172,14 @@ export const EVENT_DIALOGUES: Record<string, DialogueSequence> = {
     constitutional_court_warning: {
         background: "courtroom",
         lines: [
-            { character: "judge", expression: "angry", text: "헌법재판소는 입법부의 사법 개입에 대해 심각한 우려를 표명합니다!", effect: "slam" },
+            { character: "judge", expression: "angry", text: "헌법기관은 입법부의 사법 개입에 대해 심각한 우려를 표명합니다!", effect: "slam" },
             { character: "narrator", text: "⚖️ 헌재의 이례적 공식 성명이 발표되었다." },
         ],
     },
     international_criticism: {
         background: "dark",
         lines: [
-            { character: "narrator", text: "🌍 미국 국무부와 EU가 공동 성명을 발표한다.", effect: "slam" },
+            { character: "narrator", text: "🌍 주요 서방국가들이 공동 성명을 발표한다.", effect: "slam" },
             { character: "narrator", text: "\"한국의 사법 독립성 훼손에 대해 심각한 우려를 표명합니다.\"" },
         ],
     },
@@ -214,14 +214,14 @@ export const EVENT_DIALOGUES: Record<string, DialogueSequence> = {
     bar_association_statement: {
         background: "courtroom",
         lines: [
-            { character: "prosecutor", expression: "confident", text: "대한변호사협회 2만 명이 한 목소리로 말합니다. 공소취소는 법치주의 자살 행위입니다.", effect: "slam" },
+            { character: "prosecutor", expression: "confident", text: "변호사 단체 회원 수만 명이 한 목소리로 말합니다. 공소취소는 법치주의 자살 행위입니다.", effect: "slam" },
             { character: "citizen", text: "변호사들까지 나서서 반대하는 건... 이건 정말 정상이 아닌 거 맞죠?" },
         ],
     },
     professor_petition: {
         background: "courtroom",
         lines: [
-            { character: "narrator", text: "📚 전국 법학 교수 500명이 헌법재판소에 청원서를 제출했다.", effect: "slam" },
+            { character: "narrator", text: "📚 전국 법학 교수 수백 명이 헌법기관에 청원서를 제출했다.", effect: "slam" },
             { character: "citizen", text: "법을 가르치는 사람들이 '이것은 법치의 죽음'이라고 하는데... 우리는 뭘 해야 할까요?" },
         ],
     },
@@ -236,7 +236,7 @@ export const EVENT_DIALOGUES: Record<string, DialogueSequence> = {
     business_warning: {
         background: "dark",
         lines: [
-            { character: "narrator", text: "📊 한국경영자총협회가 긴급 기자회견을 열었다.", effect: "slam" },
+            { character: "narrator", text: "📊 주요 경제단체가 긴급 기자회견을 열었다.", effect: "slam" },
             { character: "citizen", text: "외국 기업들이 한국 투자를 보류하기 시작했대요. 우리 일자리는 어떻게 되는 거예요?" },
         ],
     },
