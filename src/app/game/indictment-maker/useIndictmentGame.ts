@@ -91,6 +91,7 @@ export function useIndictmentGame() {
     const [playStats, setPlayStats] = useState<PlayStats>(createInitialPlayStats);
     const cancelTimerRef = useRef<number | null>(null);
     const countedEndingRef = useRef<string | null>(null);
+    const recentEventIdsRef = useRef<string[]>([]);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -248,7 +249,9 @@ export function useIndictmentGame() {
         if (state.phase !== "playing" || state.currentEvent) return;
 
         const randomEvent = rollRandomEvent(state.month, state.stats, state.recentActions);
-        if (randomEvent) {
+        // Prevent the same event from firing within 4 turns (reduces repetition fatigue)
+        if (randomEvent && !recentEventIdsRef.current.includes(randomEvent.id)) {
+            recentEventIdsRef.current = [...recentEventIdsRef.current, randomEvent.id].slice(-4);
             dispatch({ type: "open_event", event: randomEvent });
         }
     }, [state.currentEvent, state.month, state.phase, state.recentActions, state.stats]);
