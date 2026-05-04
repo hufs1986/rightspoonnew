@@ -92,15 +92,17 @@ function GameScreenComponent({
 
         let dialogueKey = action.id;
 
-        if (action.id === "discredit_prosecutors") {
-            if (!seenDialogues.has("discredit_prosecutors_1")) {
-                dialogueKey = "discredit_prosecutors_1";
-            } else if (!seenDialogues.has("discredit_prosecutors_2")) {
-                dialogueKey = "discredit_prosecutors_2";
+        // 동적으로 _1, _2 시나리오가 있는지 확인하고 순차 재생
+        if (ACTION_DIALOGUES[`${action.id}_1`] || ACTION_DIALOGUES[`${action.id}_2`]) {
+            if (!seenDialogues.has(`${action.id}_1`)) {
+                dialogueKey = `${action.id}_1`;
+            } else if (!seenDialogues.has(`${action.id}_2`)) {
+                dialogueKey = `${action.id}_2`;
             } else {
-                return;
+                return; // 2번 다 봤으면 더 이상 출력 안 함
             }
         } else {
+            // 단일 시나리오인 경우 (cancel_indictment 등)
             if (!ACTION_DIALOGUES[action.id] || seenDialogues.has(action.id)) {
                 return;
             }

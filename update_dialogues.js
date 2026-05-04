@@ -1,39 +1,6 @@
-// ===== 역전재판 스타일 대사 시퀀스 데이터 =====
+const fs = require('fs');
 
-export type CharacterId = "prosecutor" | "politician" | "judge" | "citizen" | "narrator";
-export type Expression = "normal" | "angry" | "shocked" | "confident" | "sad";
-export type Background = "courtroom" | "parliament" | "protest" | "dark";
-export type ScreenEffect = "shake" | "flash" | "slam" | "none";
-
-export interface DialogueLine {
-    character: CharacterId;
-    expression?: Expression;
-    text: string;
-    effect?: ScreenEffect;
-    background?: Background;
-}
-
-export interface DialogueSequence {
-    background: Background;
-    lines: DialogueLine[];
-}
-
-export const CHARACTER_META: Record<CharacterId, { name: string; image: string; position: "left" | "right" | "center" }> = {
-    prosecutor: { name: "검사", image: "/game/prosecutor.png", position: "left" },
-    politician: { name: "정치인", image: "/game/politician.png", position: "right" },
-    judge: { name: "재판장", image: "/game/judge.png", position: "center" },
-    citizen: { name: "시민", image: "/game/citizen.png", position: "left" },
-    narrator: { name: "", image: "", position: "center" },
-};
-
-export const BG_IMAGES: Record<Background, string> = {
-    courtroom: "/game/bg-courtroom.png",
-    parliament: "/game/bg-parliament.png",
-    protest: "/game/bg-protest.png",
-    dark: "",
-};
-
-// 행동별 대사 시퀀스
+const code = `
 export const ACTION_DIALOGUES: Record<string, DialogueSequence> = {
     frame_media_1: {
         background: "parliament",
@@ -285,160 +252,14 @@ export const ACTION_DIALOGUES: Record<string, DialogueSequence> = {
         ],
     },
 };
+`;
 
-// 랜덤 이벤트별 대사
-export const EVENT_DIALOGUES: Record<string, DialogueSequence> = {
-    constitutional_court_warning: {
-        background: "courtroom",
-        lines: [
-            { character: "judge", expression: "angry", text: "헌법기관은 입법부의 사법 개입에 대해 심각한 우려를 표명합니다!", effect: "slam" },
-            { character: "narrator", text: "⚖️ 헌재의 이례적 공식 성명이 발표되었다." },
-        ],
-    },
-    international_criticism: {
-        background: "dark",
-        lines: [
-            { character: "narrator", text: "🌍 주요 서방국가들이 공동 성명을 발표한다.", effect: "slam" },
-            { character: "narrator", text: "\"한국의 사법 독립성 훼손에 대해 심각한 우려를 표명합니다.\"" },
-        ],
-    },
-    public_protest: {
-        background: "protest",
-        lines: [
-            { character: "citizen", expression: "angry", text: "왜 한 사람만 예외인가! 법 앞에 평등하라!", effect: "shake" },
-            { character: "narrator", text: "🕯️ 국회 앞에 5만 명의 시민이 촛불을 들고 모였다." },
-        ],
-    },
-    judge_resignation: {
-        background: "courtroom",
-        lines: [
-            { character: "judge", expression: "angry", text: "우리는 사법부의 독립을 끝까지 수호할 것입니다!", effect: "slam" },
-            { character: "narrator", text: "⚖️ 현직 판사 200명이 '사법독립 사수' 긴급 성명을 발표했다." },
-        ],
-    },
-    economy_crisis: {
-        background: "dark",
-        lines: [
-            { character: "narrator", text: "📉 사법 혼란으로 외국인 투자자가 이탈하고, 환율이 급등하고 있다.", effect: "shake" },
-            { character: "citizen", expression: "sad", text: "원·달러 환율 1500원 돌파... 우리 경제는 어디로 가는 건가요?" },
-        ],
-    },
-    supporter_fatigue: {
-        background: "protest",
-        lines: [
-            { character: "citizen", expression: "angry", text: "사법 이슈만 하지 말고 민생을 챙겨라! 우리 삶은 누가 돌봐요?" },
-            { character: "narrator", text: "지지층 내부에서도 피로감과 불만이 확산되고 있다." },
-        ],
-    },
-    bar_association_statement: {
-        background: "courtroom",
-        lines: [
-            { character: "prosecutor", expression: "confident", text: "변호사 단체 회원 수만 명이 한 목소리로 말합니다. 공소취소는 법치주의 자살 행위입니다.", effect: "slam" },
-            { character: "citizen", text: "변호사들까지 나서서 반대하는 건... 이건 정말 정상이 아닌 거 맞죠?" },
-        ],
-    },
-    professor_petition: {
-        background: "courtroom",
-        lines: [
-            { character: "narrator", text: "📚 전국 법학 교수 수백 명이 헌법기관에 청원서를 제출했다.", effect: "slam" },
-            { character: "citizen", text: "법을 가르치는 사람들이 '이것은 법치의 죽음'이라고 하는데... 우리는 뭘 해야 할까요?" },
-        ],
-    },
-    media_split: {
-        background: "dark",
-        lines: [
-            { character: "narrator", text: "📺 같은 사건이 두 개의 완전히 다른 뉴스가 되어 나가고 있다.", effect: "shake" },
-            { character: "citizen", expression: "sad", text: "A채널은 '정치 조작', B채널은 '사법 농단'... 나는 뭘 믿어야 하는 거죠?" },
-            { character: "narrator", text: "대한민국이 두 개의 현실로 갈라지고 있다." },
-        ],
-    },
-    business_warning: {
-        background: "dark",
-        lines: [
-            { character: "narrator", text: "📊 주요 경제단체가 긴급 기자회견을 열었다.", effect: "slam" },
-            { character: "citizen", text: "외국 기업들이 한국 투자를 보류하기 시작했대요. 우리 일자리는 어떻게 되는 거예요?" },
-        ],
-    },
-    viral_meme: {
-        background: "dark",
-        lines: [
-            { character: "narrator", text: "📱 '재판 삭제 버튼' 밈이 SNS에서 폭발적으로 퍼지고 있다." },
-            { character: "citizen", expression: "normal", text: "외국 사람들이 한국을 보면서 웃고 있어요. '재판을 삭제할 수 있는 나라'라고..." },
-            { character: "narrator", text: "풍자가 현실을 앞지르는 순간이 왔다." },
-        ],
-    },
-    whistleblower: {
-        background: "courtroom",
-        lines: [
-            { character: "narrator", text: "💣 특검팀 전 수사관이 폭로 기자회견을 열었다.", effect: "flash" },
-            { character: "prosecutor", expression: "shocked", text: "처음부터 공소취소가 목적이었다고?! 수사는 연극이었단 말인가!", effect: "shake" },
-            { character: "citizen", expression: "angry", text: "특검이 수사가 아니라 대본대로 움직인 거라면... 우리는 속은 거잖아요!" },
-        ],
-    },
-    victim_testimony: {
-        background: "courtroom",
-        lines: [
-            { character: "citizen", expression: "sad", text: "4,895억... 그건 우리 세금이에요. 진실을 밝힐 기회마저 빼앗기는 건가요?", effect: "shake" },
-            { character: "narrator", text: "😢 대장동·성남FC 피해자들이 국회 앞에서 눈물의 기자회견을 열었다." },
-            { character: "citizen", expression: "angry", text: "무죄면 재판해서 무죄 받으세요! 재판을 없애는 건 무죄가 아닙니다!" },
-        ],
-    },
-    prosecution_morale: {
-        background: "courtroom",
-        lines: [
-            { character: "prosecutor", expression: "sad", text: "권력자를 수사하면 국회에 끌려가고, 고발당하고, 경력이 끝납니다... 이래서 누가 수사를 하겠습니까.", effect: "shake" },
-            { character: "narrator", text: "검사 30명이 집단으로 사표를 제출했다. 법 집행의 의지가 꺾이고 있다." },
-        ],
-    },
-    ruling_party_revolt: {
-        background: "parliament",
-        lines: [
-            { character: "narrator", text: "🗳️ 여당 소장파 의원 3명이 표결에서 이탈했다!", effect: "slam" },
-            { character: "politician", expression: "shocked", text: "내부에서 반란이?! 당론을 어기다니!", effect: "shake" },
-            { character: "citizen", expression: "normal", text: "양심에 따라 반대한 의원이 있다니... 아직 희망이 있는 건가요?" },
-        ],
-    },
-    youth_movement: {
-        background: "protest",
-        lines: [
-            { character: "citizen", expression: "angry", text: "우리가 배운 헌법은 이게 아닙니다! 법치주의를 지켜라!", effect: "shake" },
-            { character: "narrator", text: "🎓 전국 120개 대학 학생회가 공동 성명을 발표하고 캠퍼스 서명운동을 시작했다." },
-        ],
-    },
-    // 연쇄 이벤트
-    chain_echo_chamber: {
-        background: "dark",
-        lines: [
-            { character: "narrator", text: "🧩 언론 프레임과 지지층 결집이 맞물렸다." },
-            { character: "citizen", text: "지지 기반은 단단해졌지만... 중도층은 '현실 검증이 사라졌다'며 돌아서고 있다." },
-        ],
-    },
-    chain_witness_chill: {
-        background: "courtroom",
-        lines: [
-            { character: "narrator", text: "🧩 대규모 고발 이후 증언 환경이 얼어붙었다.", effect: "shake" },
-            { character: "citizen", expression: "sad", text: "핵심 참고인들이 줄줄이 침묵하기 시작했어요... '다음은 나일 수 있다'는 공포가 퍼지고 있습니다." },
-        ],
-    },
-    chain_legislative_fatigue: {
-        background: "parliament",
-        lines: [
-            { character: "narrator", text: "🧩 강행 처리의 속도가 올랐지만, 여당 내부에서도 균열이 보인다." },
-            { character: "politician", expression: "normal", text: "'민생보다 방탄'이라는 불만이... 우리 내부에서도 새어나오기 시작했다." },
-        ],
-    },
-    chain_conflict_backlash: {
-        background: "courtroom",
-        lines: [
-            { character: "narrator", text: "🧩 이해충돌 비판이 국내외 법조계에서 증폭되고 있다.", effect: "shake" },
-            { character: "prosecutor", expression: "angry", text: "피고인이 자기 사건 심판자를 고른 셈입니다. 이건 전 세계 어디서도 없는 일이다!" },
-        ],
-    },
-    chain_late_normalization: {
-        background: "dark",
-        lines: [
-            { character: "narrator", text: "🧩 정면 충돌을 멈추자 일부 여론이 숨을 돌렸다." },
-            { character: "citizen", expression: "normal", text: "처음부터 이랬어야죠... 다만 이미 손상된 신뢰를 회복하기엔 늦었을 수도 있어요." },
-        ],
-    },
-};
+const filePath = 'src/app/game/indictment-maker/dialogueData.ts';
+let content = fs.readFileSync(filePath, 'utf8');
+
+// Replace the ACTION_DIALOGUES block
+const regex = /export const ACTION_DIALOGUES: Record<string, DialogueSequence> = \{[\s\S]*?^};/m;
+content = content.replace(regex, code.trim());
+
+fs.writeFileSync(filePath, content);
+console.log('Successfully updated ACTION_DIALOGUES in dialogueData.ts');
