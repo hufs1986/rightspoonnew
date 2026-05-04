@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { type GameAction } from "./gameData";
 import { gameReducer, getEventForecast, rollRandomEvent } from "./gameReducer";
+import { createClient } from "@/utils/supabase/client";
 import {
     CANCEL_ANIMATION_MS,
     createInitialSnapshot,
@@ -224,6 +225,21 @@ export function useIndictmentGame() {
                 latestPlayedAt: new Date().toISOString(),
             };
         });
+
+        // 엔딩 도달 시 Supabase에 완주 카운트 증가 (세션당 1회)
+        const sessionKey = `game_completed_${state.endingId}`;
+        if (typeof window !== "undefined" && !sessionStorage.getItem(sessionKey)) {
+            sessionStorage.setItem(sessionKey, "true");
+            const increment = async () => {
+                try {
+                    const supabase = createClient();
+                    await supabase.rpc("increment_game_completion");
+                } catch (err) {
+                    // Ignore error
+                }
+            };
+            increment();
+        }
     }, [isHydrated, state.endingId]);
 
     useEffect(() => {

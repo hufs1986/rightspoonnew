@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import CancelAnimation from "./CancelAnimation";
 import EndingScreen from "./EndingScreen";
 import GameScreen from "./GameScreen";
 import TitleScreen from "./TitleScreen";
 import { trackGameEvent } from "./tracking";
 import { useIndictmentGame } from "./useIndictmentGame";
+import { createClient } from "@/utils/supabase/client";
 
 export default function GameEngine() {
     const {
@@ -100,9 +103,27 @@ export default function GameEngine() {
         return <CancelAnimation />;
     }
 
+    // 완주자 수 로딩
+    const [completionCount, setCompletionCount] = useState<number | null>(null);
+
+    useEffect(() => {
+        if (state.phase !== "ending") return;
+        const fetchCount = async () => {
+            try {
+                const supabase = createClient();
+                const { data } = await supabase.rpc("get_game_completion_count");
+                if (typeof data === "number") setCompletionCount(data);
+            } catch (err) {
+                // Ignore error
+            }
+        };
+        fetchCount();
+    }, [state.phase]);
+
     if (state.phase === "ending" && endingData) {
         return (
             <EndingScreen
+                completionCount={completionCount}
                 discoveredEndingIds={discoveredEndingIds}
                 endingData={endingData}
                 onRestart={restart}

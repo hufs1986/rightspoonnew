@@ -3,6 +3,7 @@ import StoreCta from "./StoreCta";
 import styles from "./game.module.css";
 
 interface EndingScreenProps {
+    completionCount?: number | null;
     discoveredEndingIds: string[];
     endingData: GameEnding;
     onRestart: () => void;
@@ -62,7 +63,7 @@ const ENDING_PRESENTATION: Record<string, { kicker: string; accent: string; glow
     },
 };
 
-export default function EndingScreen({ discoveredEndingIds, endingData, onRestart, onShare, stats }: EndingScreenProps) {
+export default function EndingScreen({ completionCount, discoveredEndingIds, endingData, onRestart, onShare, stats }: EndingScreenProps) {
     const isCollected = discoveredEndingIds.includes(endingData.id);
     const p = ENDING_PRESENTATION[endingData.id] ?? ENDING_PRESENTATION.term_ended;
 
@@ -132,6 +133,12 @@ export default function EndingScreen({ discoveredEndingIds, endingData, onRestar
                         <button className={styles.restartBtn} onClick={onRestart}>↻ 다시 시작</button>
                         <button className={styles.shareBtn} onClick={onShare}>📤 결과 공유하기</button>
                     </div>
+
+                    {completionCount != null && (
+                        <div style={{ marginTop: "16px", textAlign: "center", fontSize: "14px", color: "var(--color-text-muted)" }}>
+                            🏆 지금까지 <strong style={{ color: "var(--color-accent)", fontFamily: "var(--font-display)" }}>{completionCount.toLocaleString()}</strong>명이 엔딩을 확인했습니다.
+                        </div>
+                    )}
 
                     <StoreCta variant="ending" />
 
