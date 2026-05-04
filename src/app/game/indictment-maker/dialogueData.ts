@@ -211,6 +211,81 @@ export const EVENT_DIALOGUES: Record<string, DialogueSequence> = {
             { character: "narrator", text: "지지층 내부에서도 피로감과 불만이 확산되고 있다." },
         ],
     },
+    bar_association_statement: {
+        background: "courtroom",
+        lines: [
+            { character: "prosecutor", expression: "confident", text: "대한변호사협회 2만 명이 한 목소리로 말합니다. 공소취소는 법치주의 자살 행위입니다.", effect: "slam" },
+            { character: "citizen", text: "변호사들까지 나서서 반대하는 건... 이건 정말 정상이 아닌 거 맞죠?" },
+        ],
+    },
+    professor_petition: {
+        background: "courtroom",
+        lines: [
+            { character: "narrator", text: "📚 전국 법학 교수 500명이 헌법재판소에 청원서를 제출했다.", effect: "slam" },
+            { character: "citizen", text: "법을 가르치는 사람들이 '이것은 법치의 죽음'이라고 하는데... 우리는 뭘 해야 할까요?" },
+        ],
+    },
+    media_split: {
+        background: "dark",
+        lines: [
+            { character: "narrator", text: "📺 같은 사건이 두 개의 완전히 다른 뉴스가 되어 나가고 있다.", effect: "shake" },
+            { character: "citizen", expression: "sad", text: "A채널은 '정치 조작', B채널은 '사법 농단'... 나는 뭘 믿어야 하는 거죠?" },
+            { character: "narrator", text: "대한민국이 두 개의 현실로 갈라지고 있다." },
+        ],
+    },
+    business_warning: {
+        background: "dark",
+        lines: [
+            { character: "narrator", text: "📊 한국경영자총협회가 긴급 기자회견을 열었다.", effect: "slam" },
+            { character: "citizen", text: "외국 기업들이 한국 투자를 보류하기 시작했대요. 우리 일자리는 어떻게 되는 거예요?" },
+        ],
+    },
+    viral_meme: {
+        background: "dark",
+        lines: [
+            { character: "narrator", text: "📱 '재판 삭제 버튼' 밈이 SNS에서 폭발적으로 퍼지고 있다." },
+            { character: "citizen", expression: "normal", text: "외국 사람들이 한국을 보면서 웃고 있어요. '재판을 삭제할 수 있는 나라'라고..." },
+            { character: "narrator", text: "풍자가 현실을 앞지르는 순간이 왔다." },
+        ],
+    },
+    whistleblower: {
+        background: "courtroom",
+        lines: [
+            { character: "narrator", text: "💣 특검팀 전 수사관이 폭로 기자회견을 열었다.", effect: "flash" },
+            { character: "prosecutor", expression: "shocked", text: "처음부터 공소취소가 목적이었다고?! 수사는 연극이었단 말인가!", effect: "shake" },
+            { character: "citizen", expression: "angry", text: "특검이 수사가 아니라 대본대로 움직인 거라면... 우리는 속은 거잖아요!" },
+        ],
+    },
+    victim_testimony: {
+        background: "courtroom",
+        lines: [
+            { character: "citizen", expression: "sad", text: "4,895억... 그건 우리 세금이에요. 진실을 밝힐 기회마저 빼앗기는 건가요?", effect: "shake" },
+            { character: "narrator", text: "😢 대장동·성남FC 피해자들이 국회 앞에서 눈물의 기자회견을 열었다." },
+            { character: "citizen", expression: "angry", text: "무죄면 재판해서 무죄 받으세요! 재판을 없애는 건 무죄가 아닙니다!" },
+        ],
+    },
+    prosecution_morale: {
+        background: "courtroom",
+        lines: [
+            { character: "prosecutor", expression: "sad", text: "권력자를 수사하면 국회에 끌려가고, 고발당하고, 경력이 끝납니다... 이래서 누가 수사를 하겠습니까.", effect: "shake" },
+            { character: "narrator", text: "검사 30명이 집단으로 사표를 제출했다. 법 집행의 의지가 꺾이고 있다." },
+        ],
+    },
+    ruling_party_revolt: {
+        background: "parliament",
+        lines: [
+            { character: "narrator", text: "🗳️ 여당 소장파 의원 3명이 표결에서 이탈했다!", effect: "slam" },
+            { character: "politician", expression: "shocked", text: "내부에서 반란이?! 당론을 어기다니!", effect: "shake" },
+            { character: "citizen", expression: "normal", text: "양심에 따라 반대한 의원이 있다니... 아직 희망이 있는 건가요?" },
+        ],
+    },
+    youth_movement: {
+        background: "protest",
+        lines: [
+            { character: "citizen", expression: "angry", text: "우리가 배운 헌법은 이게 아닙니다! 법치주의를 지켜라!", effect: "shake" },
+            { character: "narrator", text: "🎓 전국 120개 대학 학생회가 공동 성명을 발표하고 캠퍼스 서명운동을 시작했다." },
+        ],
+    },
     // 연쇄 이벤트
     chain_echo_chamber: {
         background: "dark",
