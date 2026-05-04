@@ -136,7 +136,7 @@ export default function EndingScreen({ completionCount, discoveredEndingIds, end
 
                     {completionCount != null && (
                         <div style={{ marginTop: "16px", textAlign: "center", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                            🏆 지금까지 <strong style={{ color: "var(--color-accent)", fontFamily: "var(--font-display)" }}>{completionCount.toLocaleString()}</strong>명이 엔딩을 확인했습니다.
+                            🏆 지금까지 <strong style={{ color: "var(--color-accent)", fontFamily: "var(--font-display)" }}>{completionCount.toLocaleString()}</strong>명이 공소취소를 목격했습니다.
                         </div>
                     )}
 
