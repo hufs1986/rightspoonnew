@@ -39,10 +39,12 @@ export interface GameSnapshot {
     endingId: GameEnding["id"] | null;
     cooldowns: Record<string, number>;   // actionId -> turns left
     exhaustedTurns: number;              // consecutive turns with 0 energy
+    currentHand: string[];               // actionIds currently available to pick
+    actionFrequencies: Record<string, number>; // actionId -> count
 }
 
 export interface StoredSaveSlots {
-    version: 4;
+    version: 5;
     activeSlotId: number;
     slots: SaveSlotRecord[];
 }
@@ -92,6 +94,8 @@ export function createInitialSnapshot(): GameSnapshot {
         endingId: null,
         cooldowns: {},
         exhaustedTurns: 0,
+        currentHand: drawHand({}),
+        actionFrequencies: {},
     };
 }
 
@@ -198,6 +202,17 @@ export function setCooldown(
 ): Record<string, number> {
     if (!action.cooldown) return cooldowns;
     return { ...cooldowns, [action.id]: action.cooldown };
+}
+
+// ===== 카드 드로우 (덱빌딩) =====
+export function drawHand(cooldowns: Record<string, number>): string[] {
+    const available = DEFENSE_ACTIONS
+        .filter((a) => a.id !== "rest" && !(cooldowns[a.id] > 0))
+        .map((a) => a.id);
+    
+    // 랜덤하게 4장 섞기
+    const shuffled = [...available].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 4);
 }
 
 // ===== 랜덤 이벤트 체크 =====

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { GAME_ENDINGS } from "./gameData";
 import ModalShell from "./ModalShell";
 import type { LeaderboardEntry, PlayStatsSummary, SaveSlotSummary } from "./useIndictmentGame";
+import { initAudio, playSfx } from "./audioUtils";
 import styles from "./game.module.css";
 
 interface TitleScreenProps {
@@ -39,6 +40,12 @@ export default function TitleScreen({
     const totalCount = leaderboard.length;
     const winRate = totalCount > 0 ? Math.round((victoryCount / totalCount) * 100) : 0;
 
+    const handleNewGame = () => {
+        initAudio();
+        playSfx("click");
+        onNewGame();
+    };
+
     return (
         <div className={styles.gameContainer}>
             <div className={styles.titleScreen}>
@@ -66,7 +73,7 @@ export default function TitleScreen({
                 )}
 
                 <div className={styles.titleActions}>
-                    <button className={styles.startBtn} onClick={onNewGame}>
+                    <button className={styles.startBtn} onClick={handleNewGame}>
                         {isFirstVisit ? "▶ 도전 시작" : "▶ 새 게임"}
                     </button>
                     {isHydrated && hasSavedGame && (

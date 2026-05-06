@@ -2473,34 +2473,48 @@
 .vnActionsGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
 .vnActionBtn {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 14px 16px;
-    border: 1px solid rgba(115, 137, 255, 0.2);
-    border-radius: 14px;
-    background: rgba(18, 22, 37, 0.9);
+    justify-content: center;
+    gap: 12px;
+    padding: 20px 16px;
+    border: 2px solid rgba(115, 137, 255, 0.2);
+    border-radius: 18px;
+    background: linear-gradient(145deg, rgba(22, 26, 43, 0.95), rgba(14, 17, 30, 0.95));
     color: var(--game-text);
-    font-size: 0.88rem;
-    font-weight: 600;
+    font-size: 0.9rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: left;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .vnActionBtn:hover {
-    border-color: rgba(255, 98, 98, 0.4);
-    background: rgba(255, 98, 98, 0.08);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 98, 98, 0.6);
+    background: linear-gradient(145deg, rgba(255, 98, 98, 0.15), rgba(255, 98, 98, 0.05));
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 16px 32px rgba(255, 98, 98, 0.2);
 }
 
 .vnActionBtn:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.98);
+}
+
+@keyframes cardDraw {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9) rotate(5deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
 }
 
 .vnActionBtn--locked {
@@ -2527,14 +2541,16 @@
 }
 
 .vnActionEmoji {
-    font-size: 1.3rem;
+    font-size: 2.5rem;
     flex-shrink: 0;
+    margin-bottom: 4px;
 }
 
 .vnActionInfo {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    gap: 4px;
     min-width: 0;
 }
 
@@ -2794,6 +2810,47 @@
     font-size: 0.88rem;
     line-height: 1.5;
     color: rgba(237, 242, 255, 0.9);
+    word-break: keep-all;
+}
+
+/* ===== Archetype Card (MBTI) ===== */
+.archetypeCard {
+    margin: 24px auto;
+    padding: 32px 24px;
+    background: linear-gradient(145deg, rgba(22, 26, 43, 0.95), rgba(14, 17, 30, 0.95));
+    border: 2px solid;
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    max-width: 400px;
+}
+
+.archetypeHeader {
+    font-size: 0.85rem;
+    color: var(--game-muted);
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+}
+
+.archetypeEmoji {
+    font-size: 3.5rem;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+.archetypeName {
+    font-size: 1.6rem;
+    font-weight: 900;
+    font-family: var(--font-press-start), inherit;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+}
+
+.archetypeDesc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--game-text);
     word-break: keep-all;
 }
 
@@ -3691,6 +3748,17 @@
         animation: none !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+
+@keyframes cardDraw {
+    from {
+        transform: translateY(20px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
     }
 }
 

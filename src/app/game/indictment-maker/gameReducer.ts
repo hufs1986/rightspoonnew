@@ -9,6 +9,7 @@ import {
     applyRandomEvent,
     checkEnding,
     createInitialSnapshot,
+    drawHand,
     selectPoliticalAttack,
     setCooldown,
     tickCooldowns,
@@ -79,6 +80,12 @@ export function gameReducer(state: GameState, actionState: GameReducerAction): G
                 ? state.exhaustedTurns + 1
                 : 0;
 
+            const nextActionFrequencies = {
+                ...state.actionFrequencies,
+                [action.id]: (state.actionFrequencies[action.id] || 0) + 1,
+            };
+            const nextHand = drawHand(nextCooldowns);
+
             // Check ending after defense
             const ending = checkEnding(nextStats, nextMonth, nextExhausted);
 
@@ -94,6 +101,8 @@ export function gameReducer(state: GameState, actionState: GameReducerAction): G
                 cooldowns: nextCooldowns,
                 exhaustedTurns: nextExhausted,
                 endingId: ending?.id ?? state.endingId,
+                actionFrequencies: nextActionFrequencies,
+                currentHand: nextHand,
             };
         }
 

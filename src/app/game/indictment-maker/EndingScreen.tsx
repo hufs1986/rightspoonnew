@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { toPng } from "html-to-image";
 import { GAME_ENDINGS, MAX_MONTHS, type GameEnding, type GameStats } from "./gameData";
 import type { LeaderboardEntry } from "./useIndictmentGame";
+import { calculateArchetype } from "./archetypes";
+import { initAudio, playSfx } from "./audioUtils";
 import styles from "./game.module.css";
 
 interface EndingScreenProps {
@@ -13,6 +16,7 @@ interface EndingScreenProps {
     month: number;
     leaderboard: LeaderboardEntry[];
     onSubmitScore: (nickname: string) => Promise<void>;
+    actionFrequencies: Record<string, number>;
 }
 
 export default function EndingScreen({
@@ -25,12 +29,24 @@ export default function EndingScreen({
     month,
     leaderboard,
     onSubmitScore,
+    actionFrequencies,
 }: EndingScreenProps) {
     const [nickname, setNickname] = useState("");
     const [submitted, setSubmitted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const cardRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        initAudio();
+        if (endingData.isVictory) {
+            playSfx("win");
+        } else {
+            playSfx("lose");
+        }
+    }, [endingData.isVictory]);
 
     const survived = Math.min(month - 1, MAX_MONTHS);
+    const archetype = calculateArchetype(actionFrequencies);
 
     const handleSubmit = async () => {
         if (!nickname.trim() || submitted) return;
@@ -38,6 +54,20 @@ export default function EndingScreen({
         await onSubmitScore(nickname.trim());
         setSubmitted(true);
         setSubmitting(false);
+    };
+
+    const handleDownloadCard = async () => {
+        if (!cardRef.current) return;
+        try {
+            const dataUrl = await toPng(cardRef.current, { cacheBust: true, pixelRatio: 2, style: { background: "#090b14" } });
+            const link = document.createElement("a");
+            link.download = "indictment-archetype.png";
+            link.href = dataUrl;
+            link.click();
+        } catch (err) {
+            console.error(err);
+            alert("이미지 저장에 실패했습니다.");
+        }
     };
 
     const bgGradient = endingData.isVictory
@@ -56,6 +86,20 @@ export default function EndingScreen({
                 <h2 className={styles.vnEndingTitle}>{endingData.title}</h2>
 
                 <p className={styles.vnEndingDesc}>{endingData.description}</p>
+
+                {/* 플레이어 성향(Archetype) 결과 카드 (캡처 영역) */}
+                <div 
+                    ref={cardRef}
+                    className={styles.archetypeCard}
+                    style={{ borderColor: archetype.color }}
+                >
+                    <div className={styles.archetypeHeader}>당신의 플레이 성향은?</div>
+                    <div className={styles.archetypeEmoji}>{archetype.emoji}</div>
+                    <div className={styles.archetypeName} style={{ color: archetype.color }}>
+                        {archetype.name}
+                    </div>
+                    <div className={styles.archetypeDesc}>{archetype.description}</div>
+                </div>
 
                 {/* 결과 수치 */}
                 <div className={styles.vnEndingStatsGrid}>
@@ -177,8 +221,11 @@ export default function EndingScreen({
                     <button className={styles.startBtn} onClick={onRestart}>
                         🔄 다시 도전
                     </button>
-                    <button className={styles.secondaryBtn} onClick={onShare}>
-                        📤 결과 공유
+                    <button className={styles.secondaryBtn} onClick={handleDownloadCard} style={{ flex: 1 }}>
+                        📸 내 성향 이미지 저장
+                    </button>
+                    <button className={styles.ghostBtn} onClick={onShare}>
+                        📤 게임 공유
                     </button>
                 </div>
             </div>

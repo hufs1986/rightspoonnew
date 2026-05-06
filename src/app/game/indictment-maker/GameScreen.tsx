@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { MAX_MONTHS, type DefenseAction, type GameStats, type PoliticalAttack, type RandomEvent } from "./gameData";
 import { getStatTone, STAT_LABELS } from "./gameLogic";
+import { initAudio, playSfx } from "./audioUtils";
 import ModalShell from "./ModalShell";
 import styles from "./game.module.css";
 
@@ -22,6 +23,7 @@ interface GameScreenProps {
     onDismissEvent: () => void;
     stats: GameStats;
     exhaustedTurns: number;
+    currentHand: string[];
 }
 
 const STAT_ORDER: (keyof GameStats)[] = ["cancelProgress", "energy", "awareness", "democracy"];
@@ -38,6 +40,7 @@ function GameScreenComponent({
     onDismissEvent,
     stats,
     exhaustedTurns,
+    currentHand,
 }: GameScreenProps) {
     const [prevStats, setPrevStats] = useState<GameStats>(stats);
     const [screenShake, setScreenShake] = useState(false);
@@ -86,6 +89,7 @@ function GameScreenComponent({
     useEffect(() => {
         if (turnPhase === "show_attack" && pendingAttack) {
             setScreenShake(true);
+            playSfx("hit");
 
             if (pendingAttack.cancelIncrease >= 7) {
                 setFlashColor("rgba(255,50,50,0.2)");
@@ -107,6 +111,8 @@ function GameScreenComponent({
     }, [currentEvent]);
 
     const handleDefend = useCallback((action: DefenseAction) => {
+        initAudio();
+        playSfx("defend");
         // Green flash for defense
         setFlashColor("rgba(94,226,141,0.15)");
         setTimeout(() => setFlashColor(null), 500);
@@ -114,8 +120,16 @@ function GameScreenComponent({
     }, [onDefend]);
 
     const handleDismissEvent = () => {
+        initAudio();
+        playSfx("click");
         setShowEventModal(false);
         onDismissEvent();
+    };
+
+    const handleDismissAttack = () => {
+        initAudio();
+        playSfx("click");
+        onDismissAttack();
     };
 
     const progressPercent = ((month - 1) / MAX_MONTHS) * 100;
@@ -237,18 +251,25 @@ function GameScreenComponent({
 
                 {/* Defense Actions - only visible during pick_defense phase */}
                 {showDefenseActions && (
-                    <div className={styles.vnActionsPanel} style={{ animation: "fadeSlideUp 400ms ease" }}>
-                        <div className={styles.vnActionsTitle}>⚖️ 심판을 위한 행동을 선택하세요</div>
+                    <div className={styles.vnActionsPanel}>
+                        <div style={{ background: '#ff3b30', color: 'white', padding: '8px', textAlign: 'center', fontWeight: 'bold', marginBottom: '12px', borderRadius: '8px' }}>
+                            🚀 [덱 시스템 V5] 현재 이 텍스트가 보인다면 최신 코드가 정상 반영된 상태입니다!
+                        </div>
+                        <div className={styles.vnActionsTitle}>⚖️ 심판을 위한 행동 카드 (무작위 4장 드로우)</div>
                         <div className={styles.vnActionsGrid}>
-                            {defenseActions.map((action) => {
+                            {(currentHand || []).map((id, index) => {
+                                const action = defenseActions.find(a => a.id === id);
+                                if (!action) return null;
+
                                 const isRest = action.id === "rest";
                                 const onCooldown = action.cooldownLeft > 0;
 
                                 return (
                                     <button
-                                        key={action.id}
+                                        key={`${action.id}-${month}`} // month를 키에 넣어 턴마다 애니메이션 재실행
                                         type="button"
                                         className={`${styles.vnActionBtn} ${!action.available ? styles["vnActionBtn--locked"] : ""} ${isRest ? styles["vnActionBtn--rest"] : ""}`}
+                                        style={{ animation: `cardDraw 400ms ease forwards`, animationDelay: `${index * 150}ms`, opacity: 0 }}
                                         onClick={() => handleDefend(action)}
                                         disabled={!action.available}
                                     >
@@ -278,13 +299,36 @@ function GameScreenComponent({
                                 );
                             })}
                         </div>
+                        
+                        {/* 여론 결집 (Rest) 버튼을 항상 하단에 고정 배치 */}
+                        {(() => {
+                            const restAction = defenseActions.find(a => a.id === "rest");
+                            if (!restAction) return null;
+                            return (
+                                <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'center' }}>
+                                    <button
+                                        type="button"
+                                        className={`${styles.vnActionBtn} ${!restAction.available ? styles["vnActionBtn--locked"] : ""}`}
+                                        style={{ width: '100%', maxWidth: '400px', animation: `cardDraw 400ms ease forwards`, opacity: 0 }}
+                                        onClick={() => handleDefend(restAction)}
+                                        disabled={!restAction.available}
+                                    >
+                                        <span className={styles.vnActionEmoji}>{restAction.emoji}</span>
+                                        <div className={styles.vnActionInfo}>
+                                            <div className={styles.vnActionName}>{restAction.name}</div>
+                                            <div className={styles.vnActionPhase}>⚡ +30 에너지 회복 (턴 소모)</div>
+                                        </div>
+                                    </button>
+                                </div>
+                            );
+                        })()}
                     </div>
                 )}
             </div>
 
             {/* ===== ATTACK OVERLAY — shown during show_attack phase ===== */}
             {turnPhase === "show_attack" && pendingAttack && (
-                <div className={styles.attackOverlay} onClick={onDismissAttack}>
+                <div className={styles.attackOverlay} onClick={handleDismissAttack}>
                     <div className={styles.attackOverlayCard} onClick={(e) => e.stopPropagation()}>
                         <div className={styles.attackOverlayLabel}>⚠️ 정치 머신의 공격</div>
                         <div className={styles.attackOverlayEmoji}>{pendingAttack.emoji}</div>
@@ -297,7 +341,7 @@ function GameScreenComponent({
                             <span className={styles.attackEffectBad}>🔴 공소취소 +{pendingAttack.cancelIncrease}</span>
                             <span className={styles.attackEffectBad}>🏛️ 민주주의 -{pendingAttack.democracyDamage}</span>
                         </div>
-                        <button className={styles.attackOverlayBtn} onClick={onDismissAttack}>
+                        <button className={styles.attackOverlayBtn} onClick={handleDismissAttack}>
                             심판 촉구 행동 선택하기 →
                         </button>
                     </div>

@@ -22,7 +22,7 @@ import {
 function isStoredSaveSlots(value: unknown): value is StoredSaveSlots {
     if (!value || typeof value !== "object") return false;
     const candidate = value as Partial<StoredSaveSlots>;
-    return candidate.version === 4 && typeof candidate.activeSlotId === "number" && Array.isArray(candidate.slots);
+    return candidate.version === 5 && typeof candidate.activeSlotId === "number" && Array.isArray(candidate.slots);
 }
 
 function isEndingCollection(value: unknown): value is EndingCollection {
@@ -133,7 +133,7 @@ export function useIndictmentGame() {
                 nextRecord,
             ].sort((a, b) => a.slotId - b.slotId);
 
-            const payload: StoredSaveSlots = { version: 4, activeSlotId, slots: nextSlots };
+            const payload: StoredSaveSlots = { version: 5, activeSlotId, slots: nextSlots };
             window.localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(payload));
             setSaveSlots(nextSlots);
         }
@@ -249,7 +249,7 @@ export function useIndictmentGame() {
     const clearSave = () => {
         if (typeof window !== "undefined") {
             const nextSlots = saveSlots.filter((s) => s.slotId !== activeSlotId);
-            const payload: StoredSaveSlots = { version: 4, activeSlotId, slots: nextSlots };
+            const payload: StoredSaveSlots = { version: 5, activeSlotId, slots: nextSlots };
             window.localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(payload));
         }
         setSaveSlots((c) => c.filter((s) => s.slotId !== activeSlotId));

@@ -206,6 +206,7 @@ export default function GameEngine() {
                 month={state.month}
                 leaderboard={leaderboard}
                 onSubmitScore={submitScore}
+                actionFrequencies={state.actionFrequencies}
             />
         );
     }
@@ -224,6 +225,7 @@ export default function GameEngine() {
             onDismissEvent={dismissEvent}
             stats={state.stats}
             exhaustedTurns={state.exhaustedTurns}
+            currentHand={state.currentHand}
         />
     );
 }
