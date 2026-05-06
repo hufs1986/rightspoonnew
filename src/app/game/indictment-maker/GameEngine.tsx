@@ -99,15 +99,10 @@ export default function GameEngine() {
     }, [state.phase]);
 
     const handleNewGame = () => {
-        const isFirstPlay = playStatsSummary.totalSessions === 0;
         setTurnPhase("idle");
         setPendingAttack(null);
         setPendingEvent(null);
-        if (isFirstPlay) {
-            setShowPrologue(true);
-        } else {
-            startNewGame();
-        }
+        setShowPrologue(true);
     };
 
     const handlePrologueComplete = () => {
