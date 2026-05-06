@@ -1,4 +1,5 @@
 import { memo, useMemo, useState } from "react";
+import CitizenVoice from "./CitizenVoice";
 import DialogueSystem from "./DialogueSystem";
 import GameOverlay from "./GameOverlay";
 import StoreCta from "./StoreCta";
@@ -6,6 +7,7 @@ import { ACTION_DIALOGUES, EVENT_DIALOGUES, BG_IMAGES } from "./dialogueData";
 import { GAME_ACTIONS, TRIALS, type GameAction, type GameStats, type RandomEvent } from "./gameData";
 import type { EventForecast } from "./gameReducer";
 import { getStatTone, MILESTONE_STAGES, STAT_LABELS } from "./gameLogic";
+import type { ImpactCounters } from "./impactData";
 import styles from "./game.module.css";
 
 interface GameScreenProps {
@@ -13,19 +15,22 @@ interface GameScreenProps {
     characterEmoji: string;
     characterLevel: number;
     characterName: string;
+    citizenComment: string | null;
     currentEvent: RandomEvent | null;
     eventForecast: EventForecast[];
+    hasSavedGame: boolean;
+    impactCounters: ImpactCounters;
+    isActionDone: (action: GameAction) => boolean;
+    isActionLocked: (action: GameAction) => boolean;
+    milestones: string[];
     month: number;
-    recentActions: string[];
     newsHistory: string[];
     onAction: (action: GameAction) => void;
     onDismissEvent: () => void;
+    onMidGameShare: () => void;
+    recentActions: string[];
     stats: GameStats;
     trialsCancelled: boolean;
-    hasSavedGame: boolean;
-    milestones: string[];
-    isActionDone: (action: GameAction) => boolean;
-    isActionLocked: (action: GameAction) => boolean;
 }
 
 type OverlayState =
@@ -50,24 +55,59 @@ function getSceneBackground(milestones: string[], month: number): string {
     return BG_IMAGES.courtroom;
 }
 
+// Phase별 가이드 힌트
+function getPhaseHint(milestones: string[], actions: GameAction[]): string | null {
+    const ms = new Set(milestones);
+    if (!ms.has("frame_established")) return "📌 먼저 '언론 프레임 구축'으로 여론전을 시작하세요";
+    if (!ms.has("investigation_launched")) return "📌 프레임이 깔렸습니다. '국정조사 개회'를 진행하세요";
+    if (!ms.has("report_adopted")) return "📌 증거를 확보했습니다. '조사결과보고서 채택'으로 넘어가세요";
+    if (!ms.has("bill_passed")) return "📌 보고서가 준비됐습니다. '특검법'을 발의하고 통과시키세요";
+    if (!ms.has("counsel_appointed")) return "📌 특검법이 통과됐습니다. 특검을 임명하세요";
+    if (!ms.has("prosecution_seized")) return "📌 특검이 임명됐습니다. 공소유지권을 장악하세요";
+    if (!ms.has("indictment_cancelled")) return "⚠️ 모든 준비가 끝났습니다. '공소취소 버튼'을 누르세요";
+    return null;
+}
+
+// 액션 효과에서 핵심 2~3개만 추출
+function getActionCostSummary(action: GameAction): { gains: string[]; costs: string[] } {
+    const gains: string[] = [];
+    const costs: string[] = [];
+    const entries = Object.entries(action.effects) as [keyof GameStats, number][];
+    for (const [key, val] of entries) {
+        const info = STAT_LABELS[key];
+        if (!info) continue;
+        if (key === "cancelProgress" && val > 0) {
+            gains.push(`🔴+${val}`);
+        } else if (key === "regimeShield" && val > 0) {
+            gains.push(`🛡️+${val}`);
+        } else if (val < 0 && (key === "lawRule" || key === "publicTrust" || key === "judicialIndep" || key === "separation")) {
+            costs.push(`${info.emoji}${val}`);
+        }
+    }
+    return { gains: gains.slice(0, 2), costs: costs.slice(0, 2) };
+}
+
 function GameScreenComponent({
     actions,
     characterEmoji,
     characterLevel,
     characterName,
+    citizenComment,
     currentEvent,
     eventForecast,
+    hasSavedGame,
+    impactCounters,
+    isActionDone,
+    isActionLocked,
+    milestones,
     month,
-    recentActions,
     newsHistory,
     onAction,
     onDismissEvent,
+    onMidGameShare,
+    recentActions,
     stats,
     trialsCancelled,
-    hasSavedGame,
-    milestones,
-    isActionDone,
-    isActionLocked,
 }: GameScreenProps) {
     const [overlay, setOverlay] = useState<OverlayState | null>(null);
     const [activeDialogue, setActiveDialogue] = useState<string | null>(null);
@@ -77,6 +117,7 @@ function GameScreenComponent({
     const bgUrl = getSceneBackground(milestones, month);
     const isLawRuleAlarm = stats.lawRule <= 30 && !trialsCancelled;
     const completedStages = new Set(milestones);
+    const phaseHint = getPhaseHint(milestones, actions);
 
     // Latest action for character display
     const latestActionId = recentActions[recentActions.length - 1] ?? null;
@@ -168,6 +209,10 @@ function GameScreenComponent({
         }
     }
 
+    const hasImpactCounters = impactCounters.intimidatedProsecutors > 0
+        || impactCounters.silencedWitnesses > 0
+        || impactCounters.unverifiedAmount > 0;
+
     return (
         <div className={`${styles.gameContainer} ${isLawRuleAlarm ? styles["gameContainer--alarm"] : ""}`}>
             <div className={styles.vnGameLayout}>
@@ -182,6 +227,13 @@ function GameScreenComponent({
                     </div>
                     <div className={styles.vnHudRight}>
                         <span className={styles.vnHudProgress}>{stats.cancelProgress}%</span>
+                        <button
+                            className={styles.vnHudShareBtn}
+                            onClick={onMidGameShare}
+                            title="현재 상태 공유"
+                        >
+                            📤
+                        </button>
                         {hasSavedGame && <span className={styles.vnHudSave}>💾</span>}
                     </div>
                 </div>
@@ -233,6 +285,21 @@ function GameScreenComponent({
                     </div>
                 </div>
 
+                {/* Impact Counter HUD */}
+                {hasImpactCounters && (
+                    <div className={styles.impactHud}>
+                        {impactCounters.intimidatedProsecutors > 0 && (
+                            <span className={styles.impactHudItem}>😰 위축 {impactCounters.intimidatedProsecutors}</span>
+                        )}
+                        {impactCounters.silencedWitnesses > 0 && (
+                            <span className={styles.impactHudItem}>🤐 침묵 {impactCounters.silencedWitnesses}</span>
+                        )}
+                        {impactCounters.unverifiedAmount > 0 && (
+                            <span className={styles.impactHudItem}>💰 {impactCounters.unverifiedAmount.toLocaleString()}억</span>
+                        )}
+                    </div>
+                )}
+
                 {/* News ticker */}
                 {newsHistory.length > 0 && (
                     <div className={styles.vnNewsTicker}>
@@ -248,6 +315,9 @@ function GameScreenComponent({
                         </div>
                     </div>
                 )}
+
+                {/* Citizen Voice */}
+                <CitizenVoice message={citizenComment} />
 
                 {/* Mini Stats Bar */}
                 <div className={styles.vnStatsBar}>
@@ -320,12 +390,17 @@ function GameScreenComponent({
 
                 {/* Action Selection - VN style choices */}
                 <div className={styles.vnActionsPanel}>
+                    {/* Phase 힌트 */}
+                    {phaseHint && (
+                        <div className={styles.phaseHint}>{phaseHint}</div>
+                    )}
                     <div className={styles.vnActionsTitle}>🎯 이번 달 행동을 선택하세요</div>
                     <div className={styles.vnActionsGrid}>
                         {actions.map((action) => {
                             const locked = isActionLocked(action);
                             const done = isActionDone(action);
                             const isFinal = action.id === "cancel_indictment" && !locked;
+                            const { gains, costs } = getActionCostSummary(action);
 
                             return (
                                 <button
@@ -345,6 +420,17 @@ function GameScreenComponent({
                                             PHASE {action.phase}
                                             {locked && " · 🔒 잠김"}
                                         </div>
+                                        {/* 대가 표시 */}
+                                        {!locked && (gains.length > 0 || costs.length > 0) && (
+                                            <div className={styles.vnActionCosts}>
+                                                {gains.map((g, i) => (
+                                                    <span key={`g${i}`} className={styles.vnActionGain}>{g}</span>
+                                                ))}
+                                                {costs.map((c, i) => (
+                                                    <span key={`c${i}`} className={styles.vnActionCost}>{c}</span>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </button>
                             );

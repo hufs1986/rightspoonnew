@@ -1,4 +1,5 @@
 import { GAME_ENDINGS, type GameEnding, type GameStats } from "./gameData";
+import type { ImpactCounters } from "./impactData";
 import StoreCta from "./StoreCta";
 import styles from "./game.module.css";
 
@@ -6,6 +7,7 @@ interface EndingScreenProps {
     completionCount?: number | null;
     discoveredEndingIds: string[];
     endingData: GameEnding;
+    impactCounters?: ImpactCounters;
     onRestart: () => void;
     onShare: () => void;
     stats: GameStats;
@@ -63,7 +65,7 @@ const ENDING_PRESENTATION: Record<string, { kicker: string; accent: string; glow
     },
 };
 
-export default function EndingScreen({ completionCount, discoveredEndingIds, endingData, onRestart, onShare, stats }: EndingScreenProps) {
+export default function EndingScreen({ completionCount, discoveredEndingIds, endingData, impactCounters, onRestart, onShare, stats }: EndingScreenProps) {
     const isCollected = discoveredEndingIds.includes(endingData.id);
     const p = ENDING_PRESENTATION[endingData.id] ?? ENDING_PRESENTATION.term_ended;
 
@@ -110,6 +112,39 @@ export default function EndingScreen({ completionCount, discoveredEndingIds, end
                             );
                         })}
                     </div>
+
+                    {/* 피해 카운터 요약 */}
+                    {impactCounters && (impactCounters.intimidatedProsecutors > 0 || impactCounters.unverifiedAmount > 0) && (
+                        <div className={styles.vnEndingImpact}>
+                            <div className={styles.vnEndingImpactTitle}>당신의 행동이 만든 결과</div>
+                            <div className={styles.vnEndingStatsGrid}>
+                                {impactCounters.intimidatedProsecutors > 0 && (
+                                    <div className={styles.vnEndingStatCard}>
+                                        <div className={styles.vnEndingStatLabel}>😰 위축된 검사</div>
+                                        <div className={`${styles.vnEndingStatValue} ${styles["vnEndingStatValue--bad"]}`}>{impactCounters.intimidatedProsecutors}명</div>
+                                    </div>
+                                )}
+                                {impactCounters.silencedWitnesses > 0 && (
+                                    <div className={styles.vnEndingStatCard}>
+                                        <div className={styles.vnEndingStatLabel}>🤐 침묵한 증인</div>
+                                        <div className={`${styles.vnEndingStatValue} ${styles["vnEndingStatValue--bad"]}`}>{impactCounters.silencedWitnesses}명</div>
+                                    </div>
+                                )}
+                                {impactCounters.abandonedVictims > 0 && (
+                                    <div className={styles.vnEndingStatCard}>
+                                        <div className={styles.vnEndingStatLabel}>😢 포기한 피해자</div>
+                                        <div className={`${styles.vnEndingStatValue} ${styles["vnEndingStatValue--bad"]}`}>{impactCounters.abandonedVictims}명</div>
+                                    </div>
+                                )}
+                                {impactCounters.unverifiedAmount > 0 && (
+                                    <div className={styles.vnEndingStatCard}>
+                                        <div className={styles.vnEndingStatLabel}>💰 미확인 금액</div>
+                                        <div className={`${styles.vnEndingStatValue} ${styles["vnEndingStatValue--bad"]}`}>{impactCounters.unverifiedAmount.toLocaleString()}억</div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     <div className={styles.collectionPanel}>
                         <div className={styles.collectionHeader}>

@@ -2740,6 +2740,354 @@
 .vnEndingStatValue--good { color: var(--game-good); }
 .vnEndingStatValue--bad { color: var(--game-accent); }
 
+/* ===== 엔딩 피해 카운터 요약 ===== */
+.vnEndingImpact {
+    margin-top: 14px;
+    padding: 16px;
+    border-radius: 20px;
+    background: rgba(255, 98, 98, 0.06);
+    border: 1px solid rgba(255, 98, 98, 0.2);
+}
+
+.vnEndingImpactTitle {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #ffb3b3;
+    margin-bottom: 12px;
+}
+
+/* ===== 시민 코멘트 ===== */
+.citizenVoice {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin: 0 12px 8px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: fadeSlideUp 300ms ease;
+}
+
+.citizenVoiceIcon {
+    font-size: 1.3rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.citizenVoiceContent {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.citizenVoiceLabel {
+    font-size: 0.7rem;
+    color: var(--game-muted);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.citizenVoiceText {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: rgba(237, 242, 255, 0.9);
+    word-break: keep-all;
+}
+
+/* ===== 피해 카드 오버레이 ===== */
+.impactOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    animation: fadeIn 200ms ease;
+    cursor: pointer;
+}
+
+.impactCard {
+    width: min(100%, 420px);
+    padding: 24px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(24, 28, 48, 0.98), rgba(14, 16, 30, 0.98));
+    border: 1px solid rgba(255, 98, 98, 0.3);
+    box-shadow: 0 0 0 1px rgba(255, 98, 98, 0.12), 0 30px 60px rgba(0, 0, 0, 0.5);
+    transform: translateY(20px);
+    opacity: 0;
+    animation: impactSlideIn 400ms ease forwards;
+}
+
+.impactCard--enter {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.impactCardHeader {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--game-accent);
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+}
+
+.impactCardBody {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.impactCardEmoji {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.impactCardText {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--game-text);
+    margin: 0;
+    word-break: keep-all;
+}
+
+.impactCounters {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.impactCounterItem {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.impactCounterIcon {
+    font-size: 1rem;
+}
+
+.impactCounterLabel {
+    font-size: 0.72rem;
+    color: var(--game-muted);
+    flex: 1;
+}
+
+.impactCounterValue {
+    font-size: 0.82rem;
+    color: #ffb3b3;
+}
+
+.impactDismissBtn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--game-muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background 140ms ease;
+}
+
+.impactDismissBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== 피해 카운터 HUD (게임 내) ===== */
+.impactHud {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 0 12px 8px;
+    animation: fadeIn 300ms ease;
+}
+
+.impactHudItem {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 98, 98, 0.1);
+    border: 1px solid rgba(255, 98, 98, 0.2);
+    font-size: 0.72rem;
+    color: #ffb3b3;
+    white-space: nowrap;
+}
+
+/* ===== 완주자 배너 ===== */
+.completionBanner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(94, 226, 141, 0.08);
+    border: 1px solid rgba(94, 226, 141, 0.2);
+    color: #b6f5ca;
+    font-size: 0.88rem;
+    animation: fadeSlideUp 400ms ease;
+}
+
+.completionBanner strong {
+    color: #5ee28d;
+    font-weight: 900;
+}
+
+/* ===== 타이틀 시네마틱 (첫 방문자) ===== */
+.titleCinematicBg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(139, 38, 53, 0.35), transparent 50%),
+        radial-gradient(circle at 50% 70%, rgba(67, 101, 255, 0.2), transparent 50%);
+    z-index: 0;
+}
+
+.titleTagline {
+    margin: 0;
+    color: rgba(237, 242, 255, 0.8);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+}
+
+.titleTagline strong {
+    color: #fff;
+    font-weight: 800;
+}
+
+.titleDisclaimer {
+    margin: 0;
+    color: rgba(154, 163, 199, 0.5);
+    font-size: 0.76rem;
+}
+
+.titleExtraActions {
+    max-width: min(100%, 520px);
+}
+
+/* ===== 진행 힌트 ===== */
+.phaseHint {
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 191, 71, 0.08);
+    border: 1px solid rgba(255, 191, 71, 0.2);
+    color: #ffe29f;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: center;
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* ===== 액션 대가 태그 ===== */
+.vnActionCosts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.vnActionGain {
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(255, 98, 98, 0.12);
+    color: #ff9999;
+    font-size: 0.66rem;
+    font-weight: 800;
+}
+
+.vnActionCost {
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(154, 163, 199, 0.7);
+    font-size: 0.66rem;
+    font-weight: 700;
+}
+
+/* ===== 중간 공유 버튼 ===== */
+.vnHudShareBtn {
+    appearance: none;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 140ms ease, transform 140ms ease;
+}
+
+.vnHudShareBtn:hover {
+    background: rgba(255, 255, 255, 0.16);
+    transform: scale(1.1);
+}
+
+/* ===== 소셜 링크 ===== */
+.socialLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.socialLink {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--game-muted);
+    font-size: 0.82rem;
+    text-decoration: none;
+    transition: background 140ms ease, color 140ms ease;
+}
+
+.socialLink:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--game-text);
+}
+
+/* ===== 키프레임 ===== */
+@keyframes impactSlideIn {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeSlideUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 191, 71, 0); }
+    50% { box-shadow: 0 0 12px 2px rgba(255, 191, 71, 0.15); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     :global(*),
     :global(*::before),
@@ -2749,3 +3097,4 @@
         scroll-behavior: auto !important;
     }
 }
+

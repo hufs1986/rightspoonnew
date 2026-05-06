@@ -121,6 +121,21 @@ export default async function Home() {
         <HeroArticle article={heroArticle} />
       </section>
 
+      {/* Game CTA Banner */}
+      <section className={styles.gameBanner}>
+        <Link href="/game/indictment-maker" className={styles.gameBanner__link}>
+          <div className={styles.gameBanner__content}>
+            <div className={styles.gameBanner__icon}>⚖️</div>
+            <div className={styles.gameBanner__text}>
+              <div className={styles.gameBanner__kicker}>🎮 체험형 정치 시뮬레이션</div>
+              <div className={styles.gameBanner__title}>5건의 재판을 60개월 안에 없애세요</div>
+              <div className={styles.gameBanner__sub}>공소취소 메이커 — 당신의 선택이 법치주의를 결정합니다</div>
+            </div>
+            <div className={styles.gameBanner__arrow}>→</div>
+          </div>
+        </Link>
+      </section>
+
       {/* Latest Webtoons */}
       {webtoonEpisodes && webtoonEpisodes.length > 0 && (
         <section className={styles.section}>
