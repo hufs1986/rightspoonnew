@@ -24,6 +24,7 @@
     font-family: inherit;
     position: relative;
     overflow-x: clip;
+    overscroll-behavior-y: none;
 }
 
 .gameContainer::before {
