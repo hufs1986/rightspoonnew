@@ -47,8 +47,8 @@ export default function TitleScreen({
                 <div className={styles.titleLogo}>⚖️</div>
                 <h1 className={styles.titleName}>공소취소 방어전</h1>
                 <p className={styles.titleTagline}>
-                    정치 권력이 재판을 없애려 한다.<br />
-                    <strong>30개월. 막을 수 있겠는가?</strong>
+                    정치 권력이 재판을 회피하려 한다.<br />
+                    <strong>끝까지 재판에 세워 처벌받게 하라!</strong>
                 </p>
 
                 {/* 난이도 강조 */}
@@ -164,9 +164,9 @@ export default function TitleScreen({
                     <div className={styles.eduSection}>
                         <div className={styles.eduSectionTitle}>🎯 목표</div>
                         <p className={styles.eduText}>
-                            정치 권력이 5건의 형사재판을 없애려 합니다.<br /><br />
-                            당신은 시민으로서 <strong>30개월</strong> 동안 이를 막아야 합니다.<br />
-                            공소취소 진행률이 100%에 도달하면 <strong>패배</strong>합니다.
+                            거대 정치 권력이 형사재판을 회피하고 처벌을 피하려 합니다.<br /><br />
+                            당신은 <strong>30개월</strong> 동안 범죄자가 끝까지 재판을 받도록 심판을 촉구해야 합니다.<br />
+                            재판 회피(공소취소) 진행률이 100%에 도달하면 <strong>패배</strong>합니다.
                         </p>
                     </div>
 
@@ -174,8 +174,8 @@ export default function TitleScreen({
                         <div className={styles.eduSectionTitle}>🎮 게임 방법</div>
                         <ul className={styles.infoList}>
                             <li>매 턴 <strong>정치 머신</strong>이 자동으로 공소취소를 밀어붙입니다</li>
-                            <li>당신은 <strong>에너지를 소모</strong>하여 방어 행동을 선택합니다</li>
-                            <li>에너지가 0이면 &apos;힘 모으기&apos;로 회복해야 합니다</li>
+                            <li>당신은 <strong>에너지를 소모</strong>하여 심판 촉구 행동을 선택합니다</li>
+                            <li>에너지가 0이면 &apos;여론 결집&apos;으로 회복해야 합니다</li>
                             <li>에너지 0 상태가 5턴 연속이면 <strong>시민 소진 패배</strong></li>
                             <li>난이도가 매우 높습니다. 전략적으로 플레이하세요!</li>
                         </ul>

@@ -200,7 +200,7 @@ function GameScreenComponent({
                 {/* Cancel Critical Warning */}
                 {isCancelCritical && (
                     <div className={styles.criticalWarning}>
-                        🚨 공소취소 임박! 즉시 강력한 방어가 필요합니다!
+                        🚨 재판 회피 임박! 강력한 심판 촉구가 필요합니다!
                     </div>
                 )}
 
@@ -224,7 +224,7 @@ function GameScreenComponent({
                 {isEnergyLow && (
                     <div className={styles.energyWarning}>
                         <span className={styles.energyWarningIcon}>⚡</span>
-                        <span>에너지 부족! &apos;힘 모으기&apos;로 회복하세요</span>
+                        <span>에너지 부족! &apos;여론 결집&apos;으로 회복하세요</span>
                     </div>
                 )}
 
@@ -238,7 +238,7 @@ function GameScreenComponent({
                 {/* Defense Actions - only visible during pick_defense phase */}
                 {showDefenseActions && (
                     <div className={styles.vnActionsPanel} style={{ animation: "fadeSlideUp 400ms ease" }}>
-                        <div className={styles.vnActionsTitle}>🛡️ 방어 행동을 선택하세요</div>
+                        <div className={styles.vnActionsTitle}>⚖️ 심판을 위한 행동을 선택하세요</div>
                         <div className={styles.vnActionsGrid}>
                             {defenseActions.map((action) => {
                                 const isRest = action.id === "rest";
@@ -256,7 +256,7 @@ function GameScreenComponent({
                                         <div className={styles.vnActionInfo}>
                                             <div className={styles.vnActionName}>{action.name}</div>
                                             <div className={styles.vnActionPhase}>
-                                                {isRest ? "⚡ +18 에너지" : `⚡ -${action.energyCost}`}
+                                                {isRest ? "⚡ +30 에너지" : `⚡ -${action.energyCost}`}
                                                 {onCooldown && ` · ⏳ ${action.cooldownLeft}턴`}
                                                 {!action.available && !onCooldown && !isRest && " · 에너지 부족"}
                                             </div>
@@ -298,7 +298,7 @@ function GameScreenComponent({
                             <span className={styles.attackEffectBad}>🏛️ 민주주의 -{pendingAttack.democracyDamage}</span>
                         </div>
                         <button className={styles.attackOverlayBtn} onClick={onDismissAttack}>
-                            방어 행동 선택하기 →
+                            심판 촉구 행동 선택하기 →
                         </button>
                     </div>
                 </div>

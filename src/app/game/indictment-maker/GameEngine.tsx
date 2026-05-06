@@ -142,7 +142,7 @@ export default function GameEngine() {
     }, [executeDefense]);
 
     const handleShareGame = async () => {
-        const text = "⚖️ 정치 권력이 재판을 없애려 한다. 막을 수 있을까?\n\n30개월 안에 공소취소를 저지하세요!\n거의 아무도 못 깹니다. 🔥\n\n🎮 [공소취소 방어전] 도전해보세요 👇";
+        const text = "⚖️ 정치 권력이 재판을 회피하려 한다. 막을 수 있을까?\n\n30개월 동안 끝까지 재판에 세워 처벌받게 하세요!\n거의 아무도 못 깹니다. 🔥\n\n🎮 [공소취소 방어전] 도전해보세요 👇";
         try {
             if (navigator.share) {
                 await navigator.share({ title: "공소취소 방어전", text, url: `${window.location.origin}${window.location.pathname}` });

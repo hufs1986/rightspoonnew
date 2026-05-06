@@ -26,7 +26,7 @@ export const STAT_LABELS: Record<keyof GameStats, { label: string; emoji: string
     democracy: { label: "민주주의", emoji: "🏛️" },
 };
 
-export const ENERGY_RESTORE_AMOUNT = 18;
+export const ENERGY_RESTORE_AMOUNT = 30;
 
 export interface GameSnapshot {
     phase: GamePhase;
