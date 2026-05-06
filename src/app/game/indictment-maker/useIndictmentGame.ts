@@ -6,7 +6,6 @@ import { gameReducer } from "./gameReducer";
 import { createClient } from "@/utils/supabase/client";
 import {
     canUseAction,
-    checkRandomEvent,
     createInitialPlayStats,
     createInitialSnapshot,
     ENDING_COLLECTION_KEY,
@@ -14,7 +13,6 @@ import {
     MAX_SAVE_SLOTS,
     PLAY_STATS_KEY,
     SAVE_SLOTS_KEY,
-    selectPoliticalAttack,
     type EndingCollection,
     type PlayStats,
     type SaveSlotRecord,
@@ -257,23 +255,15 @@ export function useIndictmentGame() {
         setSaveSlots((c) => c.filter((s) => s.slotId !== activeSlotId));
     };
 
-    // ===== TURN FLOW =====
-    // Each turn: 1) Political machine attacks → 2) Random event check → 3) Player defends
-    const executeTurn = useCallback((action: DefenseAction) => {
-        if (state.phase !== "playing") return;
-
-        // Step 1: Political attack
-        const attack = selectPoliticalAttack(state.month);
+    // ===== SEPARATED TURN FLOW =====
+    // Step 1: Apply attack (called when user dismisses attack overlay)
+    const applyAttackAction = useCallback((attack: import("./gameData").PoliticalAttack) => {
         dispatch({ type: "apply_attack", attack });
+    }, []);
 
-        // Step 2: Random event check (after attack)
-        const event = checkRandomEvent(state.month, usedEventsRef.current);
-        if (event) {
-            usedEventsRef.current.add(event.id);
-            dispatch({ type: "apply_event", event });
-        }
-
-        // Step 3: Defense action
+    // Step 2: Apply defense (called when user picks a defense action)
+    const executeDefenseAction = useCallback((action: DefenseAction) => {
+        if (state.phase !== "playing") return;
         setPlayStats((c) => ({
             ...c,
             totalActions: c.totalActions + 1,
@@ -284,7 +274,7 @@ export function useIndictmentGame() {
             latestPlayedAt: new Date().toISOString(),
         }));
         dispatch({ type: "execute_defense", action });
-    }, [state.phase, state.month]);
+    }, [state.phase]);
 
     return {
         activeSlotId,
@@ -305,7 +295,8 @@ export function useIndictmentGame() {
             dispatch({ type: "continue_game", snapshot: activeSlotRecord.snapshot });
         },
         dismissEvent: () => dispatch({ type: "dismiss_event" }),
-        executeTurn,
+        applyAttack: applyAttackAction,
+        executeDefense: executeDefenseAction,
         getShareText: () => {
             if (endingData) {
                 return `⚖️ [공소취소 방어전] 결과\n${endingData.isVictory ? "🏆 법치주의를 지켜냈다!" : "💀 공소취소를 막지 못했다..."}\n\n📅 ${Math.min(state.month - 1, 30)}개월 생존\n🏛️ 민주주의 ${state.stats.democracy}%\n🔴 공소취소 진행률 ${state.stats.cancelProgress}%\n\n엔딩: ${endingData.emoji} ${endingData.name}\n\n당신은 막을 수 있을까? 👇`;
@@ -315,13 +306,11 @@ export function useIndictmentGame() {
         clearSave,
         restart: () => {
             countedEndingRef.current = null;
-            usedEventsRef.current = new Set();
             clearSave();
             dispatch({ type: "restart" });
         },
         startNewGame: () => {
             countedEndingRef.current = null;
-            usedEventsRef.current = new Set();
             setPlayStats((c) => ({
                 ...c,
                 totalSessions: c.totalSessions + 1,

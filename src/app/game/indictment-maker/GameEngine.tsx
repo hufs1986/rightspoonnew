@@ -10,7 +10,10 @@ import { PROLOGUE_SEQUENCE } from "./PrologueSequence";
 import { trackGameEvent } from "./tracking";
 import { useIndictmentGame } from "./useIndictmentGame";
 import { createClient } from "@/utils/supabase/client";
-import type { DefenseAction } from "./gameData";
+import { selectPoliticalAttack, checkRandomEvent } from "./gameLogic";
+import type { DefenseAction, PoliticalAttack, RandomEvent } from "./gameData";
+
+type TurnPhase = "show_attack" | "pick_defense" | "idle";
 
 export default function GameEngine() {
     const {
@@ -29,7 +32,8 @@ export default function GameEngine() {
         state,
         submitScore,
         dismissEvent,
-        executeTurn,
+        applyAttack,
+        executeDefense,
         getShareText,
         restart,
         clearSave,
@@ -38,6 +42,28 @@ export default function GameEngine() {
 
     const [showPrologue, setShowPrologue] = useState(false);
     const [completionCount, setCompletionCount] = useState<number | null>(null);
+
+    // Turn phase management
+    const [turnPhase, setTurnPhase] = useState<TurnPhase>("idle");
+    const [pendingAttack, setPendingAttack] = useState<PoliticalAttack | null>(null);
+    const [pendingEvent, setPendingEvent] = useState<RandomEvent | null>(null);
+    const [usedEvents] = useState(() => new Set<string>());
+
+    // Auto-trigger attack at game start and after each defense
+    useEffect(() => {
+        if (state.phase === "playing" && turnPhase === "idle") {
+            const attack = selectPoliticalAttack(state.month);
+            setPendingAttack(attack);
+            setTurnPhase("show_attack");
+
+            // Check random event
+            const event = checkRandomEvent(state.month, usedEvents);
+            if (event) {
+                usedEvents.add(event.id);
+                setPendingEvent(event);
+            }
+        }
+    }, [state.phase, turnPhase, state.month, usedEvents]);
 
     const handleShare = async () => {
         const text = getShareText();
@@ -56,18 +82,21 @@ export default function GameEngine() {
     // Completion count
     useEffect(() => {
         if (state.phase !== "ending" && state.phase !== "title") return;
-        const fetch = async () => {
+        const fetchCount = async () => {
             try {
                 const supabase = createClient();
                 const { data } = await supabase.rpc("get_game_completion_count");
                 if (typeof data === "number") setCompletionCount(data);
             } catch { /* ignore */ }
         };
-        fetch();
+        fetchCount();
     }, [state.phase]);
 
     const handleNewGame = () => {
         const isFirstPlay = playStatsSummary.totalSessions === 0;
+        setTurnPhase("idle");
+        setPendingAttack(null);
+        setPendingEvent(null);
         if (isFirstPlay) {
             setShowPrologue(true);
         } else {
@@ -80,9 +109,27 @@ export default function GameEngine() {
         startNewGame();
     };
 
+    // Player dismissed the attack overlay → move to defense pick phase
+    const handleDismissAttack = useCallback(() => {
+        // Apply the attack to game state
+        if (pendingAttack) {
+            applyAttack(pendingAttack);
+        }
+        // Apply random event if any
+        if (pendingEvent) {
+            // Event will be shown via GameScreen's event modal
+        }
+        setTurnPhase("pick_defense");
+    }, [pendingAttack, pendingEvent, applyAttack]);
+
+    // Player chose a defense action
     const handleDefense = useCallback((action: DefenseAction) => {
-        executeTurn(action);
-    }, [executeTurn]);
+        executeDefense(action);
+        setPendingAttack(null);
+        setPendingEvent(null);
+        // Set idle — useEffect will auto-trigger next attack
+        setTurnPhase("idle");
+    }, [executeDefense]);
 
     const handleShareGame = async () => {
         const text = "⚖️ 정치 권력이 재판을 없애려 한다. 막을 수 있을까?\n\n30개월 안에 공소취소를 저지하세요!\n거의 아무도 못 깹니다. 🔥\n\n🎮 [공소취소 방어전] 도전해보세요 👇";
@@ -95,6 +142,13 @@ export default function GameEngine() {
             window.alert("게임 링크가 복사되었습니다!");
         } catch { /* no-op */ }
     };
+
+    const handleRestart = useCallback(() => {
+        setTurnPhase("idle");
+        setPendingAttack(null);
+        setPendingEvent(null);
+        restart();
+    }, [restart]);
 
     if (showPrologue) {
         return (
@@ -113,7 +167,7 @@ export default function GameEngine() {
                 discoveredEndingIds={discoveredEndingIds}
                 playStatsSummary={playStatsSummary}
                 onClearSave={clearSave}
-                onContinue={continueSavedGame}
+                onContinue={() => { setTurnPhase("idle"); continueSavedGame(); }}
                 onNewGame={handleNewGame}
                 onSelectSlot={selectSlot}
                 saveSlotSummaries={saveSlotSummaries}
@@ -130,7 +184,7 @@ export default function GameEngine() {
                 completionCount={completionCount}
                 discoveredEndingIds={discoveredEndingIds}
                 endingData={endingData}
-                onRestart={restart}
+                onRestart={handleRestart}
                 onShare={handleShare}
                 stats={state.stats}
                 month={state.month}
@@ -143,12 +197,14 @@ export default function GameEngine() {
     return (
         <GameScreen
             defenseActions={defenseActions}
-            currentEvent={state.currentEvent}
-            currentAttack={state.currentAttack}
+            currentEvent={pendingEvent}
+            pendingAttack={pendingAttack}
+            turnPhase={turnPhase}
             month={state.month}
             recentDefenses={state.recentDefenses}
             newsHistory={state.newsHistory}
             onDefend={handleDefense}
+            onDismissAttack={handleDismissAttack}
             onDismissEvent={dismissEvent}
             stats={state.stats}
             exhaustedTurns={state.exhaustedTurns}
