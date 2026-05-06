@@ -269,7 +269,6 @@ function GameScreenComponent({
                                         key={`${action.id}-${month}`} // month를 키에 넣어 턴마다 애니메이션 재실행
                                         type="button"
                                         className={`${styles.vnActionBtn} ${!action.available ? styles["vnActionBtn--locked"] : ""} ${isRest ? styles["vnActionBtn--rest"] : ""}`}
-                                        style={{ animation: `cardDraw 400ms ease forwards`, animationDelay: `${index * 150}ms`, opacity: 0 }}
                                         onClick={() => handleDefend(action)}
                                         disabled={!action.available}
                                     >
@@ -309,7 +308,7 @@ function GameScreenComponent({
                                     <button
                                         type="button"
                                         className={`${styles.vnActionBtn} ${!restAction.available ? styles["vnActionBtn--locked"] : ""}`}
-                                        style={{ width: '100%', maxWidth: '400px', animation: `cardDraw 400ms ease forwards`, opacity: 0 }}
+                                        style={{ width: '100%', maxWidth: '400px' }}
                                         onClick={() => handleDefend(restAction)}
                                         disabled={!restAction.available}
                                     >
