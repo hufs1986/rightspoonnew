@@ -3751,7 +3751,7 @@
     }
 }
 
-@keyframes cardDraw {
+@keyframes :global(cardDraw) {
     from {
         transform: translateY(20px) scale(0.95);
         opacity: 0;
