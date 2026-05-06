@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { MAX_MONTHS, type DefenseAction, type GameStats, type PoliticalAttack, type RandomEvent } from "./gameData";
 import { getStatTone, STAT_LABELS } from "./gameLogic";
 import ModalShell from "./ModalShell";
@@ -24,6 +24,8 @@ interface GameScreenProps {
 
 const STAT_ORDER: (keyof GameStats)[] = ["cancelProgress", "energy", "awareness", "democracy"];
 
+type TurnPhase = "idle" | "attack_in" | "attack_show" | "defense_pick" | "result_show";
+
 function GameScreenComponent({
     defenseActions,
     currentEvent,
@@ -35,25 +37,109 @@ function GameScreenComponent({
     stats,
     exhaustedTurns,
 }: GameScreenProps) {
+    const [turnPhase, setTurnPhase] = useState<TurnPhase>("defense_pick");
     const [showEvent, setShowEvent] = useState(false);
+    const [prevStats, setPrevStats] = useState<GameStats>(stats);
+    const [screenShake, setScreenShake] = useState(false);
+    const [flashColor, setFlashColor] = useState<string | null>(null);
+    const [statFlash, setStatFlash] = useState<Record<string, "up" | "down" | null>>({});
+    const [lastActionName, setLastActionName] = useState<string>("");
+    const [showAttackOverlay, setShowAttackOverlay] = useState(false);
+    const prevMonthRef = useRef(month);
+    const attackTimerRef = useRef<number | null>(null);
+
+    // Detect stat changes and trigger animations
+    useEffect(() => {
+        const flashes: Record<string, "up" | "down" | null> = {};
+        let hasChange = false;
+
+        for (const key of STAT_ORDER) {
+            if (stats[key] > prevStats[key]) {
+                flashes[key] = "up";
+                hasChange = true;
+            } else if (stats[key] < prevStats[key]) {
+                flashes[key] = "down";
+                hasChange = true;
+            } else {
+                flashes[key] = null;
+            }
+        }
+
+        if (hasChange) {
+            setStatFlash(flashes);
+            const timer = window.setTimeout(() => setStatFlash({}), 800);
+            return () => clearTimeout(timer);
+        }
+    }, [stats, prevStats]);
+
+    // Track month changes to show attack overlay
+    useEffect(() => {
+        if (month !== prevMonthRef.current && currentAttack) {
+            prevMonthRef.current = month;
+            setPrevStats(stats);
+        }
+    }, [month, currentAttack, stats]);
+
+    // Show attack overlay when we get a new attack
+    useEffect(() => {
+        if (currentAttack && turnPhase === "defense_pick") {
+            setShowAttackOverlay(true);
+            setScreenShake(true);
+
+            // Red flash for strong attacks
+            if (currentAttack.cancelIncrease >= 7) {
+                setFlashColor("rgba(255,50,50,0.15)");
+            }
+
+            attackTimerRef.current = window.setTimeout(() => {
+                setScreenShake(false);
+                setFlashColor(null);
+            }, 600);
+
+            return () => {
+                if (attackTimerRef.current) clearTimeout(attackTimerRef.current);
+            };
+        }
+    }, [currentAttack, turnPhase]);
 
     // Show event modal when there's a current event
+    useEffect(() => {
+        if (currentEvent && !showEvent) setShowEvent(true);
+    }, [currentEvent, showEvent]);
+
+    const handleDefend = useCallback((action: DefenseAction) => {
+        setLastActionName(action.name);
+        setPrevStats(stats);
+        setShowAttackOverlay(false);
+
+        // Green flash for defense
+        setFlashColor("rgba(94,226,141,0.12)");
+        setTimeout(() => setFlashColor(null), 400);
+
+        onDefend(action);
+    }, [onDefend, stats]);
+
     const handleDismissEvent = () => {
         setShowEvent(false);
         onDismissEvent();
     };
 
-    // Show event after render if there's one
-    if (currentEvent && !showEvent) {
-        setShowEvent(true);
-    }
+    const handleDismissAttack = () => {
+        setShowAttackOverlay(false);
+    };
 
     const progressPercent = ((month - 1) / MAX_MONTHS) * 100;
     const isEnergyLow = stats.energy <= 20;
     const isCancelHigh = stats.cancelProgress >= 70;
+    const isCancelCritical = stats.cancelProgress >= 85;
 
     return (
-        <div className={`${styles.gameContainer} ${isCancelHigh ? styles["gameContainer--alarm"] : ""}`}>
+        <div className={`${styles.gameContainer} ${isCancelHigh ? styles["gameContainer--alarm"] : ""} ${screenShake ? styles["gameContainer--shake"] : ""}`}>
+            {/* Screen flash overlay */}
+            {flashColor && (
+                <div className={styles.screenFlash} style={{ background: flashColor }} />
+            )}
+
             <div className={styles.vnGameLayout}>
                 {/* HUD */}
                 <div className={styles.vnHud}>
@@ -79,15 +165,51 @@ function GameScreenComponent({
                     </span>
                 </div>
 
-                {/* Political Attack Banner */}
-                {currentAttack && (
-                    <div className={styles.attackBanner}>
-                        <div className={styles.attackBannerIcon}>{currentAttack.emoji}</div>
-                        <div className={styles.attackBannerContent}>
-                            <div className={styles.attackBannerLabel}>🔴 정치 머신의 공격</div>
-                            <div className={styles.attackBannerTitle}>{currentAttack.name}</div>
-                            <div className={styles.attackBannerDesc}>{currentAttack.description}</div>
-                        </div>
+                {/* Stats Bars */}
+                <div className={styles.defenseStatsPanel}>
+                    {STAT_ORDER.map((key) => {
+                        const info = STAT_LABELS[key];
+                        const val = stats[key];
+                        const tone = getStatTone(key, val);
+                        const color = tone === "good" ? "#5ee28d" : tone === "warning" ? "#ffd166" : tone === "danger" ? "#ff6b6b" : "#70a2ff";
+                        const isCancel = key === "cancelProgress";
+                        const flash = statFlash[key];
+                        const diff = val - (prevStats[key] ?? val);
+
+                        return (
+                            <div key={key} className={`${styles.defenseStatItem} ${isCancel && isCancelHigh ? styles["defenseStatItem--danger"] : ""} ${flash ? styles[`defenseStatItem--${flash}`] : ""}`}>
+                                <div className={styles.defenseStatLabel}>
+                                    {info.emoji} {info.label}
+                                </div>
+                                <div className={styles.defenseStatBar}>
+                                    <div
+                                        className={styles.defenseStatFill}
+                                        style={{
+                                            width: `${val}%`,
+                                            background: isCancel
+                                                ? `linear-gradient(90deg, #ff6b6b, #ff3333)`
+                                                : color,
+                                        }}
+                                    />
+                                </div>
+                                <div className={styles.defenseStatValue} style={{ color }}>
+                                    {val}
+                                </div>
+                                {/* Stat change indicator */}
+                                {flash && diff !== 0 && (
+                                    <span className={`${styles.statDelta} ${flash === "up" ? styles["statDelta--up"] : styles["statDelta--down"]}`}>
+                                        {diff > 0 ? `+${diff}` : diff}
+                                    </span>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Cancel Progress Warning */}
+                {isCancelCritical && (
+                    <div className={styles.criticalWarning}>
+                        🚨 공소취소 임박! 즉시 강력한 방어가 필요합니다!
                     </div>
                 )}
 
@@ -107,43 +229,11 @@ function GameScreenComponent({
                     </div>
                 )}
 
-                {/* Stats Bars */}
-                <div className={styles.defenseStatsPanel}>
-                    {STAT_ORDER.map((key) => {
-                        const info = STAT_LABELS[key];
-                        const val = stats[key];
-                        const tone = getStatTone(key, val);
-                        const color = tone === "good" ? "#5ee28d" : tone === "warning" ? "#ffd166" : tone === "danger" ? "#ff6b6b" : "#70a2ff";
-                        const isCancel = key === "cancelProgress";
-
-                        return (
-                            <div key={key} className={`${styles.defenseStatItem} ${isCancel && isCancelHigh ? styles["defenseStatItem--danger"] : ""}`}>
-                                <div className={styles.defenseStatLabel}>
-                                    {info.emoji} {info.label}
-                                </div>
-                                <div className={styles.defenseStatBar}>
-                                    <div
-                                        className={styles.defenseStatFill}
-                                        style={{
-                                            width: `${val}%`,
-                                            background: isCancel
-                                                ? `linear-gradient(90deg, #ff6b6b, #ff3333)`
-                                                : color,
-                                        }}
-                                    />
-                                </div>
-                                <div className={styles.defenseStatValue} style={{ color }}>
-                                    {val}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-
                 {/* Energy Warning */}
                 {isEnergyLow && (
-                    <div className={styles.phaseHint} style={{ background: "rgba(255,98,98,0.12)", borderColor: "rgba(255,98,98,0.3)", color: "#ffb3b3" }}>
-                        ⚠️ 에너지가 부족합니다! '힘 모으기'로 회복하세요
+                    <div className={styles.energyWarning}>
+                        <span className={styles.energyWarningIcon}>⚡</span>
+                        <span>에너지 부족! &apos;힘 모으기&apos;로 회복하세요</span>
                     </div>
                 )}
 
@@ -160,16 +250,14 @@ function GameScreenComponent({
                                     key={action.id}
                                     type="button"
                                     className={`${styles.vnActionBtn} ${!action.available ? styles["vnActionBtn--locked"] : ""} ${isRest ? styles["vnActionBtn--rest"] : ""}`}
-                                    onClick={() => onDefend(action)}
+                                    onClick={() => handleDefend(action)}
                                     disabled={!action.available}
                                 >
                                     <span className={styles.vnActionEmoji}>{action.emoji}</span>
                                     <div className={styles.vnActionInfo}>
                                         <div className={styles.vnActionName}>{action.name}</div>
                                         <div className={styles.vnActionPhase}>
-                                            {isRest
-                                                ? "⚡ +18 에너지"
-                                                : `⚡ -${action.energyCost}`}
+                                            {isRest ? "⚡ +18 에너지" : `⚡ -${action.energyCost}`}
                                             {onCooldown && ` · ⏳ ${action.cooldownLeft}턴`}
                                             {!action.available && !onCooldown && !isRest && " · 에너지 부족"}
                                         </div>
@@ -194,7 +282,29 @@ function GameScreenComponent({
                 </div>
             </div>
 
-            {/* Event Modal */}
+            {/* ===== ATTACK OVERLAY ===== */}
+            {showAttackOverlay && currentAttack && (
+                <div className={styles.attackOverlay} onClick={handleDismissAttack}>
+                    <div className={styles.attackOverlayCard}>
+                        <div className={styles.attackOverlayLabel}>⚠️ 정치 머신의 공격</div>
+                        <div className={styles.attackOverlayEmoji}>{currentAttack.emoji}</div>
+                        <h3 className={styles.attackOverlayTitle}>{currentAttack.name}</h3>
+                        <p className={styles.attackOverlayDesc}>{currentAttack.description}</p>
+                        <div className={styles.attackOverlayNews}>
+                            📰 {currentAttack.newsHeadline}
+                        </div>
+                        <div className={styles.attackOverlayEffects}>
+                            <span className={styles.attackEffectBad}>🔴 공소취소 +{currentAttack.cancelIncrease}</span>
+                            <span className={styles.attackEffectBad}>🏛️ 민주주의 -{currentAttack.democracyDamage}</span>
+                        </div>
+                        <button className={styles.attackOverlayBtn} onClick={handleDismissAttack}>
+                            방어 행동 선택하기 →
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* ===== EVENT MODAL ===== */}
             {currentEvent && showEvent && (
                 <ModalShell
                     className={`${styles.eduModal} ${currentEvent.isPositive ? styles["eduModal--positive"] : styles["eduModal--negative"]}`}

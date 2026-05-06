@@ -3390,6 +3390,299 @@
     flex: 1;
 }
 
+/* ===== 화면 흔들림 (Screen Shake) ===== */
+.gameContainer--shake {
+    animation: screenShake 0.5s ease-in-out;
+}
+
+@keyframes screenShake {
+    0%, 100% { transform: translateX(0); }
+    10% { transform: translateX(-8px) translateY(2px); }
+    20% { transform: translateX(6px) translateY(-3px); }
+    30% { transform: translateX(-6px) translateY(1px); }
+    40% { transform: translateX(4px) translateY(-2px); }
+    50% { transform: translateX(-3px) translateY(2px); }
+    60% { transform: translateX(2px) translateY(-1px); }
+    70% { transform: translateX(-2px); }
+    80% { transform: translateX(1px); }
+}
+
+/* ===== 화면 플래시 ===== */
+.screenFlash {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    animation: flashFade 500ms ease forwards;
+}
+
+@keyframes flashFade {
+    0% { opacity: 0.8; }
+    100% { opacity: 0; }
+}
+
+/* ===== 스탯 변동 애니메이션 ===== */
+.defenseStatItem--up {
+    animation: statGlowGreen 600ms ease;
+}
+
+.defenseStatItem--down {
+    animation: statGlowRed 600ms ease;
+}
+
+@keyframes statGlowGreen {
+    0% { box-shadow: 0 0 0 0 rgba(94, 226, 141, 0); }
+    30% { box-shadow: 0 0 16px 4px rgba(94, 226, 141, 0.4); background: rgba(94, 226, 141, 0.08); }
+    100% { box-shadow: 0 0 0 0 rgba(94, 226, 141, 0); }
+}
+
+@keyframes statGlowRed {
+    0% { box-shadow: 0 0 0 0 rgba(255, 98, 98, 0); }
+    30% { box-shadow: 0 0 16px 4px rgba(255, 98, 98, 0.4); background: rgba(255, 98, 98, 0.08); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 98, 98, 0); }
+}
+
+/* ===== 스탯 변동 수치 표시 ===== */
+.statDelta {
+    position: absolute;
+    right: -8px;
+    top: -6px;
+    font-size: 0.72rem;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 6px;
+    animation: deltaPopup 800ms ease forwards;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.statDelta--up {
+    color: #5ee28d;
+    background: rgba(94, 226, 141, 0.2);
+}
+
+.statDelta--down {
+    color: #ff6b6b;
+    background: rgba(255, 98, 98, 0.2);
+}
+
+@keyframes deltaPopup {
+    0% { opacity: 0; transform: translateY(8px) scale(0.8); }
+    20% { opacity: 1; transform: translateY(-4px) scale(1.1); }
+    60% { opacity: 1; transform: translateY(-2px) scale(1); }
+    100% { opacity: 0; transform: translateY(-12px) scale(0.9); }
+}
+
+/* 스탯 아이템을 relative로 만들어 delta 배치 */
+.defenseStatItem {
+    position: relative;
+}
+
+/* ===== 정치 공격 풀스크린 오버레이 ===== */
+.attackOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    animation: overlayFadeIn 300ms ease;
+    cursor: pointer;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.attackOverlayCard {
+    width: min(100%, 440px);
+    padding: 30px 24px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(60, 20, 20, 0.98), rgba(20, 10, 30, 0.98));
+    border: 2px solid rgba(255, 98, 98, 0.5);
+    box-shadow:
+        0 0 40px rgba(255, 98, 98, 0.2),
+        0 0 80px rgba(255, 50, 50, 0.1),
+        0 30px 60px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    animation: attackCardSlam 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes attackCardSlam {
+    0% { transform: scale(0.3) translateY(-60px); opacity: 0; }
+    60% { transform: scale(1.05) translateY(0); opacity: 1; }
+    80% { transform: scale(0.98); }
+    100% { transform: scale(1); }
+}
+
+.attackOverlayLabel {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--game-accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    animation: labelPulse 1s ease-in-out infinite;
+}
+
+@keyframes labelPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.attackOverlayEmoji {
+    font-size: 3.5rem;
+    line-height: 1;
+    margin-bottom: 12px;
+    display: block;
+    animation: emojiShake 0.6s ease-in-out;
+}
+
+@keyframes emojiShake {
+    0%, 100% { transform: rotate(0); }
+    15% { transform: rotate(-15deg); }
+    30% { transform: rotate(12deg); }
+    45% { transform: rotate(-8deg); }
+    60% { transform: rotate(5deg); }
+}
+
+.attackOverlayTitle {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #ffb3b3;
+    margin: 0 0 10px;
+    line-height: 1.3;
+}
+
+.attackOverlayDesc {
+    font-size: 0.92rem;
+    color: rgba(237, 242, 255, 0.8);
+    line-height: 1.6;
+    margin: 0 0 14px;
+    word-break: keep-all;
+}
+
+.attackOverlayNews {
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.82rem;
+    color: rgba(237, 242, 255, 0.7);
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.attackOverlayEffects {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.attackEffectBad {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255, 98, 98, 0.15);
+    border: 1px solid rgba(255, 98, 98, 0.3);
+    color: #ffb3b3;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.attackOverlayBtn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(94, 226, 141, 0.2), rgba(94, 226, 141, 0.1));
+    border: 1px solid rgba(94, 226, 141, 0.3);
+    color: #b6f5ca;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.attackOverlayBtn:hover {
+    background: linear-gradient(135deg, rgba(94, 226, 141, 0.3), rgba(94, 226, 141, 0.15));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(94, 226, 141, 0.2);
+}
+
+/* ===== 위기 경고 ===== */
+.criticalWarning {
+    margin: 4px 12px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: rgba(255, 50, 50, 0.12);
+    border: 2px solid rgba(255, 50, 50, 0.4);
+    color: #ff9999;
+    font-size: 0.88rem;
+    font-weight: 800;
+    text-align: center;
+    animation: criticalPulse 0.8s ease-in-out infinite;
+}
+
+@keyframes criticalPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255, 50, 50, 0);
+        border-color: rgba(255, 50, 50, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 20px 4px rgba(255, 50, 50, 0.2);
+        border-color: rgba(255, 50, 50, 0.7);
+    }
+}
+
+/* ===== 에너지 경고 ===== */
+.energyWarning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(255, 191, 71, 0.08);
+    border: 1px solid rgba(255, 191, 71, 0.25);
+    color: #ffe29f;
+    font-size: 0.82rem;
+    font-weight: 600;
+    animation: fadeSlideUp 300ms ease;
+}
+
+.energyWarningIcon {
+    font-size: 1.2rem;
+    animation: energyBlink 1s ease-in-out infinite;
+}
+
+@keyframes energyBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ===== 액션 버튼 클릭 효과 ===== */
+.vnActionBtn:active:not(:disabled) {
+    transform: scale(0.95) !important;
+    transition: transform 80ms ease;
+}
+
+.vnActionBtn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* 경보 모드 배경 ===== */
+.gameContainer--alarm {
+    background:
+        radial-gradient(circle at 50% 0%, rgba(255, 50, 50, 0.15), transparent 50%),
+        radial-gradient(circle at 50% 100%, rgba(8, 12, 30, 1), transparent 60%),
+        linear-gradient(180deg, #0e0a14, #090b14) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
     :global(*),
     :global(*::before),
