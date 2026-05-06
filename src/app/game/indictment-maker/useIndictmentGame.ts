@@ -1,63 +1,45 @@
 "use client";
 
-import { useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { type GameAction } from "./gameData";
-import { gameReducer, getEventForecast, rollRandomEvent } from "./gameReducer";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { DEFENSE_ACTIONS, type DefenseAction } from "./gameData";
+import { gameReducer } from "./gameReducer";
 import { createClient } from "@/utils/supabase/client";
 import {
-    CANCEL_ANIMATION_MS,
-    createInitialSnapshot,
+    canUseAction,
+    checkRandomEvent,
     createInitialPlayStats,
+    createInitialSnapshot,
     ENDING_COLLECTION_KEY,
-    getAvailableActions,
-    getCharacterLevel,
     getEndingById,
-    isActionDone,
-    isActionLocked,
-    LEGACY_SAVE_KEY,
     MAX_SAVE_SLOTS,
     PLAY_STATS_KEY,
     SAVE_SLOTS_KEY,
+    selectPoliticalAttack,
     type EndingCollection,
     type PlayStats,
     type SaveSlotRecord,
-    type StoredGameState,
     type StoredSaveSlots,
 } from "./gameLogic";
 
-function isStoredGameState(value: unknown): value is StoredGameState {
-    if (!value || typeof value !== "object") return false;
-
-    const candidate = value as Partial<StoredGameState>;
-    if (candidate.version !== 2 || !candidate.snapshot) return false;
-
-    return typeof candidate.snapshot.month === "number" && Array.isArray(candidate.snapshot.newsHistory);
-}
-
 function isStoredSaveSlots(value: unknown): value is StoredSaveSlots {
     if (!value || typeof value !== "object") return false;
-
     const candidate = value as Partial<StoredSaveSlots>;
-    return candidate.version === 3 && typeof candidate.activeSlotId === "number" && Array.isArray(candidate.slots);
+    return candidate.version === 4 && typeof candidate.activeSlotId === "number" && Array.isArray(candidate.slots);
 }
 
 function isEndingCollection(value: unknown): value is EndingCollection {
     if (!value || typeof value !== "object") return false;
-
     const candidate = value as Partial<EndingCollection>;
     return candidate.version === 1 && Array.isArray(candidate.endingIds);
 }
 
 function isPlayStats(value: unknown): value is PlayStats {
     if (!value || typeof value !== "object") return false;
-
     const candidate = value as Partial<PlayStats>;
     return (
         candidate.version === 1 &&
         typeof candidate.totalSessions === "number" &&
-        typeof candidate.totalActions === "number" &&
-        typeof candidate.completedRuns === "number" &&
-        typeof candidate.actionCounts === "object"
+        typeof candidate.totalActions === "number"
     );
 }
 
@@ -83,6 +65,18 @@ export interface PlayStatsDetails {
     completionRate: number;
 }
 
+export interface LeaderboardEntry {
+    id: string;
+    nickname: string;
+    survived_months: number;
+    democracy_score: number;
+    awareness_score: number;
+    cancel_progress: number;
+    ending_id: string;
+    is_victory: boolean;
+    created_at: string;
+}
+
 export function useIndictmentGame() {
     const [state, dispatch] = useReducer(gameReducer, undefined, createInitialSnapshot);
     const [isHydrated, setIsHydrated] = useState(false);
@@ -90,205 +84,139 @@ export function useIndictmentGame() {
     const [saveSlots, setSaveSlots] = useState<SaveSlotRecord[]>([]);
     const [discoveredEndingIds, setDiscoveredEndingIds] = useState<string[]>([]);
     const [playStats, setPlayStats] = useState<PlayStats>(createInitialPlayStats);
-    const cancelTimerRef = useRef<number | null>(null);
+    const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
     const countedEndingRef = useRef<string | null>(null);
-    const recentEventIdsRef = useRef<string[]>([]);
+    const usedEventsRef = useRef<Set<string>>(new Set());
 
+    // Hydrate from localStorage
     useEffect(() => {
         if (typeof window === "undefined") return;
-
         try {
             const slotsRaw = window.localStorage.getItem(SAVE_SLOTS_KEY);
             if (slotsRaw) {
-                const parsedSlots = JSON.parse(slotsRaw) as unknown;
-                if (isStoredSaveSlots(parsedSlots)) {
-                    setSaveSlots(parsedSlots.slots);
-                    setActiveSlotId(parsedSlots.activeSlotId);
-                }
-            } else {
-                const legacyRaw = window.localStorage.getItem(LEGACY_SAVE_KEY);
-                if (legacyRaw) {
-                    const parsedLegacy = JSON.parse(legacyRaw) as unknown;
-                    if (isStoredGameState(parsedLegacy)) {
-                        const migratedSlots: SaveSlotRecord[] = [
-                            {
-                                slotId: 1,
-                                snapshot: parsedLegacy.snapshot,
-                                updatedAt: new Date().toISOString(),
-                            },
-                        ];
-
-                        const migratedPayload: StoredSaveSlots = {
-                            version: 3,
-                            activeSlotId: 1,
-                            slots: migratedSlots,
-                        };
-
-                        window.localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(migratedPayload));
-                        window.localStorage.removeItem(LEGACY_SAVE_KEY);
-                        setSaveSlots(migratedSlots);
-                        setActiveSlotId(1);
-                    }
+                const parsed = JSON.parse(slotsRaw) as unknown;
+                if (isStoredSaveSlots(parsed)) {
+                    setSaveSlots(parsed.slots);
+                    setActiveSlotId(parsed.activeSlotId);
                 }
             }
 
             const collectionRaw = window.localStorage.getItem(ENDING_COLLECTION_KEY);
             if (collectionRaw) {
-                const parsedCollection = JSON.parse(collectionRaw) as unknown;
-                if (isEndingCollection(parsedCollection)) {
-                    setDiscoveredEndingIds(parsedCollection.endingIds);
-                }
+                const parsed = JSON.parse(collectionRaw) as unknown;
+                if (isEndingCollection(parsed)) setDiscoveredEndingIds(parsed.endingIds);
             }
 
             const statsRaw = window.localStorage.getItem(PLAY_STATS_KEY);
             if (statsRaw) {
-                const parsedStats = JSON.parse(statsRaw) as unknown;
-                if (isPlayStats(parsedStats)) {
-                    setPlayStats(parsedStats);
-                }
+                const parsed = JSON.parse(statsRaw) as unknown;
+                if (isPlayStats(parsed)) setPlayStats(parsed);
             }
         } catch {
             window.localStorage.removeItem(SAVE_SLOTS_KEY);
-            window.localStorage.removeItem(LEGACY_SAVE_KEY);
         } finally {
             setIsHydrated(true);
         }
     }, []);
 
+    // Persist save state
     useEffect(() => {
         if (!isHydrated || typeof window === "undefined") return;
 
-        const shouldPersist = state.phase !== "title" || state.month > 1 || state.newsHistory.length > 0;
-        let nextSlots = saveSlots;
-
+        const shouldPersist = state.phase !== "title" || state.month > 1;
         if (shouldPersist) {
-            const existingRecord = saveSlots.find((slot) => slot.slotId === activeSlotId);
             const nextRecord: SaveSlotRecord = {
                 slotId: activeSlotId,
                 snapshot: state,
                 updatedAt: new Date().toISOString(),
             };
-
-            nextSlots = [
-                ...saveSlots.filter((slot) => slot.slotId !== activeSlotId),
+            const nextSlots = [
+                ...saveSlots.filter((s) => s.slotId !== activeSlotId),
                 nextRecord,
             ].sort((a, b) => a.slotId - b.slotId);
 
-            const payload: StoredSaveSlots = {
-                version: 3,
-                activeSlotId,
-                slots: nextSlots,
-            };
-
+            const payload: StoredSaveSlots = { version: 4, activeSlotId, slots: nextSlots };
             window.localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(payload));
-            if (!existingRecord || existingRecord.snapshot !== state) {
-                setSaveSlots(nextSlots);
-            }
-            return;
+            setSaveSlots(nextSlots);
         }
+    }, [activeSlotId, isHydrated, state]);
 
-        if (saveSlots.length > 0) {
-            const payload: StoredSaveSlots = {
-                version: 3,
-                activeSlotId,
-                slots: saveSlots,
-            };
-            window.localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(payload));
-        }
-    }, [activeSlotId, isHydrated, saveSlots, state]);
-
+    // Persist ending collection
     useEffect(() => {
         if (!isHydrated || typeof window === "undefined" || !state.endingId) return;
         if (discoveredEndingIds.includes(state.endingId)) return;
 
-        const nextEndingIds = [...discoveredEndingIds, state.endingId];
-        const payload: EndingCollection = {
-            version: 1,
-            endingIds: nextEndingIds,
-        };
-
-        window.localStorage.setItem(ENDING_COLLECTION_KEY, JSON.stringify(payload));
-        setDiscoveredEndingIds(nextEndingIds);
+        const nextIds = [...discoveredEndingIds, state.endingId];
+        window.localStorage.setItem(ENDING_COLLECTION_KEY, JSON.stringify({ version: 1, endingIds: nextIds }));
+        setDiscoveredEndingIds(nextIds);
     }, [discoveredEndingIds, isHydrated, state.endingId]);
 
+    // Record ending
     useEffect(() => {
         if (!isHydrated || !state.endingId) return;
         if (countedEndingRef.current === state.endingId) return;
 
         countedEndingRef.current = state.endingId;
-
-        setPlayStats((current) => {
-            return {
-                ...current,
-                completedRuns: current.completedRuns + 1,
-                latestEndingId: state.endingId,
-                latestPlayedAt: new Date().toISOString(),
-            };
-        });
-
-        // 엔딩 도달 시 Supabase에 완주 카운트 증가 (세션당 1회)
-        const sessionKey = `game_completed_${state.endingId}`;
-        if (typeof window !== "undefined" && !sessionStorage.getItem(sessionKey)) {
-            sessionStorage.setItem(sessionKey, "true");
-            const increment = async () => {
-                try {
-                    const supabase = createClient();
-                    await supabase.rpc("increment_game_completion");
-                } catch (err) {
-                    // Ignore error
-                }
-            };
-            increment();
-        }
+        setPlayStats((c) => ({
+            ...c,
+            completedRuns: c.completedRuns + 1,
+            latestEndingId: state.endingId,
+            latestPlayedAt: new Date().toISOString(),
+        }));
     }, [isHydrated, state.endingId]);
 
+    // Persist stats
     useEffect(() => {
         if (!isHydrated || typeof window === "undefined") return;
         window.localStorage.setItem(PLAY_STATS_KEY, JSON.stringify(playStats));
     }, [isHydrated, playStats]);
 
-    useEffect(() => {
-        if (state.phase !== "cancel_animation") return;
-
-        cancelTimerRef.current = window.setTimeout(() => {
-            dispatch({ type: "finish_cancel_animation" });
-        }, CANCEL_ANIMATION_MS);
-
-        return () => {
-            if (cancelTimerRef.current !== null) {
-                window.clearTimeout(cancelTimerRef.current);
-            }
-        };
-    }, [state.phase]);
+    // Fetch leaderboard
+    const fetchLeaderboard = useCallback(async () => {
+        try {
+            const supabase = createClient();
+            const { data } = await supabase.rpc("get_game_leaderboard", { limit_count: 20 });
+            if (Array.isArray(data)) setLeaderboard(data);
+        } catch { /* ignore */ }
+    }, []);
 
     useEffect(() => {
-        if (state.phase !== "playing" || state.currentEvent) return;
-
-        const randomEvent = rollRandomEvent(state.month, state.stats, state.recentActions);
-        // Prevent the same event from firing within 4 turns (reduces repetition fatigue)
-        if (randomEvent && !recentEventIdsRef.current.includes(randomEvent.id)) {
-            recentEventIdsRef.current = [...recentEventIdsRef.current, randomEvent.id].slice(-4);
-            dispatch({ type: "open_event", event: randomEvent });
+        if (state.phase === "title" || state.phase === "ending") {
+            fetchLeaderboard();
         }
-    }, [state.currentEvent, state.month, state.phase, state.recentActions, state.stats]);
+    }, [state.phase, fetchLeaderboard]);
 
-    const actions = useMemo(
-        () =>
-            getAvailableActions(state.stats.cancelProgress).filter((action) => {
-                if (isActionDone(action, state.milestones)) {
-                    return ["do_nothing", "press_conference", "rally_supporters", "discredit_prosecutors"].includes(
-                        action.id,
-                    );
-                }
+    // Submit score to leaderboard
+    const submitScore = useCallback(async (nickname: string) => {
+        const ending = getEndingById(state.endingId);
+        if (!ending) return;
 
-                return true;
-            }),
-        [state.milestones, state.stats.cancelProgress],
-    );
+        try {
+            const supabase = createClient();
+            await supabase.from("game_leaderboard").insert([{
+                nickname,
+                survived_months: Math.min(state.month - 1, 30),
+                democracy_score: state.stats.democracy,
+                awareness_score: state.stats.awareness,
+                cancel_progress: state.stats.cancelProgress,
+                ending_id: state.endingId,
+                is_victory: ending.isVictory,
+            }]);
+            await fetchLeaderboard();
+        } catch { /* ignore */ }
+    }, [state, fetchLeaderboard]);
 
-    const characterLevel = getCharacterLevel(state.stats.cancelProgress);
+    // Available defense actions
+    const defenseActions = useMemo(() => {
+        return DEFENSE_ACTIONS.map((action) => ({
+            ...action,
+            available: canUseAction(action, state.stats.energy, state.cooldowns),
+            cooldownLeft: state.cooldowns[action.id] ?? 0,
+        }));
+    }, [state.stats.energy, state.cooldowns]);
+
     const endingData = getEndingById(state.endingId);
-    const eventForecast = getEventForecast(state.month, state.stats, state.recentActions);
+
     const mostUsedActionId =
         Object.entries(playStats.actionCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
     const playStatsSummary: PlayStatsSummary = {
@@ -305,11 +233,11 @@ export function useIndictmentGame() {
             .map(([actionId, count]) => ({ actionId, count })),
         completionRate: playStats.totalSessions > 0 ? playStats.completedRuns / playStats.totalSessions : 0,
     };
-    const activeSlotRecord = saveSlots.find((slot) => slot.slotId === activeSlotId) ?? null;
-    const saveSlotSummaries: SaveSlotSummary[] = Array.from({ length: MAX_SAVE_SLOTS }, (_, index) => {
-        const slotId = index + 1;
-        const record = saveSlots.find((slot) => slot.slotId === slotId);
 
+    const activeSlotRecord = saveSlots.find((s) => s.slotId === activeSlotId) ?? null;
+    const saveSlotSummaries: SaveSlotSummary[] = Array.from({ length: MAX_SAVE_SLOTS }, (_, i) => {
+        const slotId = i + 1;
+        const record = saveSlots.find((s) => s.slotId === slotId);
         return {
             slotId,
             hasSave: Boolean(record),
@@ -322,71 +250,81 @@ export function useIndictmentGame() {
 
     const clearSave = () => {
         if (typeof window !== "undefined") {
-            const nextSlots = saveSlots.filter((slot) => slot.slotId !== activeSlotId);
-            const payload: StoredSaveSlots = {
-                version: 3,
-                activeSlotId,
-                slots: nextSlots,
-            };
-
+            const nextSlots = saveSlots.filter((s) => s.slotId !== activeSlotId);
+            const payload: StoredSaveSlots = { version: 4, activeSlotId, slots: nextSlots };
             window.localStorage.setItem(SAVE_SLOTS_KEY, JSON.stringify(payload));
         }
-        setSaveSlots((current) => current.filter((slot) => slot.slotId !== activeSlotId));
+        setSaveSlots((c) => c.filter((s) => s.slotId !== activeSlotId));
     };
+
+    // ===== TURN FLOW =====
+    // Each turn: 1) Political machine attacks → 2) Random event check → 3) Player defends
+    const executeTurn = useCallback((action: DefenseAction) => {
+        if (state.phase !== "playing") return;
+
+        // Step 1: Political attack
+        const attack = selectPoliticalAttack(state.month);
+        dispatch({ type: "apply_attack", attack });
+
+        // Step 2: Random event check (after attack)
+        const event = checkRandomEvent(state.month, usedEventsRef.current);
+        if (event) {
+            usedEventsRef.current.add(event.id);
+            dispatch({ type: "apply_event", event });
+        }
+
+        // Step 3: Defense action
+        setPlayStats((c) => ({
+            ...c,
+            totalActions: c.totalActions + 1,
+            actionCounts: {
+                ...c.actionCounts,
+                [action.id]: (c.actionCounts[action.id] ?? 0) + 1,
+            },
+            latestPlayedAt: new Date().toISOString(),
+        }));
+        dispatch({ type: "execute_defense", action });
+    }, [state.phase, state.month]);
 
     return {
         activeSlotId,
-        actions,
-        characterLevel,
+        defenseActions,
         discoveredEndingIds,
         endingData,
-        eventForecast,
         hasSavedGame: Boolean(activeSlotRecord),
         isHydrated,
+        leaderboard,
         playStatsDetails,
         playStatsSummary,
         saveSlotSummaries,
         state,
+        submitScore,
         selectSlot: (slotId: number) => setActiveSlotId(slotId),
         continueSavedGame: () => {
             if (!activeSlotRecord) return;
             dispatch({ type: "continue_game", snapshot: activeSlotRecord.snapshot });
         },
         dismissEvent: () => dispatch({ type: "dismiss_event" }),
-        executeAction: (action: GameAction) => {
-            if (state.phase !== "playing") return;
-            if (isActionLocked(action, state.milestones)) return;
-            setPlayStats((current) => ({
-                ...current,
-                totalActions: current.totalActions + 1,
-                actionCounts: {
-                    ...current.actionCounts,
-                    [action.id]: (current.actionCounts[action.id] ?? 0) + 1,
-                },
-                latestPlayedAt: new Date().toISOString(),
-            }));
-            dispatch({ type: "execute_action", action });
-        },
+        executeTurn,
         getShareText: () => {
             if (endingData) {
-                return `🚨 [공소취소 메이커] 플레이 결과\n"내 손으로 대한민국의 사법 시스템을 멈췄다."\n\n👑 나의 권력 등급: ${characterLevel.name}\n⚖️ 남아있는 법치주의: ${state.stats.lawRule}%\n💥 달성 엔딩: [${endingData.title}]\n\n현실보다 더 현실 같은 정치 블랙코미디 시뮬레이션.\n당신은 기소를 무사히 덮을 수 있을까? 직접 해보세요👇`;
+                return `⚖️ [공소취소 방어전] 결과\n${endingData.isVictory ? "🏆 법치주의를 지켜냈다!" : "💀 공소취소를 막지 못했다..."}\n\n📅 ${Math.min(state.month - 1, 30)}개월 생존\n🏛️ 민주주의 ${state.stats.democracy}%\n🔴 공소취소 진행률 ${state.stats.cancelProgress}%\n\n엔딩: ${endingData.emoji} ${endingData.name}\n\n당신은 막을 수 있을까? 👇`;
             }
-
-            return "⚖️ 재판은 멈추고, 권력은 자란다. 현실 100% 고증 블랙코미디 시뮬레이션 [공소취소 메이커] 👇";
+            return "⚖️ 재판을 지켜라! 정치 권력이 재판을 없애려 한다. 막을 수 있을까? [공소취소 방어전] 👇";
         },
         clearSave,
-        isActionDone: (action: GameAction) => isActionDone(action, state.milestones),
-        isActionLocked: (action: GameAction) => isActionLocked(action, state.milestones),
         restart: () => {
             countedEndingRef.current = null;
+            usedEventsRef.current = new Set();
             clearSave();
             dispatch({ type: "restart" });
         },
         startNewGame: () => {
             countedEndingRef.current = null;
-            setPlayStats((current) => ({
-                ...current,
-                totalSessions: current.totalSessions + 1,
+            usedEventsRef.current = new Set();
+            setPlayStats((c) => ({
+                ...c,
+                totalSessions: c.totalSessions + 1,
                 latestPlayedAt: new Date().toISOString(),
             }));
             dispatch({ type: "start_new_game" });

@@ -1,187 +1,185 @@
-import { GAME_ENDINGS, type GameEnding, type GameStats } from "./gameData";
-import type { ImpactCounters } from "./impactData";
-import StoreCta from "./StoreCta";
+import { useState } from "react";
+import { GAME_ENDINGS, MAX_MONTHS, type GameEnding, type GameStats } from "./gameData";
+import type { LeaderboardEntry } from "./useIndictmentGame";
 import styles from "./game.module.css";
 
 interface EndingScreenProps {
     completionCount?: number | null;
     discoveredEndingIds: string[];
     endingData: GameEnding;
-    impactCounters?: ImpactCounters;
     onRestart: () => void;
     onShare: () => void;
     stats: GameStats;
+    month: number;
+    leaderboard: LeaderboardEntry[];
+    onSubmitScore: (nickname: string) => Promise<void>;
 }
 
-const ENDING_STATS = [
-    { key: "lawRule", label: "법치주의" },
-    { key: "separation", label: "삼권분립" },
-    { key: "judicialIndep", label: "사법독립" },
-    { key: "publicTrust", label: "국민신뢰" },
-    { key: "regimeShield", label: "정권방탄" },
-    { key: "cancelProgress", label: "공소취소" },
-] as const;
+export default function EndingScreen({
+    completionCount,
+    discoveredEndingIds,
+    endingData,
+    onRestart,
+    onShare,
+    stats,
+    month,
+    leaderboard,
+    onSubmitScore,
+}: EndingScreenProps) {
+    const [nickname, setNickname] = useState("");
+    const [submitted, setSubmitted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
-const ENDING_PRESENTATION: Record<string, { kicker: string; accent: string; glow: string; summary: string; bg: string; charImg: string }> = {
-    shield_success: {
-        kicker: "방탄은 성공했다",
-        accent: "#ffb3b3",
-        glow: "rgba(255, 73, 109, 0.38)",
-        summary: "법정은 닫혔고, 권력만 살아남았습니다.",
-        bg: "/game/bg-courtroom.png",
-        charImg: "/game/politician.png",
-    },
-    constitutional_block: {
-        kicker: "헌법이 마지막 문을 닫았다",
-        accent: "#ffe29f",
-        glow: "rgba(255, 209, 102, 0.28)",
-        summary: "제동은 늦었지만, 법의 선은 아직 남아 있습니다.",
-        bg: "/game/bg-courtroom.png",
-        charImg: "/game/judge.png",
-    },
-    public_rage: {
-        kicker: "거리의 온도가 먼저 폭발했다",
-        accent: "#ffb38d",
-        glow: "rgba(255, 125, 64, 0.34)",
-        summary: "정권은 버텼지만 시민 신뢰는 붕괴했습니다.",
-        bg: "/game/bg-protest.png",
-        charImg: "/game/citizen.png",
-    },
-    law_collapse: {
-        kicker: "다음 권력도 이 방식을 배웠다",
-        accent: "#d2b3ff",
-        glow: "rgba(180, 113, 255, 0.34)",
-        summary: "이제 재판은 제도가 아니라 정치 기술이 되었습니다.",
-        bg: "/game/bg-parliament.png",
-        charImg: "/game/prosecutor.png",
-    },
-    term_ended: {
-        kicker: "시계는 멈춘 듯했지만 끝내 다시 갔다",
-        accent: "#a7d7ff",
-        glow: "rgba(86, 172, 255, 0.28)",
-        summary: "유예는 끝났고, 판단은 다시 법정으로 돌아갑니다.",
-        bg: "/game/bg-courtroom.png",
-        charImg: "/game/judge.png",
-    },
-};
+    const survived = Math.min(month - 1, MAX_MONTHS);
 
-export default function EndingScreen({ completionCount, discoveredEndingIds, endingData, impactCounters, onRestart, onShare, stats }: EndingScreenProps) {
-    const isCollected = discoveredEndingIds.includes(endingData.id);
-    const p = ENDING_PRESENTATION[endingData.id] ?? ENDING_PRESENTATION.term_ended;
+    const handleSubmit = async () => {
+        if (!nickname.trim() || submitted) return;
+        setSubmitting(true);
+        await onSubmitScore(nickname.trim());
+        setSubmitted(true);
+        setSubmitting(false);
+    };
+
+    const bgGradient = endingData.isVictory
+        ? "linear-gradient(180deg, rgba(20,60,40,0.98), rgba(10,15,30,0.98))"
+        : "linear-gradient(180deg, rgba(60,20,20,0.98), rgba(15,10,20,0.98))";
 
     return (
         <div className={styles.gameContainer}>
-            <div
-                className={styles.vnEndingScene}
-                style={{ "--ending-accent": p.accent, "--ending-glow": p.glow } as React.CSSProperties}
-            >
-                {/* Background */}
-                <div className={styles.vnEndingBg} style={{ backgroundImage: `url(${p.bg})` }} />
-                <div className={styles.vnBgOverlay} />
+            <div className={styles.endingScreen} style={{ background: bgGradient }}>
+                <div className={styles.vnEndingEmoji}>{endingData.emoji}</div>
 
-                {/* Character */}
-                {p.charImg && (
-                    <div style={{
-                        position: "absolute", bottom: "40%", left: "50%",
-                        transform: "translateX(-50%)", zIndex: 1, opacity: 0.25,
-                        maxWidth: "300px", width: "60%", pointerEvents: "none",
-                    }}>
-                        <img src={p.charImg} alt="" style={{ width: "100%", filter: "grayscale(0.5)" }} />
+                <div className={styles.vnEndingBadge}>
+                    {endingData.isVictory ? "🏆 승리!" : "💀 패배..."}
+                </div>
+
+                <h2 className={styles.vnEndingTitle}>{endingData.title}</h2>
+
+                <p className={styles.vnEndingDesc}>{endingData.description}</p>
+
+                {/* 결과 수치 */}
+                <div className={styles.vnEndingStatsGrid}>
+                    <div className={styles.vnEndingStatCard}>
+                        <div className={styles.vnEndingStatLabel}>📅 생존 기간</div>
+                        <div className={`${styles.vnEndingStatValue} ${survived >= MAX_MONTHS ? styles["vnEndingStatValue--good"] : styles["vnEndingStatValue--bad"]}`}>
+                            {survived}/{MAX_MONTHS}개월
+                        </div>
+                    </div>
+                    <div className={styles.vnEndingStatCard}>
+                        <div className={styles.vnEndingStatLabel}>🔴 공소취소 진행률</div>
+                        <div className={`${styles.vnEndingStatValue} ${stats.cancelProgress < 100 ? styles["vnEndingStatValue--good"] : styles["vnEndingStatValue--bad"]}`}>
+                            {stats.cancelProgress}%
+                        </div>
+                    </div>
+                    <div className={styles.vnEndingStatCard}>
+                        <div className={styles.vnEndingStatLabel}>🏛️ 민주주의</div>
+                        <div className={`${styles.vnEndingStatValue} ${stats.democracy >= 50 ? styles["vnEndingStatValue--good"] : styles["vnEndingStatValue--bad"]}`}>
+                            {stats.democracy}%
+                        </div>
+                    </div>
+                    <div className={styles.vnEndingStatCard}>
+                        <div className={styles.vnEndingStatLabel}>👁️ 국민 인식</div>
+                        <div className={`${styles.vnEndingStatValue} ${stats.awareness >= 50 ? styles["vnEndingStatValue--good"] : styles["vnEndingStatValue--bad"]}`}>
+                            {stats.awareness}%
+                        </div>
+                    </div>
+                </div>
+
+                {/* 랭킹 등록 */}
+                {!submitted ? (
+                    <div className={styles.rankSubmitBox}>
+                        <div className={styles.rankSubmitTitle}>🏅 랭킹에 등록하세요</div>
+                        <div className={styles.rankSubmitRow}>
+                            <input
+                                type="text"
+                                value={nickname}
+                                onChange={(e) => setNickname(e.target.value)}
+                                placeholder="닉네임 입력"
+                                maxLength={12}
+                                className={styles.rankInput}
+                            />
+                            <button
+                                className={styles.startBtn}
+                                onClick={handleSubmit}
+                                disabled={!nickname.trim() || submitting}
+                                style={{ padding: "12px 20px", fontSize: "0.9rem" }}
+                            >
+                                {submitting ? "등록 중..." : "등록"}
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className={styles.rankSubmitBox} style={{ borderColor: "rgba(94,226,141,0.3)", background: "rgba(94,226,141,0.08)" }}>
+                        <div className={styles.rankSubmitTitle}>✅ 랭킹에 등록되었습니다!</div>
                     </div>
                 )}
 
-                <div className={styles.vnEndingContent}>
-                    <div className={styles.vnEndingEmoji}>{endingData.emoji}</div>
-                    <div className={styles.endingLabel}>— ENDING —</div>
-                    <div className={styles.vnEndingKicker}>{p.kicker}</div>
-                    <h2 className={styles.vnEndingTitle}>{endingData.title}</h2>
-                    {isCollected && <div className={styles.newEndingBadge}>COLLECTED</div>}
-                    <p className={styles.vnEndingSummary}>{p.summary}</p>
-                    <p className={styles.vnEndingDesc}>{endingData.description}</p>
+                {/* 리더보드 */}
+                {leaderboard.length > 0 && (
+                    <div className={styles.leaderboardPanel}>
+                        <div className={styles.leaderboardTitle}>🏆 리더보드 TOP {leaderboard.length}</div>
+                        <div className={styles.leaderboardList}>
+                            {leaderboard.map((entry, idx) => (
+                                <div
+                                    key={entry.id}
+                                    className={`${styles.leaderboardItem} ${entry.is_victory ? styles["leaderboardItem--victory"] : ""}`}
+                                >
+                                    <span className={styles.leaderboardRank}>
+                                        {idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `${idx + 1}`}
+                                    </span>
+                                    <span className={styles.leaderboardName}>{entry.nickname}</span>
+                                    <span className={styles.leaderboardScore}>
+                                        {entry.survived_months}개월
+                                        {entry.is_victory && " ✅"}
+                                    </span>
+                                    <span className={styles.leaderboardDemocracy}>
+                                        🏛️{entry.democracy_score}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
-                    <div className={styles.vnEndingStatsGrid}>
-                        {ENDING_STATS.map(({ key, label }) => {
-                            const value = stats[key];
+                {/* 완주자 수 */}
+                {completionCount != null && (
+                    <div className={styles.completionBanner}>
+                        🏆 지금까지 <strong>{completionCount.toLocaleString()}</strong>명이 법치주의를 지켜냈습니다
+                    </div>
+                )}
+
+                {/* 엔딩 컬렉션 */}
+                <div className={styles.collectionPanel}>
+                    <div className={styles.collectionHeader}>
+                        <div className={styles.collectionTitle}>엔딩 컬렉션</div>
+                        <div className={styles.collectionMeta}>
+                            {discoveredEndingIds.length}/{GAME_ENDINGS.length} 해금
+                        </div>
+                    </div>
+                    <div className={styles.collectionGrid}>
+                        {GAME_ENDINGS.map((ending) => {
+                            const unlocked = discoveredEndingIds.includes(ending.id);
                             return (
-                                <div key={label} className={styles.vnEndingStatCard}>
-                                    <div className={styles.vnEndingStatLabel}>{label}</div>
-                                    <div className={`${styles.vnEndingStatValue} ${value >= 50 ? styles["vnEndingStatValue--good"] : styles["vnEndingStatValue--bad"]}`}>
-                                        {value}
-                                    </div>
+                                <div
+                                    key={ending.id}
+                                    className={`${styles.collectionBadge} ${unlocked ? styles["collectionBadge--unlocked"] : ""}`}
+                                >
+                                    <span className={styles.collectionEmoji}>{unlocked ? ending.emoji : "❔"}</span>
+                                    <span className={styles.collectionName}>{unlocked ? ending.name : "잠김"}</span>
                                 </div>
                             );
                         })}
                     </div>
+                </div>
 
-                    {/* 피해 카운터 요약 */}
-                    {impactCounters && (impactCounters.intimidatedProsecutors > 0 || impactCounters.unverifiedAmount > 0) && (
-                        <div className={styles.vnEndingImpact}>
-                            <div className={styles.vnEndingImpactTitle}>당신의 행동이 만든 결과</div>
-                            <div className={styles.vnEndingStatsGrid}>
-                                {impactCounters.intimidatedProsecutors > 0 && (
-                                    <div className={styles.vnEndingStatCard}>
-                                        <div className={styles.vnEndingStatLabel}>😰 위축된 검사</div>
-                                        <div className={`${styles.vnEndingStatValue} ${styles["vnEndingStatValue--bad"]}`}>{impactCounters.intimidatedProsecutors}명</div>
-                                    </div>
-                                )}
-                                {impactCounters.silencedWitnesses > 0 && (
-                                    <div className={styles.vnEndingStatCard}>
-                                        <div className={styles.vnEndingStatLabel}>🤐 침묵한 증인</div>
-                                        <div className={`${styles.vnEndingStatValue} ${styles["vnEndingStatValue--bad"]}`}>{impactCounters.silencedWitnesses}명</div>
-                                    </div>
-                                )}
-                                {impactCounters.abandonedVictims > 0 && (
-                                    <div className={styles.vnEndingStatCard}>
-                                        <div className={styles.vnEndingStatLabel}>😢 포기한 피해자</div>
-                                        <div className={`${styles.vnEndingStatValue} ${styles["vnEndingStatValue--bad"]}`}>{impactCounters.abandonedVictims}명</div>
-                                    </div>
-                                )}
-                                {impactCounters.unverifiedAmount > 0 && (
-                                    <div className={styles.vnEndingStatCard}>
-                                        <div className={styles.vnEndingStatLabel}>💰 미확인 금액</div>
-                                        <div className={`${styles.vnEndingStatValue} ${styles["vnEndingStatValue--bad"]}`}>{impactCounters.unverifiedAmount.toLocaleString()}억</div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    <div className={styles.collectionPanel}>
-                        <div className={styles.collectionHeader}>
-                            <div className={styles.collectionTitle}>엔딩 컬렉션</div>
-                            <div className={styles.collectionMeta}>{discoveredEndingIds.length}/{GAME_ENDINGS.length} 해금</div>
-                        </div>
-                        <div className={styles.collectionGrid}>
-                            {GAME_ENDINGS.map((ending) => {
-                                const unlocked = discoveredEndingIds.includes(ending.id);
-                                return (
-                                    <div key={ending.id} className={`${styles.collectionBadge} ${unlocked ? styles["collectionBadge--unlocked"] : ""}`}>
-                                        <span className={styles.collectionEmoji}>{unlocked ? ending.emoji : "❔"}</span>
-                                        <span className={styles.collectionName}>{unlocked ? ending.name : "잠김"}</span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <div className={styles.endingActions} style={{ marginTop: "24px" }}>
-                        <button className={styles.restartBtn} onClick={onRestart}>↻ 다시 시작</button>
-                        <button className={styles.shareBtn} onClick={onShare}>📤 결과 공유하기</button>
-                    </div>
-
-                    {completionCount != null && (
-                        <div style={{ marginTop: "16px", textAlign: "center", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                            🏆 지금까지 <strong style={{ color: "var(--color-accent)", fontFamily: "var(--font-display)" }}>{completionCount.toLocaleString()}</strong>명이 공소취소를 목격했습니다.
-                        </div>
-                    )}
-
-                    <StoreCta variant="ending" />
-
-                    <div className={styles.titleCredits} style={{ marginTop: "24px" }}>정치 풍자 육성 시뮬레이션 · 오른스푼 × 드럼통119 제작</div>
-                    <div className={styles.socialLinks}>
-                        <a href="https://www.youtube.com/@drumtong119" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>▶ 드럼통119 유튜브</a>
-                        <a href="https://www.instagram.com/drumtong119" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>📸 드럼통119 인스타그램</a>
-                    </div>
+                {/* Action Buttons */}
+                <div className={styles.endingActions}>
+                    <button className={styles.startBtn} onClick={onRestart}>
+                        🔄 다시 도전
+                    </button>
+                    <button className={styles.secondaryBtn} onClick={onShare}>
+                        📤 결과 공유
+                    </button>
                 </div>
             </div>
         </div>

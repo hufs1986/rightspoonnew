@@ -3088,6 +3088,308 @@
     50% { box-shadow: 0 0 12px 2px rgba(255, 191, 71, 0.15); }
 }
 
+/* ===== 방어전 — 정치 공격 배너 ===== */
+.attackBanner {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin: 8px 12px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(255, 98, 98, 0.08);
+    border: 1px solid rgba(255, 98, 98, 0.25);
+    animation: fadeSlideUp 300ms ease;
+}
+
+.attackBannerIcon {
+    font-size: 1.6rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.attackBannerContent {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+}
+
+.attackBannerLabel {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--game-accent);
+    letter-spacing: 0.04em;
+}
+
+.attackBannerTitle {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #ffb3b3;
+}
+
+.attackBannerDesc {
+    font-size: 0.82rem;
+    color: rgba(237, 242, 255, 0.7);
+    line-height: 1.4;
+}
+
+/* ===== 방어전 — 스탯 패널 ===== */
+.defenseStatsPanel {
+    display: grid;
+    gap: 6px;
+    padding: 8px 12px;
+}
+
+.defenseStatItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.defenseStatItem--danger {
+    background: rgba(255, 98, 98, 0.08);
+    border: 1px solid rgba(255, 98, 98, 0.2);
+    animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+.defenseStatLabel {
+    font-size: 0.76rem;
+    color: var(--game-muted);
+    width: 100px;
+    flex-shrink: 0;
+}
+
+.defenseStatBar {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.defenseStatFill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 400ms ease;
+}
+
+.defenseStatValue {
+    font-size: 0.82rem;
+    font-weight: 900;
+    width: 32px;
+    text-align: right;
+}
+
+/* ===== 방어전 — 진행 바 ===== */
+.defenseProgressBar {
+    position: relative;
+    height: 24px;
+    margin: 0 12px 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+}
+
+.defenseProgressFill {
+    height: 100%;
+    background: linear-gradient(90deg, rgba(94, 226, 141, 0.4), rgba(94, 226, 141, 0.7));
+    border-radius: 999px;
+    transition: width 400ms ease;
+}
+
+.defenseProgressLabel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: rgba(237, 242, 255, 0.8);
+    letter-spacing: 0.04em;
+}
+
+/* ===== 소진 배지 ===== */
+.exhaustedBadge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 98, 98, 0.15);
+    border: 1px solid rgba(255, 98, 98, 0.3);
+    color: #ffb3b3;
+    font-size: 0.72rem;
+    font-weight: 800;
+    animation: pulseGlow 1s ease-in-out infinite;
+}
+
+/* ===== 난이도 배너 ===== */
+.difficultyBanner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: rgba(255, 98, 98, 0.1);
+    border: 1px solid rgba(255, 98, 98, 0.25);
+    color: #ffb3b3;
+    font-size: 0.88rem;
+}
+
+.difficultyBanner strong {
+    color: var(--game-accent);
+    font-weight: 900;
+}
+
+/* ===== 휴식 버튼 ===== */
+.vnActionBtn--rest {
+    border-color: rgba(94, 226, 141, 0.2) !important;
+    background: rgba(94, 226, 141, 0.04) !important;
+}
+
+/* ===== 리더보드 ===== */
+.leaderboardPanel {
+    width: 100%;
+    max-width: min(100%, 520px);
+    padding: 16px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.leaderboardTitle {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--game-text);
+    margin-bottom: 12px;
+}
+
+.leaderboardList {
+    display: grid;
+    gap: 4px;
+}
+
+.leaderboardItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    transition: background 140ms ease;
+}
+
+.leaderboardItem--victory {
+    background: rgba(94, 226, 141, 0.06);
+    border: 1px solid rgba(94, 226, 141, 0.15);
+}
+
+.leaderboardRank {
+    font-size: 0.88rem;
+    font-weight: 900;
+    width: 28px;
+    text-align: center;
+}
+
+.leaderboardName {
+    flex: 1;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--game-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.leaderboardScore {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--game-muted);
+}
+
+.leaderboardDemocracy {
+    font-size: 0.72rem;
+    color: var(--game-muted);
+}
+
+/* ===== 랭킹 등록 박스 ===== */
+.rankSubmitBox {
+    width: 100%;
+    max-width: min(100%, 520px);
+    padding: 16px;
+    border-radius: 20px;
+    background: rgba(255, 191, 71, 0.06);
+    border: 1px solid rgba(255, 191, 71, 0.2);
+}
+
+.rankSubmitTitle {
+    font-size: 0.88rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.rankSubmitRow {
+    display: flex;
+    gap: 8px;
+}
+
+.rankInput {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--game-border);
+    background: var(--game-panel);
+    color: var(--game-text);
+    font-size: 0.9rem;
+}
+
+.rankInput::placeholder {
+    color: var(--game-muted);
+}
+
+/* ===== 이벤트 효과 표시 ===== */
+.eventEffects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.eventEffects span {
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    font-size: 0.78rem;
+    color: var(--game-muted);
+}
+
+.eventSubtitle {
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.eduModal--positive {
+    border-color: rgba(94, 226, 141, 0.3) !important;
+}
+
+.eduModal--negative {
+    border-color: rgba(255, 98, 98, 0.3) !important;
+}
+
+/* ===== 엔딩 액션 ===== */
+.endingActions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: min(100%, 520px);
+}
+
+.endingActions .startBtn,
+.endingActions .secondaryBtn {
+    flex: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
     :global(*),
     :global(*::before),

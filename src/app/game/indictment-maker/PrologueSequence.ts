@@ -1,5 +1,3 @@
-// ===== 프롤로그 시나리오 — 게임 시작 전 30초 몰입 =====
-
 import type { DialogueSequence } from "./dialogueData";
 
 export const PROLOGUE_SEQUENCE: DialogueSequence = {
@@ -20,12 +18,6 @@ export const PROLOGUE_SEQUENCE: DialogueSequence = {
             background: "courtroom",
         },
         {
-            character: "judge",
-            expression: "normal",
-            text: "피고인, 법정에서 유무죄를 다투시겠습니까?",
-            background: "courtroom",
-        },
-        {
             character: "politician",
             expression: "confident",
             text: "재판을요? ...아뇨. 재판을 없애겠습니다.",
@@ -34,17 +26,22 @@ export const PROLOGUE_SEQUENCE: DialogueSequence = {
         },
         {
             character: "narrator",
-            text: "당신은 이제 이 정치인의 편에서 플레이합니다.",
+            text: "국정조사, 특검법, 공소유지권 장악...\n30개월 안에 모든 재판을 소멸시키려 합니다.",
+        },
+        {
+            character: "narrator",
+            text: "당신은 이것을 막아야 하는 시민입니다.",
+            effect: "flash",
             background: "dark",
         },
         {
             character: "narrator",
-            text: "60개월. 그 안에 모든 재판을 소멸시키세요.",
-            effect: "flash",
+            text: "에너지는 한정되어 있고,\n정치 머신은 멈추지 않습니다.",
         },
         {
             character: "narrator",
-            text: "...그리고 그 대가를 목격하세요.",
+            text: "30개월. 재판을 지켜내세요.\n...거의 아무도 못 합니다.",
+            effect: "slam",
         },
     ],
 };

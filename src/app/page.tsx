@@ -128,8 +128,8 @@ export default async function Home() {
             <div className={styles.gameBanner__icon}>⚖️</div>
             <div className={styles.gameBanner__text}>
               <div className={styles.gameBanner__kicker}>🎮 체험형 정치 시뮬레이션</div>
-              <div className={styles.gameBanner__title}>5건의 재판을 60개월 안에 없애세요</div>
-              <div className={styles.gameBanner__sub}>공소취소 메이커 — 당신의 선택이 법치주의를 결정합니다</div>
+              <div className={styles.gameBanner__title}>재판을 지켜라 — 막을 수 있을까?</div>
+              <div className={styles.gameBanner__sub}>공소취소 방어전 · 거의 아무도 못 깹니다 🔥</div>
             </div>
             <div className={styles.gameBanner__arrow}>→</div>
           </div>
