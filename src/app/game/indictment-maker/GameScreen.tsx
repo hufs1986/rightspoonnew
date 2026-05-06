@@ -252,9 +252,6 @@ function GameScreenComponent({
                 {/* Defense Actions - only visible during pick_defense phase */}
                 {showDefenseActions && (
                     <div className={styles.vnActionsPanel}>
-                        <div style={{ background: '#ff3b30', color: 'white', padding: '8px', textAlign: 'center', fontWeight: 'bold', marginBottom: '12px', borderRadius: '8px' }}>
-                            🚀 [덱 시스템 V5] 현재 이 텍스트가 보인다면 최신 코드가 정상 반영된 상태입니다!
-                        </div>
                         <div className={styles.vnActionsTitle}>⚖️ 심판을 위한 행동 카드 (무작위 4장 드로우)</div>
                         <div className={styles.vnActionsGrid}>
                             {(currentHand || []).map((id, index) => {

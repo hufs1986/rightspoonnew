@@ -23,8 +23,9 @@
         linear-gradient(180deg, #131728 0%, #090b14 55%, #05070f 100%);
     font-family: inherit;
     position: relative;
-    overflow-x: clip;
-    overscroll-behavior-y: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 80px;
 }
 
 .gameContainer::before {
