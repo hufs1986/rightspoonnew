@@ -29,6 +29,7 @@ export interface PoliticalAttack {
     awarenessEffect: number;   // can be negative (propaganda)
     minMonth: number;
     maxMonth: number;
+    dialogueKey?: string;      // dialogueData.ts ACTION_DIALOGUES key
 }
 
 export const POLITICAL_ATTACKS: PoliticalAttack[] = [
@@ -44,6 +45,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -3,
         minMonth: 1,
         maxMonth: 5,
+        dialogueKey: "frame_media_1",
     },
     {
         id: "atk_rally",
@@ -56,6 +58,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -2,
         minMonth: 1,
         maxMonth: 8,
+        dialogueKey: "rally_supporters_1",
     },
     {
         id: "atk_discredit",
@@ -68,6 +71,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -4,
         minMonth: 2,
         maxMonth: 10,
+        dialogueKey: "discredit_prosecutors_1",
     },
     {
         id: "atk_press_conf",
@@ -80,6 +84,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -5,
         minMonth: 1,
         maxMonth: 30,
+        dialogueKey: "press_conference_1",
     },
 
     // Phase 2: 국정조사 (6~15)
@@ -94,6 +99,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -3,
         minMonth: 6,
         maxMonth: 15,
+        dialogueKey: "launch_investigation_1",
     },
     {
         id: "atk_summon",
@@ -106,6 +112,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -2,
         minMonth: 8,
         maxMonth: 15,
+        dialogueKey: "summon_witnesses_1",
     },
     {
         id: "atk_recording",
@@ -118,6 +125,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -6,
         minMonth: 9,
         maxMonth: 18,
+        dialogueKey: "play_recording_1",
     },
     {
         id: "atk_report",
@@ -130,6 +138,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -4,
         minMonth: 10,
         maxMonth: 18,
+        dialogueKey: "adopt_report_1",
     },
 
     // Phase 3: 특검법 (16~25)
@@ -144,6 +153,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -3,
         minMonth: 16,
         maxMonth: 22,
+        dialogueKey: "draft_special_counsel_1",
     },
     {
         id: "atk_pass_bill",
@@ -156,6 +166,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -4,
         minMonth: 18,
         maxMonth: 25,
+        dialogueKey: "pass_special_counsel_1",
     },
     {
         id: "atk_appoint",
@@ -168,6 +179,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -5,
         minMonth: 20,
         maxMonth: 27,
+        dialogueKey: "appoint_counsel_1",
     },
     {
         id: "atk_seize",
@@ -180,6 +192,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -4,
         minMonth: 22,
         maxMonth: 28,
+        dialogueKey: "seize_prosecution_1",
     },
 
     // Phase 4: 최종 공격 (26~30)
@@ -194,6 +207,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -3,
         minMonth: 26,
         maxMonth: 30,
+        dialogueKey: "transfer_cases_1",
     },
     {
         id: "atk_cancel",
@@ -206,6 +220,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         awarenessEffect: -5,
         minMonth: 27,
         maxMonth: 30,
+        dialogueKey: "cancel_indictment",
     },
 ];
 

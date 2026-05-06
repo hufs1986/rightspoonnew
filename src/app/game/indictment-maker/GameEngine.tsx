@@ -7,13 +7,14 @@ import EndingScreen from "./EndingScreen";
 import GameScreen from "./GameScreen";
 import TitleScreen from "./TitleScreen";
 import { PROLOGUE_SEQUENCE } from "./PrologueSequence";
+import { ACTION_DIALOGUES } from "./dialogueData";
 import { trackGameEvent } from "./tracking";
 import { useIndictmentGame } from "./useIndictmentGame";
 import { createClient } from "@/utils/supabase/client";
 import { selectPoliticalAttack, checkRandomEvent } from "./gameLogic";
 import type { DefenseAction, PoliticalAttack, RandomEvent } from "./gameData";
 
-type TurnPhase = "show_attack" | "pick_defense" | "idle";
+type TurnPhase = "show_dialogue" | "show_attack" | "pick_defense" | "idle";
 
 export default function GameEngine() {
     const {
@@ -54,7 +55,12 @@ export default function GameEngine() {
         if (state.phase === "playing" && turnPhase === "idle") {
             const attack = selectPoliticalAttack(state.month);
             setPendingAttack(attack);
-            setTurnPhase("show_attack");
+
+            if (attack.dialogueKey && ACTION_DIALOGUES[attack.dialogueKey]) {
+                setTurnPhase("show_dialogue");
+            } else {
+                setTurnPhase("show_attack");
+            }
 
             // Check random event
             const event = checkRandomEvent(state.month, usedEvents);
@@ -109,6 +115,10 @@ export default function GameEngine() {
         startNewGame();
     };
 
+    const handleDialogueComplete = useCallback(() => {
+        setTurnPhase("show_attack");
+    }, []);
+
     // Player dismissed the attack overlay → move to defense pick phase
     const handleDismissAttack = useCallback(() => {
         // Apply the attack to game state
@@ -156,6 +166,17 @@ export default function GameEngine() {
                 <DialogueSystem sequence={PROLOGUE_SEQUENCE} onComplete={handlePrologueComplete} />
             </div>
         );
+    }
+
+    if (turnPhase === "show_dialogue" && pendingAttack && pendingAttack.dialogueKey) {
+        const sequence = ACTION_DIALOGUES[pendingAttack.dialogueKey];
+        if (sequence) {
+            return (
+                <div style={{ minHeight: "100vh", background: "#090b14" }}>
+                    <DialogueSystem sequence={sequence} onComplete={handleDialogueComplete} />
+                </div>
+            );
+        }
     }
 
     if (state.phase === "title") {
