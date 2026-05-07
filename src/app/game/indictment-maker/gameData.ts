@@ -375,7 +375,7 @@ export const GAME_ENDINGS: GameEnding[] = [
         id: "cancel_success",
         name: "공소취소 성공",
         title: "\"재판이 사라졌습니다\"",
-        description: "4,895억 원 배임의 진실은\n영원히 법정에서 확인되지 못합니다.\n\n800만 달러 대북송금의 진실은\n영원히 미궁 속에 갇힙니다.\n\n유죄도 무죄도 아닙니다.\n그냥... 재판이 없어진 것입니다.\n\n다음 권력도 배웠습니다.\n\"재판은 지울 수 있다.\"",
+        description: "4,895억 원 개발비리의 진실은\n영원히 법정에서 확인되지 못합니다.\n\n800만 달러 대북송금의 진실은\n영원히 미궁 속에 갇힙니다.\n\n유죄도 무죄도 아닙니다.\n그냥... 재판이 없어진 것입니다.\n\n다음 권력도 배웠습니다.\n\"재판은 지울 수 있다.\"",
         emoji: "💀",
         isVictory: false,
     },
@@ -401,7 +401,7 @@ export const GAME_ENDINGS: GameEnding[] = [
 export const TRIALS = [
     { id: 1, name: "공직선거법 위반", court: "서울고법 파기환송심", emoji: "🗳️" },
     { id: 2, name: "위증교사", court: "서울고법 항소심", emoji: "🤥" },
-    { id: 3, name: "대장동·성남FC 뇌물", court: "서울중앙지법 1심", emoji: "🏗️" },
+    { id: 3, name: "개발비리·성남FC 뇌물", court: "서울중앙지법 1심", emoji: "🏗️" },
     { id: 4, name: "쌍방울 대북송금", court: "수원지법 1심", emoji: "💸" },
     { id: 5, name: "법인카드 유용", court: "수원지법 1심", emoji: "💳" },
 ];
@@ -438,7 +438,7 @@ export const RANDOM_EVENTS: RandomEvent[] = [
     {
         id: "victim_testimony",
         title: "피해자 눈물의 기자회견",
-        description: "대장동·성남FC 관련 피해자들이 \"우리의 정의는 어디로 갔나\" 호소했다",
+        description: "개발비리·성남FC 관련 피해자들이 \"우리의 정의는 어디로 갔나\" 호소했다",
         newsHeadline: "피해자 연대 \"4,895억 배임 진실, 영원히 묻히게 생겼다\" 눈물 호소",
         cancelEffect: -5,
         energyEffect: 15,

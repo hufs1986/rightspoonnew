@@ -250,7 +250,7 @@ export const ACTION_DIALOGUES: Record<string, DialogueSequence> = {
         background: "courtroom",
         lines: [
             { character: "narrator", text: "🔴 특검이 '조작기소로 판명'을 이유로 공소를 취소한다.", effect: "flash" },
-            { character: "narrator", text: "대장동 4,895억 배임... 대북송금 800만 달러... 성남FC 133억 뇌물...", effect: "shake" },
+            { character: "narrator", text: "개발비리 4,895억 배임... 대북송금 800만 달러... 성남FC 133억 뇌물...", effect: "shake" },
             { character: "narrator", text: "법원은 이 사건들에 대해 유죄도, 무죄도 선고하지 못합니다." },
             { character: "judge", expression: "sad", text: "진실은... 영원히 미궁 속에 갇히게 되었습니다.", effect: "shake" },
             { character: "citizen", expression: "angry", text: "무죄면 무죄 판결을 받으면 되잖아요! 왜 재판 자체를 없애나요! 그건 무죄가 아닙니다. 그건 도망입니다!", effect: "shake" },
@@ -379,7 +379,7 @@ export const EVENT_DIALOGUES: Record<string, DialogueSequence> = {
         background: "courtroom",
         lines: [
             { character: "citizen", expression: "sad", text: "4,895억... 그건 우리 세금이에요. 진실을 밝힐 기회마저 빼앗기는 건가요?", effect: "shake" },
-            { character: "narrator", text: "😢 대장동·성남FC 피해자들이 국회 앞에서 눈물의 기자회견을 열었다." },
+            { character: "narrator", text: "😢 개발비리·성남FC 피해자들이 국회 앞에서 눈물의 기자회견을 열었다." },
             { character: "citizen", expression: "angry", text: "무죄면 재판해서 무죄 받으세요! 재판을 없애는 건 무죄가 아닙니다!" },
         ],
     },

@@ -14,7 +14,7 @@ export const PROLOGUE_SEQUENCE: DialogueSequence = {
         },
         {
             character: "narrator",
-            text: "대장동 4,895억 배임... 대북송금 800만 달러... 성남FC 133억 뇌물...",
+            text: "개발비리 4,895억 배임... 대북송금 800만 달러... 성남FC 133억 뇌물...",
             background: "courtroom",
         },
         {
