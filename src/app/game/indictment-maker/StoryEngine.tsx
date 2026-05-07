@@ -1,15 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { STORY_DATA, type StoryNodeId, type StoryChoice } from "./storyData";
 import DialogueSystem from "./DialogueSystem";
 import styles from "./game.module.css";
+import { createClient } from "@/utils/supabase/client";
 
 export default function StoryEngine() {
     const [phase, setPhase] = useState<"title" | "playing" | "ending">("title");
     const [currentNodeId, setCurrentNodeId] = useState<StoryNodeId>("prologue");
     const [stats, setStats] = useState({ integrity: 50, opinion: 50 });
     const [endingId, setEndingId] = useState<string | null>(null);
+
+    // 통계 데이터 상태
+    const [endingStats, setEndingStats] = useState<Record<string, number>>({});
+    const [totalPlays, setTotalPlays] = useState<number>(0);
+
+    // 타이틀 화면에서 통계 불러오기
+    useEffect(() => {
+        if (phase === "title") {
+            const fetchStats = async () => {
+                const supabase = createClient();
+                const { data } = await supabase.from("ending_stats").select("*");
+                if (data) {
+                    const statsMap: Record<string, number> = {};
+                    let total = 0;
+                    data.forEach(row => {
+                        statsMap[row.id] = row.count;
+                        total += row.count;
+                    });
+                    setEndingStats(statsMap);
+                    setTotalPlays(total);
+                }
+            };
+            fetchStats();
+        }
+    }, [phase]);
 
     const handleStart = () => {
         setPhase("playing");
@@ -25,15 +51,13 @@ export default function StoryEngine() {
             }));
         }
 
-        // Handle dynamic check_ending node redirect
         if (choice.nextNodeId === "check_ending") {
-            // Decide ending based on stats
             if (stats.opinion < 20) {
-                setCurrentNodeId("ending_b"); // Riot
+                setCurrentNodeId("ending_b"); 
             } else if (stats.integrity >= 70 && stats.opinion >= 40) {
-                setCurrentNodeId("ending_d"); // True ending
+                setCurrentNodeId("ending_d"); 
             } else {
-                setCurrentNodeId("ending_c"); // Normal ending
+                setCurrentNodeId("ending_c"); 
             }
         } else {
             setCurrentNodeId(choice.nextNodeId);
@@ -44,23 +68,58 @@ export default function StoryEngine() {
         setCurrentNodeId(nextNodeId);
     };
 
-    const handleEnding = (id: string) => {
+    const handleEnding = async (id: string) => {
         setEndingId(id);
         setPhase("ending");
+        
+        // Supabase에 엔딩 카운트 증가
+        const mapping: Record<string, string> = {
+            "ending_a": "bad_conceal",
+            "ending_b": "bad_subordinate",
+            "ending_c": "normal_scars",
+            "ending_d": "true_justice"
+        };
+        const mappedId = mapping[id] || id;
+        
+        try {
+            const supabase = createClient();
+            await supabase.rpc('increment_ending_count', { ending_id_param: mappedId });
+        } catch (e) {
+            console.error("Failed to increment stats", e);
+        }
     };
 
     if (phase === "title") {
-        // Render a basic title screen or reuse the existing one
         return (
             <div style={{ position: "fixed", inset: 0, height: "100dvh", zIndex: 100, background: "#090b14", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                <h1 style={{ fontSize: "2.5rem", color: "#ff3333", marginBottom: "1rem" }}>공소취소 방어전: 진실의 법정</h1>
+                <h1 style={{ fontSize: "clamp(1.5rem, 5vw, 2.5rem)", color: "#ff3333", marginBottom: "1rem", textAlign: "center", wordBreak: "keep-all" }}>공소취소 방어전:<br/>진실의 법정</h1>
                 <p style={{ marginBottom: "2rem", color: "#aaa" }}>법치주의를 수호할 것인가, 타협할 것인가.</p>
                 <button 
                     onClick={handleStart}
-                    style={{ padding: "16px 32px", fontSize: "1.2rem", background: "#d32f2f", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }}
+                    style={{ padding: "16px 32px", fontSize: "1.2rem", background: "#d32f2f", color: "white", border: "none", borderRadius: "8px", cursor: "pointer", marginBottom: "2rem" }}
                 >
                     새 게임 시작
                 </button>
+
+                {/* 통계 화면 */}
+                <div style={{ background: "rgba(255,255,255,0.05)", padding: "16px", borderRadius: "12px", width: "min(90%, 400px)", fontSize: "0.9rem" }}>
+                    <div style={{ textAlign: "center", marginBottom: "12px", color: "#ccc", fontWeight: "bold" }}>
+                        현재까지 누적 플레이: {totalPlays.toLocaleString()}회
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "8px", color: "#999" }}>
+                        <div>배드엔딩 (진실의 은폐):</div>
+                        <div style={{ color: "#ff5555" }}>{endingStats["bad_conceal"] || 0}명</div>
+                        
+                        <div>배드엔딩 (사법부의 예속):</div>
+                        <div style={{ color: "#ff5555" }}>{endingStats["bad_subordinate"] || 0}명</div>
+                        
+                        <div>노멀엔딩 (상처뿐인 원칙):</div>
+                        <div style={{ color: "#aaaaaa" }}>{endingStats["normal_scars"] || 0}명</div>
+                        
+                        <div>트루엔딩 (법치주의의 증명):</div>
+                        <div style={{ color: "#ffd700", fontWeight: "bold" }}>{endingStats["true_justice"] || 0}명</div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -73,7 +132,15 @@ export default function StoryEngine() {
             "true_justice": { title: "트루엔딩: 법치주의의 증명", color: "#ffd700", bg: "linear-gradient(135deg, #091e3a, #2f80ed, #2d9ee0)" },
         };
 
-        const meta = endingId && ENDING_META[endingId] ? ENDING_META[endingId] : { title: "종료", color: "#fff", bg: "#000" };
+        const mapping: Record<string, string> = {
+            "ending_a": "bad_conceal",
+            "ending_b": "bad_subordinate",
+            "ending_c": "normal_scars",
+            "ending_d": "true_justice"
+        };
+        const mappedId = endingId ? mapping[endingId] : null;
+
+        const meta = mappedId && ENDING_META[mappedId] ? ENDING_META[mappedId] : { title: "종료", color: "#fff", bg: "#000" };
 
         const handleShare = async () => {
             const shareData = {
@@ -94,7 +161,7 @@ export default function StoryEngine() {
 
         return (
             <div style={{ position: "fixed", inset: 0, height: "100dvh", zIndex: 100, background: meta.bg, color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px", textAlign: "center" }}>
-                <h1 style={{ fontSize: "2.5rem", color: meta.color, marginBottom: "2rem", textShadow: endingId === "true_justice" ? "0 0 20px rgba(255, 215, 0, 0.5)" : "none" }}>{meta.title}</h1>
+                <h1 style={{ fontSize: "clamp(1.5rem, 5vw, 2.5rem)", color: meta.color, marginBottom: "2rem", textShadow: mappedId === "true_justice" ? "0 0 20px rgba(255, 215, 0, 0.5)" : "none", wordBreak: "keep-all" }}>{meta.title}</h1>
                 <p style={{ fontSize: "1rem", color: "#ddd", marginBottom: "3rem" }}>
                     최종 사법 신뢰도: {stats.integrity} / 최종 대중 여론: {stats.opinion}
                 </p>
