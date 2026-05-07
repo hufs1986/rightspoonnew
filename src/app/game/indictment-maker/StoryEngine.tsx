@@ -52,7 +52,7 @@ export default function StoryEngine() {
     if (phase === "title") {
         // Render a basic title screen or reuse the existing one
         return (
-            <div style={{ minHeight: "100vh", background: "#090b14", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ position: "fixed", inset: 0, height: "100dvh", zIndex: 100, background: "#090b14", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                 <h1 style={{ fontSize: "2.5rem", color: "#ff3333", marginBottom: "1rem" }}>공소취소 방어전: 진실의 법정</h1>
                 <p style={{ marginBottom: "2rem", color: "#aaa" }}>법치주의를 수호할 것인가, 타협할 것인가.</p>
                 <button 
@@ -67,7 +67,7 @@ export default function StoryEngine() {
 
     if (phase === "ending") {
         return (
-            <div style={{ minHeight: "100vh", background: "#000", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px", textAlign: "center" }}>
+            <div style={{ position: "fixed", inset: 0, height: "100dvh", zIndex: 100, background: "#000", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px", textAlign: "center" }}>
                 <h1 style={{ fontSize: "3rem", color: "#ff3333", marginBottom: "2rem" }}>THE END</h1>
                 <p style={{ fontSize: "1.2rem", color: "#ddd", marginBottom: "2rem" }}>
                     엔딩 코드: {endingId}
@@ -101,7 +101,7 @@ export default function StoryEngine() {
     }
 
     return (
-        <div style={{ position: "relative", minHeight: "100vh", background: "#090b14" }}>
+        <div style={{ position: "relative", height: "100dvh", background: "#090b14" }}>
             <DialogueSystem 
                 node={nodeToRender} 
                 onChoiceMade={handleChoiceMade} 

@@ -2036,10 +2036,11 @@
 /* ===== VISUAL NOVEL SYSTEM ===== */
 
 .vnContainer {
-    position: relative;
+    position: fixed;
+    inset: 0;
     width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: 100dvh;
+    z-index: 100;
     overflow: hidden;
     cursor: pointer;
     user-select: none;
@@ -3813,3 +3814,36 @@
     }
 }
 
+
+/* Choices Container */
+.vnChoicesContainer {
+    position: absolute;
+    bottom: 50vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(90%, 400px);
+    z-index: 50;
+}
+
+.vnChoiceBtn {
+    background: rgba(10, 14, 30, 0.95);
+    border: 1px solid rgba(115, 137, 255, 0.5);
+    border-radius: 8px;
+    padding: 16px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.vnChoiceBtn:hover {
+    background: rgba(115, 137, 255, 0.2);
+    border-color: rgba(115, 137, 255, 1);
+    transform: scale(1.02);
+}

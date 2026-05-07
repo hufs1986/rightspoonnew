@@ -137,11 +137,11 @@ export default function DialogueSystem({ node, onChoiceMade, onNextNode, onEndin
 
 
             {/* Dialogue Box */}
-            <div className={`${styles.vnDialogBox} ${effectClass}`}>
+            <div className={`${styles.vnDialogueBox} ${effectClass}`}>
                 {charMeta.name && <div className={styles.vnSpeakerName}>{charMeta.name}</div>}
-                <div className={styles.vnDialogText}>
+                <div className={styles.vnDialogueText}>
                     {displayedText}
-                    {!isTyping && !showChoices && <span className={styles.vnBlinkArrow}>▼</span>}
+                    {!isTyping && !showChoices && <span className={styles.vnCursor}>▼</span>}
                 </div>
             </div>
 
