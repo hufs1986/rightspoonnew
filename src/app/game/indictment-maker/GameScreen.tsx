@@ -141,6 +141,11 @@ function GameScreenComponent({
     const isCancelCritical = stats.cancelProgress >= 85;
     const showDefenseActions = turnPhase === "pick_defense";
 
+    const currentStage = month < 6 ? "STAGE 1: 프레임 유포" : 
+                         month < 16 ? "STAGE 2: 국정조사" : 
+                         month < 26 ? "STAGE 3: 특검법 강행" : 
+                         "FINAL STAGE: 재판 소멸 시도";
+
     return (
         <div className={`${styles.gameContainer} ${isCancelHigh ? styles["gameContainer--alarm"] : ""} ${screenShake ? styles["gameContainer--shake"] : ""}`}
              style={{ height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', paddingBottom: 0 }}
@@ -150,32 +155,48 @@ function GameScreenComponent({
                 <div className={styles.screenFlash} style={{ background: flashColor }} />
             )}
 
+            {/* === DOOMSDAY PROGRESS BAR === */}
+            <div style={{ width: '100%', height: '8px', background: '#111', position: 'relative', borderBottom: '1px solid #333' }}>
+                <div style={{ 
+                    position: 'absolute', top: 0, left: 0, height: '100%', 
+                    background: stats.cancelProgress > 80 ? '#ff0000' : '#d32f2f', 
+                    width: `${Math.min(100, stats.cancelProgress)}%`,
+                    transition: 'width 0.5s ease',
+                    boxShadow: stats.cancelProgress > 80 ? '0 0 15px red' : 'none'
+                }} />
+            </div>
+
             {/* === COMPACT HUD === */}
-            <div className={styles.vnHud}>
-                <div className={styles.vnHudLeft}>
-                    <span className={styles.vnHudMonth}>{month}/{MAX_MONTHS}</span>
+            <div className={styles.vnHud} style={{ padding: '12px', background: 'rgba(5,5,5,0.95)', borderBottom: '1px solid rgba(255,50,50,0.3)' }}>
+                <div className={styles.vnHudLeft} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <span style={{ fontSize: '0.65rem', color: '#ffaaaa', fontWeight: 700, letterSpacing: '1px' }}>사법 체계 소멸까지</span>
+                    <span className={styles.vnHudMonth} style={{ fontSize: '1.4rem', color: '#ff3333', fontWeight: 900, textShadow: '0 0 10px rgba(255,0,0,0.3)' }}>
+                        D-{MAX_MONTHS - month + 1}개월
+                    </span>
                 </div>
-                <div className={styles.vnHudCenter}>
-                    <span className={styles.vnHudEmoji}>⚖️</span>
-                    <span className={styles.vnHudName}>공소취소 방어전</span>
+                <div className={styles.vnHudCenter} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <span style={{ color: '#d32f2f', fontWeight: 900, fontSize: '0.75rem', letterSpacing: '1px', marginBottom: '2px' }}>{currentStage}</span>
+                    <span className={styles.vnHudName} style={{ fontSize: '0.9rem', color: '#e0e0e0' }}>[공소취소 방어전]</span>
                 </div>
                 <div className={styles.vnHudRight}>
                     {exhaustedTurns > 0 && (
-                        <span className={styles.exhaustedBadge}>⚠️ 소진 {exhaustedTurns}/5</span>
+                        <span className={styles.exhaustedBadge} style={{ background: '#ff3333', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>
+                            ⚠️ 소진 {exhaustedTurns}/5
+                        </span>
                     )}
                 </div>
             </div>
 
             {/* === COMPACT STATS (horizontal inline) === */}
-            <div style={{ display: 'flex', gap: '8px', padding: '6px 12px', background: 'rgba(9,11,20,0.9)', flexWrap: 'wrap', justifyContent: 'center', fontSize: '0.75rem' }}>
+            <div style={{ display: 'flex', gap: '8px', padding: '8px 12px', background: '#0a0a0a', flexWrap: 'wrap', justifyContent: 'center', fontSize: '0.8rem', borderBottom: '1px solid #222' }}>
                 {STAT_ORDER.map((key) => {
                     const info = STAT_LABELS[key];
                     const val = stats[key];
                     const tone = getStatTone(key, val);
-                    const color = tone === "good" ? "#5ee28d" : tone === "warning" ? "#ffd166" : tone === "danger" ? "#ff6b6b" : "#70a2ff";
+                    const color = tone === "good" ? "#5ee28d" : tone === "warning" ? "#ffaa00" : tone === "danger" ? "#ff3333" : "#aaaaaa";
                     return (
-                        <span key={key} style={{ color, fontWeight: 700 }}>
-                            {info.emoji} {info.label} {val}
+                        <span key={key} style={{ color, fontWeight: 700, padding: '2px 6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+                            {info.emoji} {info.label} {val}{key === "cancelProgress" ? "%" : ""}
                         </span>
                     );
                 })}
@@ -221,11 +242,11 @@ function GameScreenComponent({
 
             {/* === CARD AREA (fills remaining space, scrolls internally) === */}
             {showDefenseActions && (
-                <div style={{ flex: 1, overflow: 'auto', padding: '8px 12px', WebkitOverflowScrolling: 'touch' }}>
-                    <div className={styles.vnActionsTitle} style={{ marginBottom: '10px' }}>
-                        🃏 덱에서 4장을 뽑았습니다 — 카드를 선택하세요
+                <div style={{ flex: 1, overflow: 'auto', padding: '16px 12px', WebkitOverflowScrolling: 'touch' }}>
+                    <div className={styles.vnActionsTitle} style={{ marginBottom: '16px', color: '#e0e0e0', fontWeight: 700, textAlign: 'center' }}>
+                        🛡️ 대응 방식을 선택하십시오
                     </div>
-                    <div className={styles.vnActionsGrid}>
+                    <div className={styles.vnActionsGrid} style={{ display: 'grid', gap: '12px' }}>
                         {(currentHand || []).map((id) => {
                             const action = defenseActions.find(a => a.id === id);
                             if (!action) return null;
