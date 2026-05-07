@@ -29,9 +29,9 @@ export const STORY_DATA: Record<StoryNodeId, StoryNode> = {
         background: "dark",
         lines: [
             { character: "narrator", text: "※ 본 게임은 가상의 픽션이며, 현실에서 '진짜' 일어날 법한 일들을 바탕으로 제작되었습니다." },
-            { character: "creator" as any, text: "안녕하세요! 오른스푼 크리에이터 @drumtong119 입니다." },
-            { character: "creator" as any, text: "최근 대한민국 사법 시스템이 직면한 전례 없는 정치적 외압과 딜레마를 시뮬레이션하기 위해 기획했습니다." },
-            { character: "creator" as any, text: "당신의 선택 하나하나가 법치주의의 운명을 결정합니다. 부디, 진실을 지켜내 주십시오." }
+            { character: "creator", text: "안녕하세요! AI 크리에이터 @drumtong119 입니다." },
+            { character: "creator", text: "최근 대한민국 사법 시스템이 직면한 전례 없는 정치적 외압과 딜레마를 시뮬레이션하기 위해 기획했습니다." },
+            { character: "creator", text: "당신의 선택 하나하나가 법치주의의 운명을 결정합니다. 부디, 진실을 지켜내 주십시오." }
         ],
         nextNodeId: "act1_start"
     },

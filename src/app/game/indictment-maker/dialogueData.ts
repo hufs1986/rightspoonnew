@@ -1,6 +1,6 @@
 // ===== 역전재판 스타일 대사 시퀀스 데이터 =====
 
-export type CharacterId = "prosecutor" | "politician" | "judge" | "citizen" | "narrator";
+export type CharacterId = "prosecutor" | "politician" | "judge" | "citizen" | "narrator" | "creator";
 export type Expression = "normal" | "angry" | "shocked" | "confident" | "sad";
 export type Background = "courtroom" | "parliament" | "protest" | "dark";
 export type ScreenEffect = "shake" | "flash" | "slam" | "none";
@@ -18,13 +18,13 @@ export interface DialogueSequence {
     lines: DialogueLine[];
 }
 
-export const CHARACTER_META: Record<CharacterId | "creator", { name: string; image: string; position: "left" | "right" | "center" }> = {
+export const CHARACTER_META: Record<CharacterId, { name: string; image: string; position: "left" | "right" | "center" }> = {
     prosecutor: { name: "검사", image: "/game/prosecutor.png", position: "left" },
     politician: { name: "정치인", image: "/game/politician.png", position: "right" },
     judge: { name: "재판장", image: "/game/judge.png", position: "center" },
     citizen: { name: "시민", image: "/game/citizen.png", position: "left" },
     narrator: { name: "", image: "", position: "center" },
-    creator: { name: "@drumtong119", image: "/drumtong119-logo.jpg", position: "center" },
+    creator: { name: "@drumtong119", image: "/logo-character.webp", position: "center" },
 };
 
 export const BG_IMAGES: Record<Background, string> = {
