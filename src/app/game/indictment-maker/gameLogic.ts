@@ -105,30 +105,31 @@ export function clamp(value: number, min = 0, max = 100) {
 
 // ===== 정치 머신 공격 선택 =====
 export function selectPoliticalAttack(month: number): PoliticalAttack {
-    const candidates = POLITICAL_ATTACKS.filter(
-        (a) => month >= a.minMonth && month <= a.maxMonth,
-    );
+    const TIMELINE: Record<number, string> = {
+        1: "atk_frame_media",
+        3: "atk_press_conf",
+        5: "atk_rally",
+        7: "atk_discredit",
+        10: "atk_investigation",
+        12: "atk_summon",
+        15: "atk_recording",
+        17: "atk_report",
+        20: "atk_draft_bill",
+        22: "atk_pass_bill",
+        24: "atk_appoint",
+        26: "atk_seize",
+        28: "atk_transfer",
+        30: "atk_cancel",
+    };
 
-    if (candidates.length === 0) {
-        // 후반부엔 가장 강력한 공격
-        return POLITICAL_ATTACKS[POLITICAL_ATTACKS.length - 1];
+    const targetId = TIMELINE[month];
+    if (targetId) {
+        const found = POLITICAL_ATTACKS.find((a) => a.id === targetId);
+        if (found) return found;
     }
 
-    // 후반부로 갈수록 강력한 공격 확률 증가
-    const weighted = candidates.map((atk) => ({
-        attack: atk,
-        weight: atk.cancelIncrease * (month > 20 ? 2 : 1),
-    }));
-
-    const totalWeight = weighted.reduce((s, w) => s + w.weight, 0);
-    let roll = Math.random() * totalWeight;
-
-    for (const w of weighted) {
-        roll -= w.weight;
-        if (roll <= 0) return w.attack;
-    }
-
-    return candidates[candidates.length - 1];
+    // Default to generic attack for months without a major event
+    return POLITICAL_ATTACKS.find((a) => a.id === "atk_generic") || POLITICAL_ATTACKS[0];
 }
 
 // ===== 공격 적용 (난이도: 매우 높음) =====

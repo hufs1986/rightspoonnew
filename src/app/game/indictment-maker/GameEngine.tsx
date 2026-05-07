@@ -56,10 +56,17 @@ export default function GameEngine() {
             const attack = selectPoliticalAttack(state.month);
             setPendingAttack(attack);
 
-            if (attack.dialogueKey && ACTION_DIALOGUES[attack.dialogueKey]) {
-                setTurnPhase("show_dialogue");
+            if (attack) {
+                if (attack.id === "atk_generic") {
+                    applyAttack(attack); // 백그라운드 데미지 적용
+                    setTurnPhase("pick_defense"); // UI 팝업 생략하고 바로 방어 페이즈로
+                } else if (attack.dialogueKey && ACTION_DIALOGUES[attack.dialogueKey]) {
+                    setTurnPhase("show_dialogue");
+                } else {
+                    setTurnPhase("show_attack");
+                }
             } else {
-                setTurnPhase("show_attack");
+                setTurnPhase("pick_defense");
             }
 
             // Check random event
@@ -69,7 +76,7 @@ export default function GameEngine() {
                 setPendingEvent(event);
             }
         }
-    }, [state.phase, turnPhase, state.month, usedEvents]);
+    }, [state.phase, turnPhase, state.month, usedEvents, applyAttack]);
 
     const handleShare = async () => {
         const text = getShareText();

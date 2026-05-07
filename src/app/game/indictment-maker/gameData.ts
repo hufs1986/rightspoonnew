@@ -252,6 +252,21 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         emotionalText: "지금 이 순간, 5개 재판의 진실이 영원히 사라지려 하고 있다.",
         victimVoice: "4,895억 원... 800만 달러... 133억 원... 이 모든 진실이 사라진다고요? 제발... 제발 재판만은 남겨주세요.",
     },
+    {
+        id: "atk_generic",
+        name: "정치 공세 지속",
+        emoji: "⚔️",
+        description: "여당의 일상적인 정치 공세와 여론전이 계속되고 있습니다",
+        newsHeadline: "",
+        cancelIncrease: 3,
+        democracyDamage: 2,
+        awarenessEffect: -1,
+        minMonth: 1,
+        maxMonth: 30,
+        dialogueKey: "generic_attack",
+        emotionalText: "조용한 날이 없다. 거짓 프레임은 매일같이 뉴스를 채운다.",
+        victimVoice: "매일 뉴스를 보기가 무서워요. 언제 끝날까요?",
+    }
 ];
 
 // ===== 방어 행동 =====
