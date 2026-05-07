@@ -56,7 +56,7 @@ export function gameReducer(state: GameState, actionState: GameReducerAction): G
             const nextCooldowns = tickCooldowns(state.cooldowns);
 
             // Check ending after attack
-            const ending = checkEnding(nextStats, state.month, state.exhaustedTurns);
+            const ending = checkEnding(nextStats, state.month);
 
             return {
                 ...state,
@@ -76,10 +76,6 @@ export function gameReducer(state: GameState, actionState: GameReducerAction): G
             const nextNews = pushNews(state.newsHistory, action.newsHeadline);
             const nextRecentDefenses = [...state.recentDefenses, action.id].slice(-6);
             const nextCooldowns = setCooldown(state.cooldowns, action);
-            const nextExhausted = nextStats.energy <= 0
-                ? state.exhaustedTurns + 1
-                : 0;
-
             const nextActionFrequencies = {
                 ...state.actionFrequencies,
                 [action.id]: (state.actionFrequencies[action.id] || 0) + 1,
@@ -87,7 +83,7 @@ export function gameReducer(state: GameState, actionState: GameReducerAction): G
             const nextHand = drawHand(nextCooldowns);
 
             // Check ending after defense
-            const ending = checkEnding(nextStats, nextMonth, nextExhausted);
+            const ending = checkEnding(nextStats, nextMonth);
 
             return {
                 ...state,
@@ -99,7 +95,6 @@ export function gameReducer(state: GameState, actionState: GameReducerAction): G
                 currentAttack: null,
                 currentEvent: null,
                 cooldowns: nextCooldowns,
-                exhaustedTurns: nextExhausted,
                 endingId: ending?.id ?? state.endingId,
                 actionFrequencies: nextActionFrequencies,
                 currentHand: nextHand,

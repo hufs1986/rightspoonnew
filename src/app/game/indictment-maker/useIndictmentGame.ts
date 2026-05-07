@@ -208,10 +208,10 @@ export function useIndictmentGame() {
     const defenseActions = useMemo(() => {
         return DEFENSE_ACTIONS.map((action) => ({
             ...action,
-            available: canUseAction(action, state.stats.energy, state.cooldowns),
+            available: canUseAction(action, state.cooldowns),
             cooldownLeft: state.cooldowns[action.id] ?? 0,
         }));
-    }, [state.stats.energy, state.cooldowns]);
+    }, [state.cooldowns]);
 
     const endingData = getEndingById(state.endingId);
 

@@ -238,7 +238,6 @@ export default function GameEngine() {
             onDismissAttack={handleDismissAttack}
             onDismissEvent={dismissEvent}
             stats={state.stats}
-            exhaustedTurns={state.exhaustedTurns}
             currentHand={state.currentHand}
         />
     );

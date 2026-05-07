@@ -21,7 +21,6 @@ export type GamePhase = "title" | "playing" | "ending";
 
 export const STAT_LABELS: Record<keyof GameStats, { label: string; emoji: string }> = {
     cancelProgress: { label: "사법 붕괴 임계점", emoji: "🔴" },
-    energy: { label: "결집 동력", emoji: "⚡" },
     awareness: { label: "여론 지형", emoji: "👁️" },
     democracy: { label: "법치주의 지수", emoji: "🏛️" },
 };
@@ -38,7 +37,6 @@ export interface GameSnapshot {
     currentAttack: PoliticalAttack | null;
     endingId: GameEnding["id"] | null;
     cooldowns: Record<string, number>;   // actionId -> turns left
-    exhaustedTurns: number;              // consecutive turns with 0 energy
     currentHand: string[];               // actionIds currently available to pick
     actionFrequencies: Record<string, number>; // actionId -> count
 }
@@ -93,7 +91,6 @@ export function createInitialSnapshot(): GameSnapshot {
         currentAttack: null,
         endingId: null,
         cooldowns: {},
-        exhaustedTurns: 0,
         currentHand: drawHand({}),
         actionFrequencies: {},
     };
@@ -105,21 +102,37 @@ export function clamp(value: number, min = 0, max = 100) {
 
 // ===== 정치 머신 공격 선택 =====
 export function selectPoliticalAttack(month: number): PoliticalAttack {
-    const TIMELINE: Record<number, string> = {
+            const TIMELINE: Record<number, string> = {
         1: "atk_frame_media",
+        2: "atk_falsify",
         3: "atk_press_conf",
+        4: "atk_petitions",
         5: "atk_rally",
+        6: "atk_investigation",
         7: "atk_discredit",
-        10: "atk_investigation",
-        12: "atk_summon",
-        15: "atk_recording",
-        17: "atk_report",
-        20: "atk_draft_bill",
-        22: "atk_pass_bill",
-        24: "atk_appoint",
-        26: "atk_seize",
-        28: "atk_transfer",
-        30: "atk_cancel",
+        8: "atk_summon",
+        9: "atk_recording",
+        10: "atk_leak",
+        11: "atk_boycott",
+        12: "atk_report",
+        13: "atk_threat",
+        14: "atk_budget",
+        15: "atk_draft_bill",
+        16: "atk_fasttrack",
+        17: "atk_filibuster",
+        18: "atk_pass_bill",
+        19: "atk_veto_reject",
+        20: "atk_appoint",
+        21: "atk_office",
+        22: "atk_seize",
+        23: "atk_media_play",
+        24: "atk_suspend",
+        25: "atk_transfer",
+        26: "atk_reassign",
+        27: "atk_cancel",
+        28: "atk_final_hearing",
+        29: "atk_court_pressure",
+        30: "atk_d_day",
     };
 
     const targetId = TIMELINE[month];
@@ -150,40 +163,26 @@ export function applyPoliticalAttack(
 
     return {
         cancelProgress: clamp(stats.cancelProgress + cancelIncrease),
-        energy: clamp(stats.energy - 2), // 에너지도 매 턴 자연감소
         awareness: clamp(stats.awareness + attack.awarenessEffect),
         democracy: clamp(stats.democracy - demoDamage),
     };
 }
 
-// ===== 방어 행동 적용 =====
 export function applyDefenseAction(
     stats: GameStats,
     action: DefenseAction,
 ): GameStats {
-    if (action.id === "rest") {
-        return {
-            ...stats,
-            energy: clamp(stats.energy + ENERGY_RESTORE_AMOUNT),
-        };
-    }
-
     return {
-        cancelProgress: clamp(stats.cancelProgress - action.cancelReduction),
-        energy: clamp(stats.energy - action.energyCost),
+        cancelProgress: clamp(stats.cancelProgress + action.cancelReduction),
         awareness: clamp(stats.awareness + action.awarenessGain),
         democracy: clamp(stats.democracy + action.democracyGain),
     };
 }
 
-// ===== 에너지로 사용 가능한지 체크 =====
 export function canUseAction(
     action: DefenseAction,
-    energy: number,
     cooldowns: Record<string, number>,
 ): boolean {
-    if (action.id === "rest") return true;
-    if (energy < action.energyCost) return false;
     if (cooldowns[action.id] && cooldowns[action.id] > 0) return false;
     return true;
 }
@@ -208,7 +207,7 @@ export function setCooldown(
 // ===== 카드 드로우 (덱빌딩) =====
 export function drawHand(cooldowns: Record<string, number>): string[] {
     const available = DEFENSE_ACTIONS
-        .filter((a) => a.id !== "rest" && !(cooldowns[a.id] > 0))
+        .filter((a) => !(cooldowns[a.id] > 0))
         .map((a) => a.id);
     
     // 랜덤하게 4장 섞기
@@ -232,7 +231,6 @@ export function checkRandomEvent(month: number, usedEvents: Set<string>): Random
 export function applyRandomEvent(stats: GameStats, event: RandomEvent): GameStats {
     return {
         cancelProgress: clamp(stats.cancelProgress + event.cancelEffect),
-        energy: clamp(stats.energy + event.energyEffect),
         awareness: clamp(stats.awareness + event.awarenessEffect),
         democracy: clamp(stats.democracy + event.democracyEffect),
     };
@@ -242,16 +240,15 @@ export function applyRandomEvent(stats: GameStats, event: RandomEvent): GameStat
 export function checkEnding(
     stats: GameStats,
     month: number,
-    exhaustedTurns: number,
 ): GameEnding | null {
-    // 패배: 공소취소 100%
+    // 패배 1: 공소취소 100% (사법 붕괴)
     if (stats.cancelProgress >= 100) {
         return GAME_ENDINGS.find((e) => e.id === "cancel_success") ?? null;
     }
 
-    // 패배: 시민 소진 (에너지 0으로 5턴 연속)
-    if (exhaustedTurns >= 5) {
-        return GAME_ENDINGS.find((e) => e.id === "exhausted") ?? null;
+    // 패배 2: 법치주의 0% (법치주의 붕괴 / 광장 정치)
+    if (stats.democracy <= 0) {
+        return GAME_ENDINGS.find((e) => e.id === "democracy_collapse") ?? null;
     }
 
     // 승리 조건: 30턴 생존
@@ -281,11 +278,6 @@ export function getStatTone(key: keyof GameStats, value: number): string {
         if (value >= 70) return "danger";
         if (value >= 40) return "warning";
         return "good";
-    }
-    if (key === "energy") {
-        if (value >= 40) return "good";
-        if (value >= 20) return "warning";
-        return "danger";
     }
     // awareness, democracy — higher is better
     if (value >= 60) return "good";

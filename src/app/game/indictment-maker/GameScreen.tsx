@@ -24,11 +24,10 @@ interface GameScreenProps {
     onDismissAttack: () => void;
     onDismissEvent: () => void;
     stats: GameStats;
-    exhaustedTurns: number;
     currentHand: string[];
 }
 
-const STAT_ORDER: (keyof GameStats)[] = ["cancelProgress", "energy", "awareness", "democracy"];
+const STAT_ORDER: (keyof GameStats)[] = ["cancelProgress", "awareness", "democracy"];
 
 function GameScreenComponent({
     defenseActions,
@@ -42,7 +41,6 @@ function GameScreenComponent({
     onDismissAttack,
     onDismissEvent,
     stats,
-    exhaustedTurns,
     currentHand,
 }: GameScreenProps) {
     const [prevStats, setPrevStats] = useState<GameStats>(stats);
@@ -136,7 +134,6 @@ function GameScreenComponent({
     };
 
     const progressPercent = ((month - 1) / MAX_MONTHS) * 100;
-    const isEnergyLow = stats.energy <= 20;
     const isCancelHigh = stats.cancelProgress >= 70;
     const isCancelCritical = stats.cancelProgress >= 85;
     const showDefenseActions = turnPhase === "pick_defense";
@@ -179,11 +176,6 @@ function GameScreenComponent({
                     <span className={styles.vnHudName} style={{ fontSize: '0.9rem', color: '#e0e0e0' }}>[공소취소 방어전]</span>
                 </div>
                 <div className={styles.vnHudRight}>
-                    {exhaustedTurns > 0 && (
-                        <span className={styles.exhaustedBadge} style={{ background: '#ff3333', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>
-                            ⚠️ 소진 {exhaustedTurns}/5
-                        </span>
-                    )}
                 </div>
             </div>
 
@@ -225,14 +217,6 @@ function GameScreenComponent({
                 </div>
             )}
 
-            {/* Energy Warning */}
-            {isEnergyLow && (
-                <div className={styles.energyWarning} style={{ margin: '0 12px', padding: '6px 10px', fontSize: '0.75rem' }}>
-                    <span className={styles.energyWarningIcon}>⚡</span>
-                    <span>에너지 부족! &apos;여론 결집&apos;으로 회복하세요</span>
-                </div>
-            )}
-
             {/* Waiting for attack message */}
             {turnPhase === "show_attack" && !pendingAttack && (
                 <div className={styles.phaseHint}>
@@ -258,7 +242,7 @@ function GameScreenComponent({
                                 <button
                                     key={`${action.id}-${month}`}
                                     type="button"
-                                    className={`${styles.vnActionBtn} ${!action.available ? styles["vnActionBtn--locked"] : ""} ${isRest ? styles["vnActionBtn--rest"] : ""}`}
+                                    className={`${styles.vnActionBtn} ${!action.available ? styles["vnActionBtn--locked"] : ""}`}
                                     onClick={() => handleDefend(action)}
                                     disabled={!action.available}
                                 >
@@ -266,23 +250,40 @@ function GameScreenComponent({
                                     <div className={styles.vnActionInfo}>
                                         <div className={styles.vnActionName}>{action.name}</div>
                                         <div className={styles.vnActionPhase}>
-                                            {isRest ? "⚡ +30 에너지" : `⚡ -${action.energyCost}`}
-                                            {onCooldown && ` · ⏳ ${action.cooldownLeft}턴`}
-                                            {!action.available && !onCooldown && !isRest && " · 에너지 부족"}
+                                            {onCooldown && `⏳ 쿨다운 ${action.cooldownLeft}턴`}
+                                            {!action.available && !onCooldown && "사용 불가"}
                                         </div>
-                                        {!isRest && action.available && (
-                                            <div className={styles.vnActionCosts}>
-                                                {action.cancelReduction > 0 && (
-                                                    <span className={styles.vnActionGain}>🔴-{action.cancelReduction}</span>
-                                                )}
-                                                {action.awarenessGain > 0 && (
-                                                    <span className={styles.vnActionGain}>👁️+{action.awarenessGain}</span>
-                                                )}
-                                                {action.democracyGain > 0 && (
-                                                    <span className={styles.vnActionGain}>🏛️+{action.democracyGain}</span>
-                                                )}
-                                            </div>
-                                        )}
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '6px' }}>
+                                        {action.cancelReduction > 0 ? (
+                                            <span style={{ fontSize: '0.75rem', background: 'rgba(94,226,141,0.2)', color: '#5ee28d', padding: '2px 4px', borderRadius: '4px' }}>
+                                                🔴 임계점 -{action.cancelReduction}%
+                                            </span>
+                                        ) : action.cancelReduction < 0 ? (
+                                            <span style={{ fontSize: '0.75rem', background: 'rgba(255,100,100,0.2)', color: '#ff8888', padding: '2px 4px', borderRadius: '4px' }}>
+                                                🔴 임계점 +{Math.abs(action.cancelReduction)}%
+                                            </span>
+                                        ) : null}
+                                        
+                                        {action.awarenessGain > 0 ? (
+                                            <span style={{ fontSize: '0.75rem', background: 'rgba(94,226,141,0.2)', color: '#5ee28d', padding: '2px 4px', borderRadius: '4px' }}>
+                                                👁️ 여론 +{action.awarenessGain}
+                                            </span>
+                                        ) : action.awarenessGain < 0 ? (
+                                            <span style={{ fontSize: '0.75rem', background: 'rgba(255,100,100,0.2)', color: '#ff8888', padding: '2px 4px', borderRadius: '4px' }}>
+                                                👁️ 여론 {action.awarenessGain}
+                                            </span>
+                                        ) : null}
+
+                                        {action.democracyGain > 0 ? (
+                                            <span style={{ fontSize: '0.75rem', background: 'rgba(94,226,141,0.2)', color: '#5ee28d', padding: '2px 4px', borderRadius: '4px' }}>
+                                                🏛️ 법치 +{action.democracyGain}
+                                            </span>
+                                        ) : action.democracyGain < 0 ? (
+                                            <span style={{ fontSize: '0.75rem', background: 'rgba(255,100,100,0.2)', color: '#ff8888', padding: '2px 4px', borderRadius: '4px' }}>
+                                                🏛️ 법치 {action.democracyGain}
+                                            </span>
+                                        ) : null}
                                     </div>
                                 </button>
                             );
