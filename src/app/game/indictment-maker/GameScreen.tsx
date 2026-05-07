@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { MAX_MONTHS, type DefenseAction, type GameStats, type PoliticalAttack, type RandomEvent } from "./gameData";
 import { getStatTone, STAT_LABELS } from "./gameLogic";
+import { ACTION_EDUCATION } from "./educationData";
 import { initAudio, playSfx } from "./audioUtils";
 import ModalShell from "./ModalShell";
 import styles from "./game.module.css";
@@ -297,30 +298,37 @@ function GameScreenComponent({
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
                     {turnPhase === "apply_defense" && lastDefense?.reactionText ? (
                         <div style={{
-                            background: 'rgba(255, 68, 68, 0.1)',
-                            border: '1px solid rgba(255, 68, 68, 0.4)',
-                            borderRadius: '16px',
-                            padding: '20px',
-                            maxWidth: '400px',
-                            width: '100%',
-                            boxShadow: '0 10px 30px rgba(255, 0, 0, 0.15)',
-                            animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                            position: 'relative'
+                            position: 'absolute',
+                            top: '50%',
+                            left: 0,
+                            right: 0,
+                            transform: 'translateY(-50%)',
+                            background: 'rgba(0, 0, 0, 0.85)',
+                            borderTop: '2px solid #d32f2f',
+                            borderBottom: '2px solid #d32f2f',
+                            padding: '40px 20px',
+                            zIndex: 50,
+                            boxShadow: '0 10px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(211, 47, 47, 0.15)',
+                            animation: 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center'
                         }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                                <span style={{ fontSize: '1.5rem' }}>
-                                    {lastDefense.reactionCharacter === "politician" ? "👔" : "👤"}
-                                </span>
-                                <span style={{ color: '#ff9999', fontWeight: 700, fontSize: '0.9rem' }}>
-                                    {lastDefense.reactionCharacter === "politician" ? "정치 머신의 반응" : "여론의 반응"}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                                <span style={{ color: '#d32f2f', fontWeight: 900, fontSize: '0.85rem', letterSpacing: '2px' }}>
+                                    [ 권력의 묵살 ]
                                 </span>
                             </div>
                             <div style={{
-                                color: '#fff',
-                                fontSize: '1rem',
-                                lineHeight: '1.5',
+                                color: '#ffffff',
+                                fontSize: '1.2rem',
+                                lineHeight: '1.6',
                                 fontStyle: 'italic',
-                                textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                                textAlign: 'center',
+                                textShadow: '0 2px 10px rgba(0,0,0,0.8)',
+                                wordBreak: 'keep-all',
+                                maxWidth: '80%'
                             }}>
                                 "{lastDefense.reactionText}"
                             </div>
@@ -335,53 +343,56 @@ function GameScreenComponent({
 
             {/* ===== ATTACK OVERLAY — shown during show_attack phase ===== */}
             {turnPhase === "show_attack" && pendingAttack && (
-                <div className={styles.attackOverlay} onClick={handleDismissAttack}>
-                    <div className={styles.attackOverlayCard} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.attackOverlayLabel}>⚠️ 정치 머신의 공격</div>
-                        <div className={styles.attackOverlayEmoji}>{pendingAttack.emoji}</div>
-                        <h3 className={styles.attackOverlayTitle}>{pendingAttack.name}</h3>
-                        <p className={styles.attackOverlayDesc}>{pendingAttack.description}</p>
-                        
-                        {/* 감정적 텍스트 */}
-                        <div style={{
-                            margin: '12px 0',
-                            padding: '10px 14px',
-                            background: 'rgba(255, 68, 68, 0.08)',
-                            borderLeft: '3px solid rgba(255, 68, 68, 0.6)',
-                            borderRadius: '0 8px 8px 0',
-                            fontSize: '0.85rem',
-                            lineHeight: '1.5',
-                            color: '#ffcccc',
-                            fontStyle: 'italic',
-                        }}>
-                            {pendingAttack.emotionalText}
+                <div className={styles.attackOverlay} onClick={handleDismissAttack} style={{ background: 'rgba(10, 0, 0, 0.92)' }}>
+                    <div className={styles.attackOverlayCard} onClick={(e) => e.stopPropagation()} style={{ 
+                        border: '1px solid #ff3333', 
+                        boxShadow: '0 0 50px rgba(255, 0, 0, 0.25)',
+                        padding: '30px 20px',
+                        background: 'linear-gradient(180deg, #1a0505 0%, #0a0000 100%)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        maxHeight: '90vh',
+                        overflowY: 'auto'
+                    }}>
+                        <div style={{ color: '#ff4444', fontWeight: 900, fontSize: '1.1rem', letterSpacing: '3px', textAlign: 'center', marginBottom: '16px' }}>
+                            [ 헌정 위기 발생 ]
                         </div>
-
-                        {/* 피해자 목소리 */}
-                        {pendingAttack.victimVoice && (
-                            <div style={{
-                                margin: '8px 0',
-                                padding: '10px 14px',
-                                background: 'rgba(255, 255, 255, 0.04)',
-                                borderRadius: '8px',
-                                fontSize: '0.8rem',
-                                lineHeight: '1.5',
-                                color: '#aab3d0',
-                            }}>
-                                <span style={{ fontSize: '0.7rem', color: '#888', display: 'block', marginBottom: '4px' }}>💬 피해자의 목소리</span>
-                                &ldquo;{pendingAttack.victimVoice}&rdquo;
+                        <h3 style={{ fontSize: '1.6rem', color: '#ffffff', textAlign: 'center', marginBottom: '12px', wordBreak: 'keep-all', lineHeight: '1.3' }}>
+                            {pendingAttack.name}
+                        </h3>
+                        <p style={{ color: '#ffaaaa', textAlign: 'center', marginBottom: '24px', fontSize: '0.95rem' }}>
+                            {pendingAttack.description}
+                        </p>
+                        
+                        {pendingAttack.educationKey && ACTION_EDUCATION[pendingAttack.educationKey] && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+                                {/* 헌법적 문제점 */}
+                                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '8px', borderLeft: '4px solid #d32f2f' }}>
+                                    <div style={{ color: '#d32f2f', fontSize: '0.8rem', fontWeight: 700, marginBottom: '8px', letterSpacing: '1px' }}>⚖️ 무엇이 문제인가</div>
+                                    <div style={{ color: '#e0e0e0', fontSize: '0.95rem', lineHeight: '1.6', wordBreak: 'keep-all' }}>
+                                        {ACTION_EDUCATION[pendingAttack.educationKey].legalComment}
+                                    </div>
+                                </div>
+                                
+                                {/* 역사적 전례 */}
+                                {ACTION_EDUCATION[pendingAttack.educationKey].historicalNote && (
+                                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '8px', borderLeft: '4px solid #8b949e' }}>
+                                        <div style={{ color: '#8b949e', fontSize: '0.8rem', fontWeight: 700, marginBottom: '8px', letterSpacing: '1px' }}>📜 역사적 전례</div>
+                                        <div style={{ color: '#c9d1d9', fontSize: '0.9rem', lineHeight: '1.6', wordBreak: 'keep-all' }}>
+                                            {ACTION_EDUCATION[pendingAttack.educationKey].historicalNote}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
 
-                        <div className={styles.attackOverlayNews}>
-                            📰 {pendingAttack.newsHeadline}
+                        <div className={styles.attackOverlayEffects} style={{ borderTop: '1px solid #333', paddingTop: '20px', marginTop: 'auto', display: 'flex', justifyContent: 'center' }}>
+                            <span className={styles.attackEffectBad} style={{ background: 'rgba(255,0,0,0.2)', color: '#ff8888', border: '1px solid rgba(255,0,0,0.4)' }}>
+                                🔴 사법 붕괴 임계점 +{pendingAttack.cancelIncrease}
+                            </span>
                         </div>
-                        <div className={styles.attackOverlayEffects}>
-                            <span className={styles.attackEffectBad}>🔴 공소취소 +{pendingAttack.cancelIncrease}</span>
-                            <span className={styles.attackEffectBad}>🏛️ 민주주의 -{pendingAttack.democracyDamage}</span>
-                        </div>
-                        <button className={styles.attackOverlayBtn} onClick={handleDismissAttack}>
-                            ✊ 맞서 싸우기 →
+                        <button className={styles.attackOverlayBtn} onClick={handleDismissAttack} style={{ background: '#d32f2f', color: 'white', marginTop: '20px', fontSize: '1.1rem', padding: '16px' }}>
+                            상황 직시 및 대응하기
                         </button>
                     </div>
                 </div>

@@ -20,10 +20,10 @@ export const MAX_SAVE_SLOTS = 3;
 export type GamePhase = "title" | "playing" | "ending";
 
 export const STAT_LABELS: Record<keyof GameStats, { label: string; emoji: string }> = {
-    cancelProgress: { label: "공소취소 진행률", emoji: "🔴" },
-    energy: { label: "시민 에너지", emoji: "⚡" },
-    awareness: { label: "국민 인식", emoji: "👁️" },
-    democracy: { label: "민주주의", emoji: "🏛️" },
+    cancelProgress: { label: "사법 붕괴 임계점", emoji: "🔴" },
+    energy: { label: "결집 동력", emoji: "⚡" },
+    awareness: { label: "여론 지형", emoji: "👁️" },
+    democracy: { label: "법치주의 지수", emoji: "🏛️" },
 };
 
 export const ENERGY_RESTORE_AMOUNT = 30;

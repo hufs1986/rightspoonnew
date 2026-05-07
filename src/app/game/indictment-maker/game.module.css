@@ -1,17 +1,17 @@
 :root {
-    --game-bg: #090b14;
-    --game-panel: rgba(18, 22, 37, 0.94);
-    --game-panel-strong: rgba(12, 15, 28, 0.98);
-    --game-border: rgba(115, 137, 255, 0.22);
-    --game-border-strong: rgba(255, 96, 96, 0.48);
-    --game-text: #edf2ff;
-    --game-muted: #9aa3c7;
-    --game-accent: #ff6262;
-    --game-accent-soft: rgba(255, 98, 98, 0.18);
-    --game-warning: #ffbf47;
+    --game-bg: #050505;
+    --game-panel: rgba(15, 5, 5, 0.94);
+    --game-panel-strong: rgba(10, 0, 0, 0.98);
+    --game-border: rgba(150, 0, 0, 0.3);
+    --game-border-strong: rgba(255, 30, 30, 0.6);
+    --game-text: #e0e0e0;
+    --game-muted: #888888;
+    --game-accent: #ff3333;
+    --game-accent-soft: rgba(255, 50, 50, 0.15);
+    --game-warning: #ffaa00;
     --game-good: #5ee28d;
-    --game-neutral: #70a2ff;
-    --game-shadow: 0 20px 50px rgba(0, 0, 0, 0.34);
+    --game-neutral: #555555;
+    --game-shadow: 0 20px 50px rgba(255, 0, 0, 0.15);
 }
 
 .gameContainer {
@@ -19,9 +19,8 @@
     min-height: 100dvh;
     color: var(--game-text);
     background:
-        radial-gradient(circle at top, rgba(139, 38, 53, 0.28), transparent 30%),
-        radial-gradient(circle at 20% 20%, rgba(67, 101, 255, 0.15), transparent 28%),
-        linear-gradient(180deg, #131728 0%, #090b14 55%, #05070f 100%);
+        radial-gradient(circle at top, rgba(139, 10, 20, 0.25), transparent 40%),
+        linear-gradient(180deg, #0f0505 0%, #050505 55%, #000000 100%);
     font-family: inherit;
     position: relative;
     overflow: visible;

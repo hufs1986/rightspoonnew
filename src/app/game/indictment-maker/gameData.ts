@@ -32,6 +32,7 @@ export interface PoliticalAttack {
     dialogueKey?: string;
     emotionalText: string;      // 감정을 자극하는 짧은 문장
     victimVoice?: string;       // 피해자 관점의 독백
+    educationKey?: string;      // educationData.ts의 키
 }
 
 export const POLITICAL_ATTACKS: PoliticalAttack[] = [
@@ -50,6 +51,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "frame_media_1",
         emotionalText: "진실을 가리는 가장 효과적인 방법은, 진실을 '조작'이라고 부르는 것이다.",
         victimVoice: "저는 피해자예요. 근데 TV에서는 제 사건이 '조작'이래요. 저의 고통은 조작인가요?",
+        educationKey: "frame_media",
     },
     {
         id: "atk_rally",
@@ -65,6 +67,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "rally_supporters_1",
         emotionalText: "법원 앞에 모인 수만 명. 그들이 원하는 건 '정의'가 아니라 '면죄부'다.",
         victimVoice: "재판부 판사님 집 앞까지 시위가 왔대요. 판사님이 공정한 판결을 내릴 수 있을까요?",
+        educationKey: "rally_supporters",
     },
     {
         id: "atk_discredit",
@@ -80,6 +83,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "discredit_prosecutors_1",
         emotionalText: "메신저를 죽이면 메시지도 죽는다. 검사를 무너뜨리면 기소도 무너진다.",
         victimVoice: "수사해준 검사님이 신상 털리고 협박받고 있대요. 다음에 누가 수사하겠어요?",
+        educationKey: "discredit_prosecutors",
     },
     {
         id: "atk_press_conf",
@@ -95,6 +99,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "press_conference_1",
         emotionalText: "4,895억 원의 피해자가 있는데, 가해 혐의자가 '나는 피해자'라고 말한다.",
         victimVoice: "대통령이 피해자라면... 4,895억을 잃은 저는 뭔가요?",
+        educationKey: "press_conference",
     },
 
     // Phase 2: 국정조사 (6~15)
@@ -112,6 +117,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "launch_investigation_1",
         emotionalText: "국회가 법원의 일을 빼앗았다. 재판 대신 정치쇼가 시작됐다.",
         victimVoice: "법원에서 진실이 밝혀지길 기다렸는데... 이제 국회에서 정치인들이 판단한대요.",
+        educationKey: "launch_investigation",
     },
     {
         id: "atk_summon",
@@ -127,6 +133,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "summon_witnesses_1",
         emotionalText: "219명. 진실을 밝히려 했던 모든 사람이 심판대에 올랐다.",
         victimVoice: "수사관 아내: '남편이 국회에 불려가고 나서 밤마다 울어요. 정의를 위해 일했을 뿐인데.'",
+        educationKey: "summon_witnesses",
     },
     {
         id: "atk_recording",
@@ -142,6 +149,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "play_recording_1",
         emotionalText: "맥락을 잘라낸 30초 녹취가, 2년간의 수사를 삼켰다.",
         victimVoice: "그 녹취의 전체 맥락을 아무도 안 틀어줘요. 30초만 돌려요. 그게 공정한가요?",
+        educationKey: "play_recording",
     },
     {
         id: "atk_report",
@@ -157,6 +165,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "adopt_report_1",
         emotionalText: "야당 의견 0줄. 반쪽짜리 보고서가 '진실'이 되었다.",
         victimVoice: "국회가 결론을 내렸대요. 법원도 아닌 국회가. 제 사건의 진실을 정치인이 결정한 거예요.",
+        educationKey: "adopt_report",
     },
 
     // Phase 3: 특검법 (16~25)
@@ -174,6 +183,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "draft_special_counsel_1",
         emotionalText: "역사상 처음이다. 재판을 없애기 위한 법이 만들어지고 있다.",
         victimVoice: "재판을 없애는 법이라니... 그럼 저의 피해는 법적으로 존재하지 않게 되는 건가요?",
+        educationKey: "draft_special_counsel",
     },
     {
         id: "atk_pass_bill",
@@ -189,6 +199,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "pass_special_counsel_1",
         emotionalText: "다수당이면 재판도 없앨 수 있는 나라. 이것이 민주주의인가?",
         victimVoice: "국회 표결 영상을 봤어요. 웃으면서 통과시키더라고요. 제 인생이 걸린 재판인데.",
+        educationKey: "pass_special_counsel",
     },
     {
         id: "atk_appoint",
@@ -204,6 +215,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "appoint_counsel_1",
         emotionalText: "피고인이 추천한 검사가, 피고인의 재판을 맡는다.",
         victimVoice: "재판하는 사람을 피의자가 골랐어요. 이게 말이 되나요? 어느 나라 이야기예요?",
+        educationKey: "appoint_counsel",
     },
     {
         id: "atk_seize",
@@ -219,6 +231,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "seize_prosecution_1",
         emotionalText: "'유죄입니다'라고 말하던 검사를 쫓아내고, '무혐의입니다'라고 말할 검사가 왔다.",
         victimVoice: "원래 검사님이 해임됐대요. 2년간 제 사건을 맡아준 분인데... 이제 누가 제 편이죠?",
+        educationKey: "seize_prosecution",
     },
 
     // Phase 4: 최종 공격 (26~30)
@@ -236,6 +249,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "transfer_cases_1",
         emotionalText: "법원에서 트럭 수십 대 분량의 재판 기록이 사라졌다.",
         victimVoice: "판사님이 '제 손에서 사건이 강탈당했다'고 하셨대요. 판사도 막을 수 없는 거예요?",
+        educationKey: "transfer_cases",
     },
     {
         id: "atk_cancel",
@@ -251,6 +265,7 @@ export const POLITICAL_ATTACKS: PoliticalAttack[] = [
         dialogueKey: "cancel_indictment",
         emotionalText: "지금 이 순간, 5개 재판의 진실이 영원히 사라지려 하고 있다.",
         victimVoice: "4,895억 원... 800만 달러... 133억 원... 이 모든 진실이 사라진다고요? 제발... 제발 재판만은 남겨주세요.",
+        educationKey: "cancel_indictment",
     },
     {
         id: "atk_generic",
