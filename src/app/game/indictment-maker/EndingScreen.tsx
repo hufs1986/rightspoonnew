@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { toPng } from "html-to-image";
-import { GAME_ENDINGS, MAX_MONTHS, type GameEnding, type GameStats } from "./gameData";
+import { GAME_ENDINGS, MAX_MONTHS, TRIALS, type GameEnding, type GameStats } from "./gameData";
 import type { LeaderboardEntry } from "./useIndictmentGame";
 import { calculateArchetype } from "./archetypes";
 import { initAudio, playSfx } from "./audioUtils";
@@ -86,6 +86,92 @@ export default function EndingScreen({
                 <h2 className={styles.vnEndingTitle}>{endingData.title}</h2>
 
                 <p className={styles.vnEndingDesc}>{endingData.description}</p>
+
+                {/* 패배 엔딩: 사라지는 재판 목록 */}
+                {!endingData.isVictory && endingData.id === "cancel_success" && (
+                    <div style={{
+                        margin: '16px auto',
+                        padding: '16px',
+                        background: 'rgba(255, 50, 50, 0.06)',
+                        border: '1px solid rgba(255, 50, 50, 0.2)',
+                        borderRadius: '12px',
+                        maxWidth: '400px',
+                    }}>
+                        <div style={{ fontSize: '0.8rem', color: '#ff6b6b', marginBottom: '12px', fontWeight: 700 }}>
+                            ❌ 영원히 사라진 재판들
+                        </div>
+                        {TRIALS.map((trial) => (
+                            <div key={trial.id} style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                padding: '6px 0',
+                                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                textDecoration: 'line-through',
+                                color: 'rgba(255, 100, 100, 0.6)',
+                                fontSize: '0.82rem',
+                            }}>
+                                <span>{trial.emoji}</span>
+                                <span>{trial.name}</span>
+                                <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#555' }}>{trial.court}</span>
+                            </div>
+                        ))}
+                        <div style={{
+                            marginTop: '12px',
+                            fontSize: '0.78rem',
+                            color: '#ff9999',
+                            textAlign: 'center',
+                            fontStyle: 'italic',
+                            lineHeight: '1.6',
+                        }}>
+                            유죄도 무죄도 아닙니다.<br />
+                            재판이 사라진 것입니다.<br />
+                            <strong style={{ color: '#ff6b6b' }}>다음 권력도 배웠습니다. &ldquo;재판은 지울 수 있다.&rdquo;</strong>
+                        </div>
+                    </div>
+                )}
+
+                {/* 승리 엔딩: 지켜낸 재판 목록 */}
+                {endingData.isVictory && (
+                    <div style={{
+                        margin: '16px auto',
+                        padding: '16px',
+                        background: 'rgba(94, 226, 141, 0.06)',
+                        border: '1px solid rgba(94, 226, 141, 0.2)',
+                        borderRadius: '12px',
+                        maxWidth: '400px',
+                    }}>
+                        <div style={{ fontSize: '0.8rem', color: '#5ee28d', marginBottom: '12px', fontWeight: 700 }}>
+                            ✅ 당신이 지켜낸 재판들
+                        </div>
+                        {TRIALS.map((trial) => (
+                            <div key={trial.id} style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                padding: '6px 0',
+                                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                color: '#c8d8e8',
+                                fontSize: '0.82rem',
+                            }}>
+                                <span>{trial.emoji}</span>
+                                <span>{trial.name}</span>
+                                <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#5ee28d' }}>진행 중 ✅</span>
+                            </div>
+                        ))}
+                        <div style={{
+                            marginTop: '12px',
+                            fontSize: '0.78rem',
+                            color: '#a3d4b0',
+                            textAlign: 'center',
+                            fontStyle: 'italic',
+                            lineHeight: '1.6',
+                        }}>
+                            진실은 법정에서 밝혀질 것입니다.<br />
+                            <strong style={{ color: '#5ee28d' }}>시민이 법치주의를 지켰습니다.</strong>
+                        </div>
+                    </div>
+                )}
 
                 {/* 플레이어 성향(Archetype) 결과 카드 (캡처 영역) */}
                 <div 
@@ -225,7 +311,7 @@ export default function EndingScreen({
                         📸 내 성향 이미지 저장
                     </button>
                     <button className={styles.ghostBtn} onClick={onShare}>
-                        📤 게임 공유
+                        📤 이 게임 공유하기 — &ldquo;당신도 법치주의를 지켜보세요&rdquo;
                     </button>
                 </div>
             </div>
