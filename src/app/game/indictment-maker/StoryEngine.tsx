@@ -120,6 +120,26 @@ export default function StoryEngine() {
                         <div style={{ color: "#ffd700", fontWeight: "bold" }}>{endingStats["true_justice"] || 0}명</div>
                     </div>
                 </div>
+
+                {/* 공유 버튼 */}
+                <button
+                    onClick={async () => {
+                        const shareData = {
+                            title: '공소취소 방어전: 진실의 법정',
+                            text: '당신의 선택이 법치주의의 운명을 결정합니다. 트루엔딩에 도전해보세요!',
+                            url: window.location.href
+                        };
+                        if (navigator.share) {
+                            try { await navigator.share(shareData); } catch (e) { /* 취소 */ }
+                        } else {
+                            await navigator.clipboard.writeText(window.location.href);
+                            alert('링크가 복사되었습니다!');
+                        }
+                    }}
+                    style={{ marginTop: "16px", padding: "14px 28px", fontSize: "1rem", background: "#fee500", color: "#000", fontWeight: "bold", border: "none", borderRadius: "12px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                >
+                    💬 친구에게 공유하기
+                </button>
             </div>
         );
     }
