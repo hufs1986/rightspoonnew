@@ -306,6 +306,38 @@ function GameScreenComponent({
                         <div className={styles.attackOverlayEmoji}>{pendingAttack.emoji}</div>
                         <h3 className={styles.attackOverlayTitle}>{pendingAttack.name}</h3>
                         <p className={styles.attackOverlayDesc}>{pendingAttack.description}</p>
+                        
+                        {/* 감정적 텍스트 */}
+                        <div style={{
+                            margin: '12px 0',
+                            padding: '10px 14px',
+                            background: 'rgba(255, 68, 68, 0.08)',
+                            borderLeft: '3px solid rgba(255, 68, 68, 0.6)',
+                            borderRadius: '0 8px 8px 0',
+                            fontSize: '0.85rem',
+                            lineHeight: '1.5',
+                            color: '#ffcccc',
+                            fontStyle: 'italic',
+                        }}>
+                            {pendingAttack.emotionalText}
+                        </div>
+
+                        {/* 피해자 목소리 */}
+                        {pendingAttack.victimVoice && (
+                            <div style={{
+                                margin: '8px 0',
+                                padding: '10px 14px',
+                                background: 'rgba(255, 255, 255, 0.04)',
+                                borderRadius: '8px',
+                                fontSize: '0.8rem',
+                                lineHeight: '1.5',
+                                color: '#aab3d0',
+                            }}>
+                                <span style={{ fontSize: '0.7rem', color: '#888', display: 'block', marginBottom: '4px' }}>💬 피해자의 목소리</span>
+                                &ldquo;{pendingAttack.victimVoice}&rdquo;
+                            </div>
+                        )}
+
                         <div className={styles.attackOverlayNews}>
                             📰 {pendingAttack.newsHeadline}
                         </div>
@@ -314,7 +346,7 @@ function GameScreenComponent({
                             <span className={styles.attackEffectBad}>🏛️ 민주주의 -{pendingAttack.democracyDamage}</span>
                         </div>
                         <button className={styles.attackOverlayBtn} onClick={handleDismissAttack}>
-                            심판 촉구 행동 선택하기 →
+                            ✊ 맞서 싸우기 →
                         </button>
                     </div>
                 </div>
