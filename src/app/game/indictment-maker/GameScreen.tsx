@@ -219,8 +219,10 @@ function GameScreenComponent({
             {/* === CARD AREA (fills remaining space, scrolls internally) === */}
             {showDefenseActions && (
                 <div style={{ flex: 1, overflow: 'auto', padding: '8px 12px', WebkitOverflowScrolling: 'touch' }}>
-                    <div className={styles.vnActionsTitle} style={{ marginBottom: '8px' }}>⚖️ 심판을 위한 행동 카드 (무작위 4장)</div>
-                    <div className={styles.vnActionsGrid} style={{ gap: '8px' }}>
+                    <div className={styles.vnActionsTitle} style={{ marginBottom: '10px' }}>
+                        🃏 덱에서 4장을 뽑았습니다 — 카드를 선택하세요
+                    </div>
+                    <div className={styles.vnActionsGrid}>
                         {(currentHand || []).map((id) => {
                             const action = defenseActions.find(a => a.id === id);
                             if (!action) return null;
@@ -233,13 +235,12 @@ function GameScreenComponent({
                                     key={`${action.id}-${month}`}
                                     type="button"
                                     className={`${styles.vnActionBtn} ${!action.available ? styles["vnActionBtn--locked"] : ""} ${isRest ? styles["vnActionBtn--rest"] : ""}`}
-                                    style={{ padding: '12px 10px', gap: '6px' }}
                                     onClick={() => handleDefend(action)}
                                     disabled={!action.available}
                                 >
-                                    <span className={styles.vnActionEmoji} style={{ fontSize: '1.8rem' }}>{action.emoji}</span>
+                                    <span className={styles.vnActionEmoji}>{action.emoji}</span>
                                     <div className={styles.vnActionInfo}>
-                                        <div className={styles.vnActionName} style={{ fontSize: '0.8rem' }}>{action.name}</div>
+                                        <div className={styles.vnActionName}>{action.name}</div>
                                         <div className={styles.vnActionPhase}>
                                             {isRest ? "⚡ +30 에너지" : `⚡ -${action.energyCost}`}
                                             {onCooldown && ` · ⏳ ${action.cooldownLeft}턴`}
@@ -273,11 +274,11 @@ function GameScreenComponent({
                                 <button
                                     type="button"
                                     className={`${styles.vnActionBtn} ${styles["vnActionBtn--rest"]} ${!restAction.available ? styles["vnActionBtn--locked"] : ""}`}
-                                    style={{ width: '100%', maxWidth: '400px', padding: '12px 10px', flexDirection: 'row', gap: '10px' }}
+                                    style={{ width: '100%', maxWidth: '400px', flexDirection: 'row', gap: '10px' }}
                                     onClick={() => handleDefend(restAction)}
                                     disabled={!restAction.available}
                                 >
-                                    <span className={styles.vnActionEmoji} style={{ fontSize: '1.5rem' }}>{restAction.emoji}</span>
+                                    <span className={styles.vnActionEmoji}>{restAction.emoji}</span>
                                     <div className={styles.vnActionInfo}>
                                         <div className={styles.vnActionName}>{restAction.name}</div>
                                         <div className={styles.vnActionPhase}>⚡ +30 에너지 회복 (턴 소모)</div>
