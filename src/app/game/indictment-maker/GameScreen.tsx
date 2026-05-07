@@ -139,188 +139,164 @@ function GameScreenComponent({
     const showDefenseActions = turnPhase === "pick_defense";
 
     return (
-        <div className={`${styles.gameContainer} ${isCancelHigh ? styles["gameContainer--alarm"] : ""} ${screenShake ? styles["gameContainer--shake"] : ""}`}>
+        <div className={`${styles.gameContainer} ${isCancelHigh ? styles["gameContainer--alarm"] : ""} ${screenShake ? styles["gameContainer--shake"] : ""}`}
+             style={{ height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', paddingBottom: 0 }}
+        >
             {/* Screen flash overlay */}
             {flashColor && (
                 <div className={styles.screenFlash} style={{ background: flashColor }} />
             )}
 
-            <div className={styles.vnGameLayout}>
-                {/* HUD */}
-                <div className={styles.vnHud}>
-                    <div className={styles.vnHudLeft}>
-                        <span className={styles.vnHudMonth}>{month}/{MAX_MONTHS}</span>
-                    </div>
-                    <div className={styles.vnHudCenter}>
-                        <span className={styles.vnHudEmoji}>⚖️</span>
-                        <span className={styles.vnHudName}>공소취소 방어전</span>
-                    </div>
-                    <div className={styles.vnHudRight}>
-                        {exhaustedTurns > 0 && (
-                            <span className={styles.exhaustedBadge}>⚠️ 소진 {exhaustedTurns}/5</span>
-                        )}
-                    </div>
+            {/* === COMPACT HUD === */}
+            <div className={styles.vnHud}>
+                <div className={styles.vnHudLeft}>
+                    <span className={styles.vnHudMonth}>{month}/{MAX_MONTHS}</span>
                 </div>
-
-                {/* Progress Bar */}
-                <div className={styles.defenseProgressBar}>
-                    <div className={styles.defenseProgressFill} style={{ width: `${progressPercent}%` }} />
-                    <span className={styles.defenseProgressLabel}>
-                        {month <= MAX_MONTHS ? `${MAX_MONTHS - month + 1}개월 남음` : "완료!"}
-                    </span>
+                <div className={styles.vnHudCenter}>
+                    <span className={styles.vnHudEmoji}>⚖️</span>
+                    <span className={styles.vnHudName}>공소취소 방어전</span>
                 </div>
-
-                {/* Stats Bars */}
-                <div className={styles.defenseStatsPanel}>
-                    {STAT_ORDER.map((key) => {
-                        const info = STAT_LABELS[key];
-                        const val = stats[key];
-                        const tone = getStatTone(key, val);
-                        const color = tone === "good" ? "#5ee28d" : tone === "warning" ? "#ffd166" : tone === "danger" ? "#ff6b6b" : "#70a2ff";
-                        const isCancel = key === "cancelProgress";
-                        const flash = statFlash[key];
-                        const prev = prevStats[key] ?? val;
-                        const diff = val - prev;
-
-                        return (
-                            <div key={key} className={`${styles.defenseStatItem} ${isCancel && isCancelHigh ? styles["defenseStatItem--danger"] : ""} ${flash ? styles[`defenseStatItem--${flash}`] : ""}`}>
-                                <div className={styles.defenseStatLabel}>
-                                    {info.emoji} {info.label}
-                                </div>
-                                <div className={styles.defenseStatBar}>
-                                    <div
-                                        className={styles.defenseStatFill}
-                                        style={{
-                                            width: `${val}%`,
-                                            background: isCancel
-                                                ? `linear-gradient(90deg, #ff6b6b, #ff3333)`
-                                                : color,
-                                        }}
-                                    />
-                                </div>
-                                <div className={styles.defenseStatValue} style={{ color }}>
-                                    {val}
-                                </div>
-                                {flash && diff !== 0 && (
-                                    <span className={`${styles.statDelta} ${flash === "up" ? styles["statDelta--up"] : styles["statDelta--down"]}`}>
-                                        {diff > 0 ? `+${diff}` : diff}
-                                    </span>
-                                )}
-                            </div>
-                        );
-                    })}
+                <div className={styles.vnHudRight}>
+                    {exhaustedTurns > 0 && (
+                        <span className={styles.exhaustedBadge}>⚠️ 소진 {exhaustedTurns}/5</span>
+                    )}
                 </div>
+            </div>
 
-                {/* Cancel Critical Warning */}
-                {isCancelCritical && (
-                    <div className={styles.criticalWarning}>
-                        🚨 재판 회피 임박! 강력한 심판 촉구가 필요합니다!
-                    </div>
-                )}
+            {/* === COMPACT STATS (horizontal inline) === */}
+            <div style={{ display: 'flex', gap: '8px', padding: '6px 12px', background: 'rgba(9,11,20,0.9)', flexWrap: 'wrap', justifyContent: 'center', fontSize: '0.75rem' }}>
+                {STAT_ORDER.map((key) => {
+                    const info = STAT_LABELS[key];
+                    const val = stats[key];
+                    const tone = getStatTone(key, val);
+                    const color = tone === "good" ? "#5ee28d" : tone === "warning" ? "#ffd166" : tone === "danger" ? "#ff6b6b" : "#70a2ff";
+                    return (
+                        <span key={key} style={{ color, fontWeight: 700 }}>
+                            {info.emoji} {info.label} {val}
+                        </span>
+                    );
+                })}
+            </div>
 
-                {/* News Ticker */}
-                {newsHistory.length > 0 && (
-                    <div className={styles.vnNewsTicker}>
-                        <div className={styles.newsTickerBar}>
-                            <div className={styles.newsLabel}>🔴 BREAKING</div>
-                            <div className={styles.newsMarquee}>
-                                <div className={styles.newsMarqueeTrack}>
-                                    <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
-                                    <span className={styles.newsMarqueeDivider}>•</span>
-                                    <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
-                                </div>
+            {/* Cancel Critical Warning */}
+            {isCancelCritical && (
+                <div className={styles.criticalWarning} style={{ margin: '0', padding: '6px 12px', fontSize: '0.78rem' }}>
+                    🚨 재판 회피 임박! 강력한 심판 촉구가 필요합니다!
+                </div>
+            )}
+
+            {/* News Ticker */}
+            {newsHistory.length > 0 && (
+                <div className={styles.vnNewsTicker}>
+                    <div className={styles.newsTickerBar}>
+                        <div className={styles.newsLabel}>🔴 BREAKING</div>
+                        <div className={styles.newsMarquee}>
+                            <div className={styles.newsMarqueeTrack}>
+                                <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
+                                <span className={styles.newsMarqueeDivider}>•</span>
+                                <span className={styles.newsMarqueeItem}>{newsHistory[0]}</span>
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
+            )}
 
-                {/* Energy Warning */}
-                {isEnergyLow && (
-                    <div className={styles.energyWarning}>
-                        <span className={styles.energyWarningIcon}>⚡</span>
-                        <span>에너지 부족! &apos;여론 결집&apos;으로 회복하세요</span>
+            {/* Energy Warning */}
+            {isEnergyLow && (
+                <div className={styles.energyWarning} style={{ margin: '0 12px', padding: '6px 10px', fontSize: '0.75rem' }}>
+                    <span className={styles.energyWarningIcon}>⚡</span>
+                    <span>에너지 부족! &apos;여론 결집&apos;으로 회복하세요</span>
+                </div>
+            )}
+
+            {/* Waiting for attack message */}
+            {turnPhase === "show_attack" && !pendingAttack && (
+                <div className={styles.phaseHint}>
+                    정치 머신이 다음 공격을 준비하고 있습니다...
+                </div>
+            )}
+
+            {/* === CARD AREA (fills remaining space, scrolls internally) === */}
+            {showDefenseActions && (
+                <div style={{ flex: 1, overflow: 'auto', padding: '8px 12px', WebkitOverflowScrolling: 'touch' }}>
+                    <div className={styles.vnActionsTitle} style={{ marginBottom: '8px' }}>⚖️ 심판을 위한 행동 카드 (무작위 4장)</div>
+                    <div className={styles.vnActionsGrid} style={{ gap: '8px' }}>
+                        {(currentHand || []).map((id) => {
+                            const action = defenseActions.find(a => a.id === id);
+                            if (!action) return null;
+
+                            const isRest = action.id === "rest";
+                            const onCooldown = action.cooldownLeft > 0;
+
+                            return (
+                                <button
+                                    key={`${action.id}-${month}`}
+                                    type="button"
+                                    className={`${styles.vnActionBtn} ${!action.available ? styles["vnActionBtn--locked"] : ""} ${isRest ? styles["vnActionBtn--rest"] : ""}`}
+                                    style={{ padding: '12px 10px', gap: '6px' }}
+                                    onClick={() => handleDefend(action)}
+                                    disabled={!action.available}
+                                >
+                                    <span className={styles.vnActionEmoji} style={{ fontSize: '1.8rem' }}>{action.emoji}</span>
+                                    <div className={styles.vnActionInfo}>
+                                        <div className={styles.vnActionName} style={{ fontSize: '0.8rem' }}>{action.name}</div>
+                                        <div className={styles.vnActionPhase}>
+                                            {isRest ? "⚡ +30 에너지" : `⚡ -${action.energyCost}`}
+                                            {onCooldown && ` · ⏳ ${action.cooldownLeft}턴`}
+                                            {!action.available && !onCooldown && !isRest && " · 에너지 부족"}
+                                        </div>
+                                        {!isRest && action.available && (
+                                            <div className={styles.vnActionCosts}>
+                                                {action.cancelReduction > 0 && (
+                                                    <span className={styles.vnActionGain}>🔴-{action.cancelReduction}</span>
+                                                )}
+                                                {action.awarenessGain > 0 && (
+                                                    <span className={styles.vnActionGain}>👁️+{action.awarenessGain}</span>
+                                                )}
+                                                {action.democracyGain > 0 && (
+                                                    <span className={styles.vnActionGain}>🏛️+{action.democracyGain}</span>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </button>
+                            );
+                        })}
                     </div>
-                )}
+                    
+                    {/* 여론 결집 (Rest) 버튼 */}
+                    {(() => {
+                        const restAction = defenseActions.find(a => a.id === "rest");
+                        if (!restAction) return null;
+                        return (
+                            <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'center', paddingBottom: '20px' }}>
+                                <button
+                                    type="button"
+                                    className={`${styles.vnActionBtn} ${styles["vnActionBtn--rest"]} ${!restAction.available ? styles["vnActionBtn--locked"] : ""}`}
+                                    style={{ width: '100%', maxWidth: '400px', padding: '12px 10px', flexDirection: 'row', gap: '10px' }}
+                                    onClick={() => handleDefend(restAction)}
+                                    disabled={!restAction.available}
+                                >
+                                    <span className={styles.vnActionEmoji} style={{ fontSize: '1.5rem' }}>{restAction.emoji}</span>
+                                    <div className={styles.vnActionInfo}>
+                                        <div className={styles.vnActionName}>{restAction.name}</div>
+                                        <div className={styles.vnActionPhase}>⚡ +30 에너지 회복 (턴 소모)</div>
+                                    </div>
+                                </button>
+                            </div>
+                        );
+                    })()}
+                </div>
+            )}
 
-                {/* Waiting for attack message */}
-                {turnPhase === "show_attack" && !pendingAttack && (
+            {/* When not in defense phase, show empty space */}
+            {!showDefenseActions && turnPhase !== "show_attack" && (
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <div className={styles.phaseHint}>
                         정치 머신이 다음 공격을 준비하고 있습니다...
                     </div>
-                )}
-
-                {/* Defense Actions - only visible during pick_defense phase */}
-                {showDefenseActions && (
-                    <div className={styles.vnActionsPanel}>
-                        <div className={styles.vnActionsTitle}>⚖️ 심판을 위한 행동 카드 (무작위 4장 드로우)</div>
-                        <div className={styles.vnActionsGrid}>
-                            {(currentHand || []).map((id, index) => {
-                                const action = defenseActions.find(a => a.id === id);
-                                if (!action) return null;
-
-                                const isRest = action.id === "rest";
-                                const onCooldown = action.cooldownLeft > 0;
-
-                                return (
-                                    <button
-                                        key={`${action.id}-${month}`} // month를 키에 넣어 턴마다 애니메이션 재실행
-                                        type="button"
-                                        className={`${styles.vnActionBtn} ${!action.available ? styles["vnActionBtn--locked"] : ""} ${isRest ? styles["vnActionBtn--rest"] : ""}`}
-                                        onClick={() => handleDefend(action)}
-                                        disabled={!action.available}
-                                    >
-                                        <span className={styles.vnActionEmoji}>{action.emoji}</span>
-                                        <div className={styles.vnActionInfo}>
-                                            <div className={styles.vnActionName}>{action.name}</div>
-                                            <div className={styles.vnActionPhase}>
-                                                {isRest ? "⚡ +30 에너지" : `⚡ -${action.energyCost}`}
-                                                {onCooldown && ` · ⏳ ${action.cooldownLeft}턴`}
-                                                {!action.available && !onCooldown && !isRest && " · 에너지 부족"}
-                                            </div>
-                                            {!isRest && action.available && (
-                                                <div className={styles.vnActionCosts}>
-                                                    {action.cancelReduction > 0 && (
-                                                        <span className={styles.vnActionGain}>🔴-{action.cancelReduction}</span>
-                                                    )}
-                                                    {action.awarenessGain > 0 && (
-                                                        <span className={styles.vnActionGain}>👁️+{action.awarenessGain}</span>
-                                                    )}
-                                                    {action.democracyGain > 0 && (
-                                                        <span className={styles.vnActionGain}>🏛️+{action.democracyGain}</span>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        
-                        {/* 여론 결집 (Rest) 버튼을 항상 하단에 고정 배치 */}
-                        {(() => {
-                            const restAction = defenseActions.find(a => a.id === "rest");
-                            if (!restAction) return null;
-                            return (
-                                <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'center' }}>
-                                    <button
-                                        type="button"
-                                        className={`${styles.vnActionBtn} ${!restAction.available ? styles["vnActionBtn--locked"] : ""}`}
-                                        style={{ width: '100%', maxWidth: '400px' }}
-                                        onClick={() => handleDefend(restAction)}
-                                        disabled={!restAction.available}
-                                    >
-                                        <span className={styles.vnActionEmoji}>{restAction.emoji}</span>
-                                        <div className={styles.vnActionInfo}>
-                                            <div className={styles.vnActionName}>{restAction.name}</div>
-                                            <div className={styles.vnActionPhase}>⚡ +30 에너지 회복 (턴 소모)</div>
-                                        </div>
-                                    </button>
-                                </div>
-                            );
-                        })()}
-                    </div>
-                )}
-            </div>
+                </div>
+            )}
 
             {/* ===== ATTACK OVERLAY — shown during show_attack phase ===== */}
             {turnPhase === "show_attack" && pendingAttack && (
