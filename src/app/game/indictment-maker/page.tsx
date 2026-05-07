@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR, Press_Start_2P } from "next/font/google";
-import GameEngine from "./GameEngine";
+import StoryEngine from "./StoryEngine";
 
 const notoSansKr = Noto_Sans_KR({
     weight: ["400", "500", "700", "900"],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export default function IndictmentMakerPage() {
     return (
         <div className={`${notoSansKr.className} ${pressStart.variable}`}>
-            <GameEngine />
+            <StoryEngine />
         </div>
     );
 }

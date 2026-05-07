@@ -1,33 +1,36 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-    BG_IMAGES,
-    CHARACTER_META,
-    type DialogueLine,
-    type DialogueSequence,
-    type ScreenEffect,
-} from "./dialogueData";
+import { BG_IMAGES, CHARACTER_META, type ScreenEffect } from "./dialogueData";
+import type { StoryNode, StoryChoice } from "./storyData";
 import styles from "./game.module.css";
 
 interface DialogueSystemProps {
-    sequence: DialogueSequence;
-    onComplete: () => void;
+    node: StoryNode;
+    onChoiceMade: (choice: StoryChoice) => void;
+    onNextNode: (nextNodeId: string) => void;
+    onEnding: (endingId: string) => void;
 }
 
 const TYPING_SPEED = 35; // ms per character
 
-export default function DialogueSystem({ sequence, onComplete }: DialogueSystemProps) {
+export default function DialogueSystem({ node, onChoiceMade, onNextNode, onEnding }: DialogueSystemProps) {
     const [lineIndex, setLineIndex] = useState(0);
     const [displayedText, setDisplayedText] = useState("");
     const [isTyping, setIsTyping] = useState(true);
     const [activeEffect, setActiveEffect] = useState<ScreenEffect>("none");
+    const [showChoices, setShowChoices] = useState(false);
     const timerRef = useRef<number | null>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
 
-    const currentLine: DialogueLine | undefined = sequence.lines[lineIndex];
+    // Reset when node changes
+    useEffect(() => {
+        setLineIndex(0);
+        setShowChoices(false);
+    }, [node.id]);
+
+    const currentLine = node.lines[lineIndex];
     const charMeta = currentLine ? CHARACTER_META[currentLine.character] : null;
-    const bgUrl = BG_IMAGES[sequence.background];
+    const bgUrl = BG_IMAGES[node.background];
 
     // Typing animation
     useEffect(() => {
@@ -35,6 +38,7 @@ export default function DialogueSystem({ sequence, onComplete }: DialogueSystemP
 
         setDisplayedText("");
         setIsTyping(true);
+        setShowChoices(false);
 
         if (currentLine.effect && currentLine.effect !== "none") {
             setActiveEffect(currentLine.effect);
@@ -51,6 +55,9 @@ export default function DialogueSystem({ sequence, onComplete }: DialogueSystemP
                 timerRef.current = window.setTimeout(tick, TYPING_SPEED);
             } else {
                 setIsTyping(false);
+                if (lineIndex === node.lines.length - 1 && node.choices && node.choices.length > 0) {
+                    setShowChoices(true);
+                }
             }
         };
 
@@ -59,23 +66,33 @@ export default function DialogueSystem({ sequence, onComplete }: DialogueSystemP
         return () => {
             if (timerRef.current !== null) window.clearTimeout(timerRef.current);
         };
-    }, [lineIndex, currentLine]);
+    }, [lineIndex, currentLine, node]);
 
     const advance = useCallback(() => {
+        if (showChoices) return; // Wait for choice to be clicked
+
         if (isTyping) {
             // Skip to end of current line
             if (timerRef.current !== null) window.clearTimeout(timerRef.current);
             if (currentLine) setDisplayedText(currentLine.text);
             setIsTyping(false);
+            if (lineIndex === node.lines.length - 1 && node.choices && node.choices.length > 0) {
+                setShowChoices(true);
+            }
             return;
         }
 
-        if (lineIndex < sequence.lines.length - 1) {
+        if (lineIndex < node.lines.length - 1) {
             setLineIndex((prev) => prev + 1);
         } else {
-            onComplete();
+            // End of node
+            if (node.isEnding && node.endingId) {
+                onEnding(node.endingId);
+            } else if (node.nextNodeId && (!node.choices || node.choices.length === 0)) {
+                onNextNode(node.nextNodeId);
+            }
         }
-    }, [isTyping, lineIndex, sequence.lines.length, currentLine, onComplete]);
+    }, [isTyping, lineIndex, node, currentLine, showChoices, onNextNode, onEnding]);
 
     // Click / tap / key to advance
     useEffect(() => {
@@ -97,77 +114,51 @@ export default function DialogueSystem({ sequence, onComplete }: DialogueSystemP
                 : activeEffect === "slam" ? styles.vnSlam
                     : "";
 
-    // Determine which characters to show
-    const leftChar = charMeta.position === "left" ? charMeta : null;
-    const rightChar = charMeta.position === "right" ? charMeta : null;
-    const centerChar = charMeta.position === "center" && currentLine.character !== "narrator" ? charMeta : null;
+    const showLeft = charMeta.position === "left" && charMeta.image;
+    const showRight = charMeta.position === "right" && charMeta.image;
+    const showCenter = charMeta.position === "center" && charMeta.image;
 
     return (
-        <div
-            ref={containerRef}
-            className={`${styles.vnContainer} ${effectClass}`}
-            onClick={advance}
-            role="button"
-            tabIndex={0}
-            aria-label="다음 대사로 진행"
-        >
+        <div className={styles.vnContainer} onClick={advance}>
             {/* Background */}
-            {bgUrl && (
-                <div className={styles.vnBg} style={{ backgroundImage: `url(${bgUrl})` }} />
-            )}
-            <div className={styles.vnBgOverlay} />
-
-            {/* Skip button */}
-            <button
-                className={styles.vnSkipBtn}
-                onClick={(e) => { e.stopPropagation(); onComplete(); }}
-                aria-label="대사 건너뛰기"
-            >
-                SKIP ▶▶
-            </button>
+            <div
+                className={`${styles.vnBg} ${effectClass}`}
+                style={{ backgroundImage: bgUrl ? `url('${bgUrl}')` : 'none', backgroundColor: bgUrl ? 'transparent' : '#000' }}
+            />
 
             {/* Characters */}
-            <div className={styles.vnCharacters}>
-                {leftChar && leftChar.image && (
-                    <div className={`${styles.vnCharLeft} ${styles.vnCharEnter}`}>
-                        <img src={leftChar.image} alt={leftChar.name} className={styles.vnCharImg} />
-                    </div>
-                )}
-                {centerChar && centerChar.image && (
-                    <div className={`${styles.vnCharCenter} ${styles.vnCharEnter}`}>
-                        <img src={centerChar.image} alt={centerChar.name} className={styles.vnCharImg} />
-                    </div>
-                )}
-                {rightChar && rightChar.image && (
-                    <div className={`${styles.vnCharRight} ${styles.vnCharEnter}`}>
-                        <img src={rightChar.image} alt={rightChar.name} className={styles.vnCharImg} />
-                    </div>
-                )}
+            <div className={`${styles.vnCharContainer} ${effectClass}`}>
+                {showLeft && <img src={charMeta.image} className={`${styles.vnChar} ${styles.vnCharLeft}`} alt="left char" />}
+                {showCenter && <img src={charMeta.image} className={`${styles.vnChar} ${styles.vnCharCenter}`} alt="center char" />}
+                {showRight && <img src={charMeta.image} className={`${styles.vnChar} ${styles.vnCharRight}`} alt="right char" />}
             </div>
+
+            {/* Emotion / Context text overhead */}
+
 
             {/* Dialogue Box */}
-            <div className={styles.vnDialogueBox}>
-                {charMeta.name && (
-                    <div className={styles.vnSpeakerName}>{charMeta.name}</div>
-                )}
-                <div className={styles.vnDialogueText}>
+            <div className={`${styles.vnDialogBox} ${effectClass}`}>
+                {charMeta.name && <div className={styles.vnSpeakerName}>{charMeta.name}</div>}
+                <div className={styles.vnDialogText}>
                     {displayedText}
-                    {isTyping && <span className={styles.vnCursor}>▌</span>}
+                    {!isTyping && !showChoices && <span className={styles.vnBlinkArrow}>▼</span>}
                 </div>
-                {!isTyping && (
-                    <div className={styles.vnAdvanceHint}>▼ 탭하여 계속</div>
-                )}
             </div>
 
-            {/* Progress dots */}
-            <div className={styles.vnProgress}>
-                {sequence.lines.map((_, i) => (
-                    <span
-                        key={i}
-                        className={`${styles.vnDot} ${i === lineIndex ? styles["vnDot--active"] : ""} ${i < lineIndex ? styles["vnDot--done"] : ""}`}
-                    />
-                ))}
-            </div>
+            {/* Choices Box */}
+            {showChoices && node.choices && (
+                <div className={styles.vnChoicesContainer} onClick={(e) => e.stopPropagation()}>
+                    {node.choices.map((choice, idx) => (
+                        <button
+                            key={idx}
+                            className={styles.vnChoiceBtn}
+                            onClick={() => onChoiceMade(choice)}
+                        >
+                            {choice.label}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
