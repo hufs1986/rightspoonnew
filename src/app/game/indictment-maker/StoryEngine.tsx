@@ -7,13 +7,13 @@ import styles from "./game.module.css";
 
 export default function StoryEngine() {
     const [phase, setPhase] = useState<"title" | "playing" | "ending">("title");
-    const [currentNodeId, setCurrentNodeId] = useState<StoryNodeId>("act1_start");
+    const [currentNodeId, setCurrentNodeId] = useState<StoryNodeId>("prologue");
     const [stats, setStats] = useState({ integrity: 50, opinion: 50 });
     const [endingId, setEndingId] = useState<string | null>(null);
 
     const handleStart = () => {
         setPhase("playing");
-        setCurrentNodeId("act1_start");
+        setCurrentNodeId("prologue");
         setStats({ integrity: 50, opinion: 50 });
     };
 

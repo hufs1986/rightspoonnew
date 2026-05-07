@@ -18,12 +18,13 @@ export interface DialogueSequence {
     lines: DialogueLine[];
 }
 
-export const CHARACTER_META: Record<CharacterId, { name: string; image: string; position: "left" | "right" | "center" }> = {
+export const CHARACTER_META: Record<CharacterId | "creator", { name: string; image: string; position: "left" | "right" | "center" }> = {
     prosecutor: { name: "검사", image: "/game/prosecutor.png", position: "left" },
     politician: { name: "정치인", image: "/game/politician.png", position: "right" },
     judge: { name: "재판장", image: "/game/judge.png", position: "center" },
     citizen: { name: "시민", image: "/game/citizen.png", position: "left" },
     narrator: { name: "", image: "", position: "center" },
+    creator: { name: "@drumtong119", image: "/drumtong119-logo.jpg", position: "center" },
 };
 
 export const BG_IMAGES: Record<Background, string> = {

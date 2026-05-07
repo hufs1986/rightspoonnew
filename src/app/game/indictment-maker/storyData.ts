@@ -23,6 +23,18 @@ export interface StoryNode {
 }
 
 export const STORY_DATA: Record<StoryNodeId, StoryNode> = {
+    // --- PROLOGUE: 크리에이터 소개 ---
+    "prologue": {
+        id: "prologue",
+        background: "dark",
+        lines: [
+            { character: "creator" as any, text: "안녕하세요! 오른스푼 크리에이터 @drumtong119 입니다." },
+            { character: "creator" as any, text: "본 게임은 대한민국 사법 시스템이 직면한 현실적인 정치적 외압을 시뮬레이션하기 위해 제작되었습니다." },
+            { character: "creator" as any, text: "당신의 선택이 법치주의의 운명을 결정합니다. 행운을 빕니다!" }
+        ],
+        nextNodeId: "act1_start"
+    },
+
     // --- ACT 1: 프레임의 시작 ---
     "act1_start": {
         id: "act1_start",
