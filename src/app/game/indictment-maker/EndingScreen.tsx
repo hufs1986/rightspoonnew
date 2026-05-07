@@ -75,7 +75,7 @@ export default function EndingScreen({
         : "linear-gradient(180deg, rgba(60,20,20,0.98), rgba(15,10,20,0.98))";
 
     return (
-        <div className={styles.gameContainer} style={{ overflowY: 'auto', WebkitOverflowScrolling: 'touch', minHeight: '100dvh', paddingBottom: '40px' }}>
+        <div className={styles.gameContainer} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, overflowY: 'auto', WebkitOverflowScrolling: 'touch', zIndex: 100, paddingBottom: '40px' }}>
             <div className={styles.endingScreen} style={{ background: bgGradient, minHeight: '100%' }}>
                 <div className={styles.vnEndingEmoji}>{endingData.emoji}</div>
 

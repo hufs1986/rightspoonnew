@@ -14,7 +14,7 @@ import { createClient } from "@/utils/supabase/client";
 import { selectPoliticalAttack, checkRandomEvent } from "./gameLogic";
 import type { DefenseAction, PoliticalAttack, RandomEvent } from "./gameData";
 
-type TurnPhase = "show_dialogue" | "show_attack" | "pick_defense" | "idle";
+type TurnPhase = "show_dialogue" | "show_attack" | "pick_defense" | "apply_defense" | "idle";
 
 export default function GameEngine() {
     const {
@@ -139,8 +139,12 @@ export default function GameEngine() {
         executeDefense(action);
         setPendingAttack(null);
         setPendingEvent(null);
-        // Set idle — useEffect will auto-trigger next attack
-        setTurnPhase("idle");
+        
+        // 방어 효과(스탯 변화, 화면 플래시)를 플레이어가 확인할 수 있도록 지연 시간을 둡니다.
+        setTurnPhase("apply_defense");
+        setTimeout(() => {
+            setTurnPhase("idle");
+        }, 1500);
     }, [executeDefense]);
 
     const handleShareGame = async () => {

@@ -14,7 +14,7 @@ interface GameScreenProps {
     defenseActions: DefenseActionWithMeta[];
     currentEvent: RandomEvent | null;
     pendingAttack: PoliticalAttack | null;
-    turnPhase: "show_dialogue" | "show_attack" | "pick_defense" | "idle";
+    turnPhase: "show_dialogue" | "show_attack" | "pick_defense" | "apply_defense" | "idle";
     month: number;
     recentDefenses: string[];
     newsHistory: string[];
