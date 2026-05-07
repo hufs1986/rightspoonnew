@@ -292,11 +292,12 @@ export const STORY_DATA: Record<StoryNodeId, StoryNode> = {
         id: "ending_d",
         background: "courtroom",
         lines: [
-            { character: "narrator", text: "[트루엔딩 D: 법치주의의 증명]" },
+            { character: "narrator", text: "[트루엔딩: 법치주의의 증명]" },
             { character: "narrator", text: "대법원의 추상같은 기각 판결이 내려지자, 숨죽이던 침묵의 다수가 지지를 보내기 시작했다." },
             { character: "narrator", text: "특검의 위헌성이 만천하에 드러나며 맹렬했던 정치권의 폭주도 명분을 잃고 멈춰 섰다." },
+            { character: "narrator", text: "어두운 구름이 걷히고, 거리에 다시 평화가 찾아왔다." },
             { character: "narrator", text: "법치주의가 여론의 쏠림과 거대 정치 권력을 이겨낸 역사적 순간." },
-            { character: "narrator", text: "대한민국 사법부는 절체절명의 위기를 극복하고 스스로의 존재 이유를 완벽하게 증명했다." }
+            { character: "narrator", text: "대한민국 사법부는 절체절명의 위기를 극복하고 굳건히 바로 섰다. 진실의 빛이 마침내 대한민국을 밝게 비추기 시작했다." }
         ],
         isEnding: true,
         endingId: "true_justice"

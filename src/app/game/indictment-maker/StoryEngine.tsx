@@ -66,21 +66,52 @@ export default function StoryEngine() {
     }
 
     if (phase === "ending") {
+        const ENDING_META: Record<string, { title: string, color: string, bg: string }> = {
+            "bad_conceal": { title: "배드엔딩: 진실의 은폐", color: "#ff3333", bg: "#0a0000" },
+            "bad_subordinate": { title: "배드엔딩: 사법부의 예속", color: "#ff3333", bg: "#0a0000" },
+            "normal_scars": { title: "노멀엔딩: 상처뿐인 원칙", color: "#aaaaaa", bg: "#111" },
+            "true_justice": { title: "트루엔딩: 법치주의의 증명", color: "#ffd700", bg: "linear-gradient(135deg, #091e3a, #2f80ed, #2d9ee0)" },
+        };
+
+        const meta = endingId && ENDING_META[endingId] ? ENDING_META[endingId] : { title: "종료", color: "#fff", bg: "#000" };
+
+        const handleShare = async () => {
+            const shareData = {
+                title: '공소취소 메이커',
+                text: `나의 결과: [${meta.title}]\n법치주의: ${stats.integrity} / 여론: ${stats.opinion}\n대한민국 사법 시스템의 운명을 직접 결정해보세요!`,
+                url: window.location.href
+            };
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                } catch (e) {
+                    console.log('공유 취소 또는 오류');
+                }
+            } else {
+                alert('지원하지 않는 브라우저입니다. URL을 복사해주세요!');
+            }
+        };
+
         return (
-            <div style={{ position: "fixed", inset: 0, height: "100dvh", zIndex: 100, background: "#000", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px", textAlign: "center" }}>
-                <h1 style={{ fontSize: "3rem", color: "#ff3333", marginBottom: "2rem" }}>THE END</h1>
-                <p style={{ fontSize: "1.2rem", color: "#ddd", marginBottom: "2rem" }}>
-                    엔딩 코드: {endingId}
+            <div style={{ position: "fixed", inset: 0, height: "100dvh", zIndex: 100, background: meta.bg, color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px", textAlign: "center" }}>
+                <h1 style={{ fontSize: "2.5rem", color: meta.color, marginBottom: "2rem", textShadow: endingId === "true_justice" ? "0 0 20px rgba(255, 215, 0, 0.5)" : "none" }}>{meta.title}</h1>
+                <p style={{ fontSize: "1rem", color: "#ddd", marginBottom: "3rem" }}>
+                    최종 사법 신뢰도: {stats.integrity} / 최종 대중 여론: {stats.opinion}
                 </p>
-                <p style={{ fontSize: "1rem", color: "#aaa", marginBottom: "3rem" }}>
-                    최종 법치주의: {stats.integrity} / 최종 여론: {stats.opinion}
-                </p>
-                <button 
-                    onClick={() => setPhase("title")}
-                    style={{ padding: "12px 24px", fontSize: "1rem", background: "#333", color: "white", border: "1px solid #555", borderRadius: "8px", cursor: "pointer" }}
-                >
-                    타이틀로 돌아가기
-                </button>
+                <div style={{ display: "flex", gap: "12px", flexDirection: "column", width: "min(100%, 300px)" }}>
+                    <button 
+                        onClick={handleShare}
+                        style={{ padding: "16px 24px", fontSize: "1.1rem", background: "#fee500", color: "#000", fontWeight: "bold", border: "none", borderRadius: "12px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                    >
+                        💬 결과 공유하기
+                    </button>
+                    <button 
+                        onClick={() => setPhase("title")}
+                        style={{ padding: "16px 24px", fontSize: "1rem", background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "12px", cursor: "pointer" }}
+                    >
+                        다시 도전하기
+                    </button>
+                </div>
             </div>
         );
     }
