@@ -64,7 +64,7 @@ export const ACTION_DIALOGUES: Record<string, DialogueSequence> = {
     rally_supporters_2: {
         background: "protest",
         lines: [
-            { character: "politician", expression: "confident", text: "우리가 촛불을 들어야 민주주의가 지켜집니다! 광장으로 모이십시오!" },
+            { character: "politician", expression: "confident", text: "우리가 거리에 나서야 민주주의가 지켜집니다! 광장으로 모이십시오!" },
             { character: "citizen", expression: "sad", text: "재판받기 싫어서 사람들 동원하는 거 너무 속 보이는 거 아니에요?" },
             { character: "narrator", text: "✊ 장외 집회가 계속되며 정치적 양극화가 극에 달하고 있다." },
         ],
@@ -306,7 +306,7 @@ export const EVENT_DIALOGUES: Record<string, DialogueSequence> = {
         background: "protest",
         lines: [
             { character: "citizen", expression: "angry", text: "왜 한 사람만 예외인가! 법 앞에 평등하라!", effect: "shake" },
-            { character: "narrator", text: "🕯️ 국회 앞에 5만 명의 시민이 촛불을 들고 모였다." },
+            { character: "narrator", text: "🏴 국회 앞에 5만 명의 시민이 시위에 나섰다." },
         ],
     },
     judge_resignation: {

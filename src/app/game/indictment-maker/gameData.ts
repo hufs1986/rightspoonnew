@@ -293,14 +293,14 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
     },
     {
         id: "protest_rally",
-        name: "사법 정의 실현 촛불 집회",
+        name: "사법 정의 실현 대규모 시위",
         emoji: "✊",
-        description: "국회 앞에서 법치주의 수호 촛불 집회에 참여한다",
+        description: "국회 앞에서 법치주의 수호 시위에 참여한다",
         energyCost: 25,
         cancelReduction: 10,
         awarenessGain: 5,
         democracyGain: 3,
-        newsHeadline: "\"재판을 지켜라\" 국회 앞 촛불 집회 10만 명 운집",
+        newsHeadline: "\"재판을 지켜라\" 국회 앞 시위 10만 명 운집",
     },
     {
         id: "constitutional_appeal",
