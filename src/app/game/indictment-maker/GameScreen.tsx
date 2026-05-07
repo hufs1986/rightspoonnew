@@ -14,6 +14,7 @@ interface GameScreenProps {
     defenseActions: DefenseActionWithMeta[];
     currentEvent: RandomEvent | null;
     pendingAttack: PoliticalAttack | null;
+    lastDefense?: DefenseAction | null;
     turnPhase: "show_dialogue" | "show_attack" | "pick_defense" | "apply_defense" | "idle";
     month: number;
     recentDefenses: string[];
@@ -32,6 +33,7 @@ function GameScreenComponent({
     defenseActions,
     currentEvent,
     pendingAttack,
+    lastDefense,
     turnPhase,
     month,
     newsHistory,
@@ -290,12 +292,44 @@ function GameScreenComponent({
                 </div>
             )}
 
-            {/* When not in defense phase, show empty space */}
+            {/* When not in defense phase, show empty space or reaction */}
             {!showDefenseActions && turnPhase !== "show_attack" && (
-                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div className={styles.phaseHint}>
-                        정치 머신이 다음 공격을 준비하고 있습니다...
-                    </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+                    {turnPhase === "apply_defense" && lastDefense?.reactionText ? (
+                        <div style={{
+                            background: 'rgba(255, 68, 68, 0.1)',
+                            border: '1px solid rgba(255, 68, 68, 0.4)',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            maxWidth: '400px',
+                            width: '100%',
+                            boxShadow: '0 10px 30px rgba(255, 0, 0, 0.15)',
+                            animation: 'slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                            position: 'relative'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                                <span style={{ fontSize: '1.5rem' }}>
+                                    {lastDefense.reactionCharacter === "politician" ? "👔" : "👤"}
+                                </span>
+                                <span style={{ color: '#ff9999', fontWeight: 700, fontSize: '0.9rem' }}>
+                                    {lastDefense.reactionCharacter === "politician" ? "정치 머신의 반응" : "여론의 반응"}
+                                </span>
+                            </div>
+                            <div style={{
+                                color: '#fff',
+                                fontSize: '1rem',
+                                lineHeight: '1.5',
+                                fontStyle: 'italic',
+                                textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                            }}>
+                                "{lastDefense.reactionText}"
+                            </div>
+                        </div>
+                    ) : (
+                        <div className={styles.phaseHint}>
+                            정치 머신이 다음 공격을 준비하고 있습니다...
+                        </div>
+                    )}
                 </div>
             )}
 

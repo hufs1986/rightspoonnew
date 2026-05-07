@@ -48,6 +48,7 @@ export default function GameEngine() {
     const [turnPhase, setTurnPhase] = useState<TurnPhase>("idle");
     const [pendingAttack, setPendingAttack] = useState<PoliticalAttack | null>(null);
     const [pendingEvent, setPendingEvent] = useState<RandomEvent | null>(null);
+    const [lastDefense, setLastDefense] = useState<DefenseAction | null>(null);
     const [usedEvents] = useState(() => new Set<string>());
 
     // Auto-trigger attack at game start and after each defense
@@ -136,6 +137,7 @@ export default function GameEngine() {
 
     // Player chose a defense action
     const handleDefense = useCallback((action: DefenseAction) => {
+        setLastDefense(action);
         executeDefense(action);
         setPendingAttack(null);
         setPendingEvent(null);
@@ -144,7 +146,7 @@ export default function GameEngine() {
         setTurnPhase("apply_defense");
         setTimeout(() => {
             setTurnPhase("idle");
-        }, 1500);
+        }, 2500); // 대사를 읽을 수 있도록 2.5초 지연
     }, [executeDefense]);
 
     const handleShareGame = async () => {
@@ -227,6 +229,7 @@ export default function GameEngine() {
             defenseActions={defenseActions}
             currentEvent={pendingEvent}
             pendingAttack={pendingAttack}
+            lastDefense={lastDefense}
             turnPhase={turnPhase}
             month={state.month}
             recentDefenses={state.recentDefenses}

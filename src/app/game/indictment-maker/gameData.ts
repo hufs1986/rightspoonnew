@@ -281,6 +281,8 @@ export interface DefenseAction {
     democracyGain: number;     // 민주주의 회복
     newsHeadline: string;
     cooldown?: number;         // 쿨다운 (턴)
+    reactionText?: string;     // 방어 후 상대의 반응 대사
+    reactionCharacter?: "politician" | "citizen" | "narrator";
 }
 
 export const DEFENSE_ACTIONS: DefenseAction[] = [
@@ -294,6 +296,8 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
         awarenessGain: 6,
         democracyGain: 1,
         newsHeadline: "탐사보도 \"특검법의 숨겨진 조항, 공소취소 장치였다\"",
+        reactionText: "저건 검찰이 흘린 가짜 뉴스입니다! 속지 마십시오!",
+        reactionCharacter: "politician",
     },
     {
         id: "citizen_petition",
@@ -305,6 +309,8 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
         awarenessGain: 4,
         democracyGain: 2,
         newsHeadline: "\"법 앞에 평등하라\" 100만 시민 청원 국회 도달",
+        reactionText: "여론재판으로 사법부를 압박하는 야만적 행위입니다!",
+        reactionCharacter: "politician",
     },
     {
         id: "protest_rally",
@@ -316,6 +322,8 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
         awarenessGain: 5,
         democracyGain: 3,
         newsHeadline: "\"재판을 지켜라\" 국회 앞 시위 10만 명 운집",
+        reactionText: "소수 정치 훌리건들의 선동일 뿐입니다. 흔들리지 않습니다.",
+        reactionCharacter: "politician",
     },
     {
         id: "constitutional_appeal",
@@ -328,6 +336,8 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
         democracyGain: 5,
         newsHeadline: "시민단체, 특검법 핵심 조항 위헌 심판 청구",
         cooldown: 3,
+        reactionText: "헌법재판소도 이미 기울어진 운동장입니다! 특검이 곧 헌법입니다!",
+        reactionCharacter: "politician",
     },
     {
         id: "education_campaign",
@@ -339,6 +349,8 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
         awarenessGain: 10,
         democracyGain: 2,
         newsHeadline: "\"공소취소의 진짜 의미\" 시민 교육 캠페인 전국 확산",
+        reactionText: "국민 여러분! 재판받다가 죽으란 말입니까? 이게 인권 탄압입니다!",
+        reactionCharacter: "politician",
     },
     {
         id: "corruption_expose",
@@ -351,6 +363,8 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
         democracyGain: 1,
         newsHeadline: "새 비위 폭로 \"특검이 이것도 없앨 건가\" 여론 들끓어",
         cooldown: 2,
+        reactionText: "정치 검찰의 끝없는 먼지떨이 수사! 이제 지긋지긋합니다!",
+        reactionCharacter: "politician",
     },
     {
         id: "international_solidarity",
@@ -363,6 +377,8 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
         democracyGain: 4,
         newsHeadline: "국제법률가협회 \"한국 사법독립 훼손\" 긴급 성명",
         cooldown: 3,
+        reactionText: "외세에 기대어 국내 정치를 간섭하려는 사대주의적 매국 행위!",
+        reactionCharacter: "politician",
     },
     {
         id: "legal_scholars",
@@ -375,6 +391,8 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
         democracyGain: 3,
         newsHeadline: "법학 교수 300명 \"공소취소는 법치의 죽음\" 긴급 성명",
         cooldown: 4,
+        reactionText: "기득권 카르텔 교수들의 조직적 저항일 뿐입니다!",
+        reactionCharacter: "politician",
     },
     {
         id: "rest",
@@ -386,6 +404,8 @@ export const DEFENSE_ACTIONS: DefenseAction[] = [
         awarenessGain: 0,
         democracyGain: 0,
         newsHeadline: "",
+        reactionText: "어차피 대중은 곧 잊을 겁니다. 특검을 서둘러야 합니다.",
+        reactionCharacter: "politician",
     },
 ];
 
