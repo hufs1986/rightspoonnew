@@ -83,9 +83,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/logo-v2.png" />
       </head>
       <body>
-        <InstallBanner />
+        {/* <InstallBanner /> */}
         {children}
-        <PushPermission />
+        {/* <PushPermission /> */}
       </body>
     </html>
   );
