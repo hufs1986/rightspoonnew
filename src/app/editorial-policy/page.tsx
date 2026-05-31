@@ -5,7 +5,7 @@ import styles from "../about/about.module.css";
 
 export const metadata = {
     title: "편집 원칙 | 오른스푼",
-    description: "오른스푼의 콘텐츠 작성 기준, AI 활용 원칙, 정정 및 문의 절차를 안내합니다.",
+    description: "오른스푼의 콘텐츠 작성 기준과 정정 및 문의 절차를 안내합니다.",
 };
 
 export default function EditorialPolicyPage() {
@@ -17,13 +17,13 @@ export default function EditorialPolicyPage() {
                 <div className={styles.heroInner}>
                     <div className={styles.heroIdentity}>
                         <img src="/logo-character.webp" alt="드럼통119" className={styles.heroLogo} />
-                        <span>오른스푼 운영 기준</span>
+                        <span>오른스푼 편집 원칙</span>
                     </div>
                     <h1 className={styles.heroTitle}>
-                        오른스푼은 빠른 복사가 아니라, 남는 해설을 목표로 씁니다.
+                        빠른 복사가 아니라, 남는 해설을 목표로 씁니다.
                     </h1>
                     <p className={styles.heroDesc}>
-                        정치·사회 이슈를 다루는 1인 미디어일수록 관점, 근거, 책임 소재가 분명해야 합니다.
+                        정치·사회 이슈를 다루는 미디어일수록 관점, 근거, 책임 소재가 분명해야 합니다.
                         이 페이지는 오른스푼이 글을 고르고, 쓰고, 고치는 기준을 공개합니다.
                     </p>
                 </div>
@@ -34,7 +34,7 @@ export default function EditorialPolicyPage() {
                     <p className={styles.kicker}>Editorial Policy</p>
                     <h2>무엇을 쓰는가</h2>
                     <p>
-                        오른스푼은 인스타그램과 유튜브에서 빠르게 지나가는 정치·사회 이슈 중
+                        오른스푼은 빠르게 지나가는 정치·사회 이슈 중
                         다시 꺼내 읽을 가치가 있는 주제를 글로 정리합니다. 속보 경쟁보다 사건의 구조,
                         반복되는 프레임, 독자가 확인해야 할 질문을 남기는 데 집중합니다.
                     </p>
@@ -51,18 +51,18 @@ export default function EditorialPolicyPage() {
                     </div>
                     <div className={styles.card}>
                         <span className={styles.cardLabel}>02</span>
-                        <h3 className={styles.cardTitle}>AI는 초안 보조 도구입니다</h3>
-                        <p className={styles.cardDesc}>
-                            AI는 소재 정리, 리라이트 구조, 인스타 공유 문구 생성에 사용합니다.
-                            최종 발행 전에는 운영자가 문체, 사실관계, 출처, 결론을 확인합니다.
-                        </p>
-                    </div>
-                    <div className={styles.card}>
-                        <span className={styles.cardLabel}>03</span>
                         <h3 className={styles.cardTitle}>관점은 숨기지 않습니다</h3>
                         <p className={styles.cardDesc}>
                             오른스푼은 오른쪽 시각의 해설 미디어입니다. 관점을 감추지 않는 대신,
                             독자가 판단할 수 있도록 쟁점과 반대 프레임을 함께 정리하려고 합니다.
+                        </p>
+                    </div>
+                    <div className={styles.card}>
+                        <span className={styles.cardLabel}>03</span>
+                        <h3 className={styles.cardTitle}>출처를 명시합니다</h3>
+                        <p className={styles.cardDesc}>
+                            주장의 근거가 되는 기사, 통계, 공식 자료는 가능한 한 출처 링크를 함께 제공합니다.
+                            독자가 직접 확인하고 판단할 수 있어야 한다고 생각합니다.
                         </p>
                     </div>
                 </div>
@@ -79,7 +79,7 @@ export default function EditorialPolicyPage() {
                         </div>
                         <div>
                             <strong>출처 보강</strong>
-                            <span>기존 글도 콘텐츠 감사와 AI 리라이트 도구를 통해 출처, 소제목, 내부 링크를 계속 보강합니다.</span>
+                            <span>기존 글도 출처, 소제목, 내부 링크를 계속 보강합니다.</span>
                         </div>
                         <div>
                             <strong>문의</strong>

@@ -84,13 +84,12 @@ export default async function Home() {
 
       <section className={styles.homeIntro}>
         <div className={styles.homeIntro__copy}>
-          <div className={styles.homeIntro__eyebrow}>드럼통119의 정치·사회 해설 본진</div>
+          <div className={styles.homeIntro__eyebrow}>드럼통119</div>
           <h1 className={styles.homeIntro__title}>
-            흘러가는 이슈를 붙잡아, 오른쪽 시각으로 다시 씁니다.
+            오른쪽 시각으로 다시 쓰는 정치·사회 해설
           </h1>
           <p className={styles.homeIntro__desc}>
-            오른스푼은 인스타그램과 유튜브에서 짧게 지나가는 정치·사회 이슈를 글로 축적하는 1인 미디어입니다.
-            뉴스 복사가 아니라, 사건의 프레임과 쟁점을 운영자의 관점으로 정리합니다.
+            오른스푼은 매일 쏟아지는 이슈 중 오래 남길 주제만 골라 정리하는 해설 미디어입니다.
           </p>
           <div className={styles.homeIntro__actions}>
             <Link href="/category/all" className="btn btn--primary">
@@ -101,14 +100,6 @@ export default async function Home() {
             </Link>
           </div>
         </div>
-        <aside className={styles.homeIntro__panel} aria-label="오른스푼 사용 안내">
-          <strong>인스타에서 오셨다면</strong>
-          <span>짧은 문장으로 끝낸 이슈의 전체 맥락과 근거를 여기에서 이어서 읽을 수 있습니다.</span>
-          <span>마음에 남는 글은 링크로 저장하고 공유하세요. 이곳이 오른스푼의 아카이브입니다.</span>
-          <Link href="/from-instagram" className={styles.homeIntro__textLink}>
-            처음 오신 분들을 위한 안내 보기
-          </Link>
-        </aside>
       </section>
 
       {/* Hero Section */}
@@ -168,43 +159,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className={styles.instagramBridge}>
-        <div>
-          <strong>인스타 반응을 오른스푼 자산으로</strong>
-          <p>
-            짧은 릴스와 피드에서 반응이 있었던 주제는 오른스푼에서 긴 해설로 정리합니다.
-            저장 가능한 글, 공유 가능한 링크, 검색되는 아카이브로 남기는 것이 목표입니다.
-          </p>
-        </div>
-        <Link href="/from-instagram" className="btn btn--primary">
-          인스타 방문자 안내
-        </Link>
-      </section>
 
-      <section className={styles.workflow}>
-        <div className={styles.workflow__copy}>
-          <span>운영 방식</span>
-          <h2>뉴스를 그대로 옮기지 않고, 해설 자산으로 바꿉니다.</h2>
-          <p>
-            매일 쏟아지는 이슈 중 오래 남길 주제만 고르고, AI 초안으로 구조를 잡은 뒤
-            드럼통119의 관점과 문장으로 다시 편집해 발행합니다.
-          </p>
-        </div>
-        <div className={styles.workflow__steps}>
-          <div>
-            <strong>1. 소재 수집</strong>
-            <p>뉴스, 공식자료, 인스타 반응에서 주제를 고릅니다.</p>
-          </div>
-          <div>
-            <strong>2. AI 구조화</strong>
-            <p>사실관계, 상대 프레임, 핵심 질문을 초안으로 만듭니다.</p>
-          </div>
-          <div>
-            <strong>3. 운영자 편집</strong>
-            <p>관점, 근거, 결론을 보강해 오른스푼 글로 발행합니다.</p>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>
