@@ -35,6 +35,8 @@ export default function ArticlePushBar() {
     }, []);
 
     async function handleSubscribe() {
+        if (!VAPID_PUBLIC_KEY) return;
+
         try {
             const permission = await Notification.requestPermission();
             if (permission === "granted") {
@@ -84,7 +86,7 @@ export default function ArticlePushBar() {
                         marginBottom: "4px",
                     }}
                 >
-                    {done ? "✅ 구독 완료!" : "🔔 이런 글, 놓치고 싶지 않다면?"}
+                    {done ? "구독 완료" : "새 글이 올라오면 바로 보기"}
                 </div>
                 <div
                     style={{
@@ -94,8 +96,8 @@ export default function ArticlePushBar() {
                     }}
                 >
                     {done
-                        ? "새 칼럼이 올라오면 바로 알려드릴게요."
-                        : "새 칼럼 · 웹툰 알림을 받아보세요. 광고 없이, 언제든 해제 가능."}
+                        ? "새 해설이 올라오면 바로 알려드릴게요."
+                        : "오른스푼은 짧은 피드가 아니라 쌓이는 글입니다. 새 정치·사회 해설 알림을 받아보세요."}
                 </div>
             </div>
 

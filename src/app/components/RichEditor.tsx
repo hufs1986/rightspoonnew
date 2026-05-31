@@ -100,10 +100,16 @@ export default function RichEditor({ value, onChange }: RichEditorProps) {
         immediatelyRender: false,
     });
 
-    // 외부에서 value가 초기화되면(발행 후 clear) 에디터도 초기화
+    // 외부 템플릿 적용/초기화가 들어오면 에디터 내용도 동기화
     useEffect(() => {
-        if (editor && value === "" && editor.getHTML() !== "<p></p>") {
+        if (!editor) return;
+        const current = editor.getHTML();
+        if (value === "" && current !== "<p></p>") {
             editor.commands.clearContent();
+            return;
+        }
+        if (value && value !== current) {
+            editor.commands.setContent(value, { emitUpdate: false });
         }
     }, [editor, value]);
 

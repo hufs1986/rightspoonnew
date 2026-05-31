@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -18,15 +18,7 @@ export default function Comments({ articleId }: { articleId: string }) {
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useEffect(() => {
-        // 기본 닉네임 생성 (익명_랜덤4자리)
-        const randomNum = Math.floor(1000 + Math.random() * 9000);
-        setNickname(`익명_${randomNum}`);
-
-        fetchComments();
-    }, [articleId]);
-
-    const fetchComments = async () => {
+    const fetchComments = useCallback(async () => {
         const supabase = createClient();
         const { data, error } = await supabase
             .from("comments")
@@ -37,7 +29,15 @@ export default function Comments({ articleId }: { articleId: string }) {
         if (!error && data) {
             setComments(data);
         }
-    };
+    }, [articleId]);
+
+    useEffect(() => {
+        // 기본 닉네임 생성 (익명_랜덤4자리)
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        setNickname(`익명_${randomNum}`);
+
+        fetchComments();
+    }, [articleId, fetchComments]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
