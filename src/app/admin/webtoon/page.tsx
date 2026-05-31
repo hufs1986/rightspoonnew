@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Link from "next/link";
@@ -24,19 +24,19 @@ export default function AdminWebtoonPage() {
     const [newDesc, setNewDesc] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const supabase = createClient();
+    const supabase = useMemo(() => createClient(), []);
 
-    const loadSeries = async () => {
+    const loadSeries = useCallback(async () => {
         const { data } = await supabase
             .from("webtoon_series")
             .select("*")
             .order("created_at", { ascending: false });
         if (data) setSeriesList(data);
-    };
+    }, [supabase]);
 
     useEffect(() => {
         loadSeries();
-    }, []);
+    }, [loadSeries]);
 
     const handleCreateSeries = async (e: React.FormEvent) => {
         e.preventDefault();

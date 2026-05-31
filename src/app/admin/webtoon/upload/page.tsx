@@ -29,10 +29,10 @@ export default function WebtoonUploadPage() {
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const supabase = createClient();
 
     // Load series list
     useEffect(() => {
+        const supabase = createClient();
         supabase
             .from("webtoon_series")
             .select("id, title")
@@ -45,6 +45,7 @@ export default function WebtoonUploadPage() {
     // Auto-increment episode number
     useEffect(() => {
         if (!seriesId) return;
+        const supabase = createClient();
         supabase
             .from("webtoon_episodes")
             .select("episode_number")
@@ -130,6 +131,7 @@ export default function WebtoonUploadPage() {
 
         setIsUploading(true);
         setUploadProgress(0);
+        const supabase = createClient();
 
         try {
             const uploadedPages: { path: string; order: number }[] = [];
