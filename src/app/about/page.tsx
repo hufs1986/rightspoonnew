@@ -1,10 +1,11 @@
+import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "./about.module.css";
 
 export const metadata = {
     title: "소개 | 오른스푼 by 드럼통119",
-    description: "오른스푼 미디어의 소개 페이지입니다. 대한민국 오른 시각의 뉴스와 칼럼을 전합니다.",
+    description: "오른스푼은 드럼통119의 정치·사회 해설 본진입니다. 흘러가는 이슈를 붙잡아 글로 남깁니다.",
 };
 
 export default function AboutPage() {
@@ -14,86 +15,113 @@ export default function AboutPage() {
 
             <section className={styles.hero}>
                 <div className={styles.heroInner}>
-                    <img
-                        src="/logo-character.webp"
-                        alt="드럼통119"
-                        className={styles.heroLogo}
-                    />
-                    <h1 className={styles.heroTitle}>오른스푼 미디어</h1>
-                    <p className={styles.heroSub}>by 드럼통119</p>
+                    <div className={styles.heroIdentity}>
+                        <img
+                            src="/logo-character.webp"
+                            alt="드럼통119"
+                            className={styles.heroLogo}
+                        />
+                        <span>드럼통119의 본진</span>
+                    </div>
+                    <h1 className={styles.heroTitle}>
+                        오른스푼은 흘러가는 이슈를 붙잡아
+                        오른쪽 시각으로 다시 쓰는 해설 저장소입니다.
+                    </h1>
                     <p className={styles.heroDesc}>
-                        대한민국 오른 시각을 담다<br />
-                        유튜브 영상과 함께 깊이 있는 분석을 제공하는 미디어 플랫폼입니다.
+                        인스타그램과 유튜브에서는 짧게 반응하고, 오른스푼에서는 맥락과 근거를 붙여 글로 남깁니다.
+                        플랫폼 알고리즘에 흘러가지 않도록 내 도메인에 쌓는 1인 정치·사회 미디어입니다.
                     </p>
+                    <div className={styles.heroActions}>
+                        <Link href="/from-instagram" className={styles.primaryAction}>
+                            처음 오셨다면
+                        </Link>
+                        <Link href="/category/all" className={styles.secondaryAction}>
+                            최신 해설 보기
+                        </Link>
+                    </div>
                 </div>
             </section>
 
             <section className={styles.content}>
-                {/* 운영자 소개 */}
-                <div style={{ maxWidth: "700px", margin: "0 auto 48px", padding: "0 20px" }}>
-                    <h2 style={{ fontSize: "22px", fontWeight: "bold", color: "var(--color-text-primary)", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span style={{ width: "4px", height: "24px", background: "#d32f2f", borderRadius: "9999px", display: "inline-block" }} />
-                        운영자 소개
-                    </h2>
-                    <div style={{ background: "var(--color-bg-card)", border: "1px solid var(--color-border)", borderRadius: "16px", padding: "28px", lineHeight: 1.8 }}>
-                        <p style={{ color: "var(--color-text-secondary)", fontSize: "15px", marginBottom: "16px" }}>
-                            <strong style={{ color: "var(--color-text-primary)" }}>드럼통119</strong>은 정치·경제·역사 분야를 깊이 있게 분석하는 유튜브 크리에이터이자 1인 미디어 운영자입니다.
-                        </p>
-                        <p style={{ color: "var(--color-text-secondary)", fontSize: "15px", marginBottom: "16px" }}>
-                            주류 언론이 다루지 않는 시각, 데이터에 기반한 논리적 분석, 그리고 대한민국의 과거와 현재를 잇는 역사적 맥락을 콘텐츠에 담고 있습니다.
-                            &ldquo;올바른 시각이 올바른 판단을 만든다&rdquo;는 신념 아래, 복잡한 이슈를 누구나 이해할 수 있도록 쉽고 명쾌하게 전달하는 것을 목표로 합니다.
-                        </p>
-                        <p style={{ color: "var(--color-text-secondary)", fontSize: "15px" }}>
-                            오른스푼은 유튜브 채널의 영상 콘텐츠를 텍스트 기사로 재구성하여, 영상을 볼 시간이 없는 분들도 핵심 내용을 빠르게 파악할 수 있도록 서비스하고 있습니다.
-                        </p>
-                    </div>
-                </div>
+                <section className={styles.statement}>
+                    <p className={styles.kicker}>왜 만들었나</p>
+                    <h2>인스타 반응은 빠르지만, 내 자산으로 남지 않습니다.</h2>
+                    <p>
+                        오른스푼은 드럼통119가 매일 보는 정치·사회 이슈를 검색 가능한 글로 축적하기 위해 만들었습니다.
+                        짧은 분노나 단발성 밈에서 끝내지 않고, 사건의 구조와 프레임, 독자가 확인해야 할 질문을 남깁니다.
+                    </p>
+                </section>
 
                 <div className={styles.grid}>
                     <div className={styles.card}>
-                        <span className={styles.cardIcon}>📺</span>
-                        <h3 className={styles.cardTitle}>유튜브 × 기사</h3>
+                        <span className={styles.cardLabel}>01</span>
+                        <h3 className={styles.cardTitle}>뉴스를 베끼지 않습니다</h3>
                         <p className={styles.cardDesc}>
-                            드럼통119 유튜브 채널의 영상을 기사 형태로 정리하여
-                            더 깊이 있는 분석과 의견을 전달합니다.
+                            공개된 이슈와 자료를 바탕으로, 오른스푼의 관점과 해석을 붙여 다시 씁니다.
+                            핵심은 속보가 아니라 판단의 기준입니다.
                         </p>
                     </div>
                     <div className={styles.card}>
-                        <span className={styles.cardIcon}>🎯</span>
-                        <h3 className={styles.cardTitle}>오른의 시각</h3>
+                        <span className={styles.cardLabel}>02</span>
+                        <h3 className={styles.cardTitle}>짧은 반응을 긴 해설로 바꿉니다</h3>
                         <p className={styles.cardDesc}>
-                            정치, 경제, 역사 등 주요 이슈를 오른 관점에서 분석하며,
-                            사실에 기반한 균형 잡힌 시각을 지향합니다.
+                            인스타그램에서 반응이 온 주제는 오른스푼에서 배경, 상대 프레임, 결론까지 정리합니다.
+                            공유보다 중요한 것은 남는 기록입니다.
                         </p>
                     </div>
                     <div className={styles.card}>
-                        <span className={styles.cardIcon}>🔍</span>
-                        <h3 className={styles.cardTitle}>근거 있는 분석</h3>
+                        <span className={styles.cardLabel}>03</span>
+                        <h3 className={styles.cardTitle}>입문자도 따라오게 만듭니다</h3>
                         <p className={styles.cardDesc}>
-                            감정이 아닌 논리와 근거로 말합니다.
-                            공식 자료에 기반한 분석으로 신뢰를 쌓아갑니다.
+                            정치·경제·역사 이슈를 처음 접하는 독자도 맥락을 놓치지 않도록 쉬운 구조로 정리합니다.
+                            다시 읽을 수 있는 글을 목표로 합니다.
                         </p>
                     </div>
                 </div>
 
-                <div className={styles.channels}>
-                    <h2 className={styles.channelsTitle}>채널 안내</h2>
+                <section className={styles.readGuide}>
+                    <div>
+                        <p className={styles.kicker}>읽는 방법</p>
+                        <h2>오른스푼은 이렇게 읽으면 됩니다.</h2>
+                    </div>
+                    <div className={styles.guideList}>
+                        <div>
+                            <strong>오늘의 해설</strong>
+                            <span>지금 논쟁이 되는 이슈를 오른쪽 시각으로 정리합니다.</span>
+                        </div>
+                        <div>
+                            <strong>인스타 확장판</strong>
+                            <span>짧은 게시물에서 못 다한 근거와 맥락을 이어갑니다.</span>
+                        </div>
+                        <div>
+                            <strong>입문서</strong>
+                            <span>반복해서 등장하는 정치·경제·역사 개념을 보관합니다.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section className={styles.channels}>
+                    <div>
+                        <p className={styles.kicker}>연결</p>
+                        <h2 className={styles.channelsTitle}>짧게 보고, 길게 읽고, 다시 공유합니다.</h2>
+                    </div>
                     <div className={styles.channelGrid}>
+                        <Link href="/from-instagram" className={styles.channelLink}>
+                            인스타 방문자 안내
+                        </Link>
+                        <Link href="/category/all" className={styles.channelLink}>
+                            전체 글 보기
+                        </Link>
                         <a href="https://youtube.com/channel/UCzoap467OGtjhLk5qmU53OA?si=qKPByMpqOz1bq44J" target="_blank" rel="noopener noreferrer" className={styles.channelLink}>
-                            ▶ YouTube
+                            YouTube
                         </a>
                     </div>
-                </div>
+                </section>
 
-                {/* 연락처 */}
-                <div style={{ maxWidth: "700px", margin: "32px auto 0", padding: "0 20px", textAlign: "center" }}>
-                    <div style={{ background: "var(--color-bg-card)", border: "1px solid var(--color-border)", borderRadius: "12px", padding: "20px" }}>
-                        <p style={{ color: "var(--color-text-tertiary)", fontSize: "13px", marginBottom: "6px" }}>문의 및 제보</p>
-                        <a href="mailto:drumtong119@gmail.com" style={{ color: "#d32f2f", fontSize: "16px", fontWeight: "600", textDecoration: "none" }}>
-                            📧 drumtong119@gmail.com
-                        </a>
-                    </div>
-                </div>
+                <section className={styles.contact}>
+                    <p>제보와 협업 문의</p>
+                    <a href="mailto:drumtong119@gmail.com">drumtong119@gmail.com</a>
+                </section>
             </section>
 
             <Footer />

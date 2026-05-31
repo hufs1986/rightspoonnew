@@ -1,15 +1,11 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { ArticleCard, HeroArticle } from "./components/ArticleCard";
-import PopularArticles from "./components/PopularArticles";
 
 import styles from "./page.module.css";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
-import { getCategoryValue } from "./data/articles";
 
-import DailyQuote from "./components/DailyQuote";
-import CardNewsSwiper from "./components/CardNewsSwiper";
 import { formatArticle } from "@/utils/articleFormat";
 import LoadMore from "./components/LoadMore";
 
@@ -24,21 +20,6 @@ export default async function Home() {
     .select("*")
     .order("created_at", { ascending: false })
     .limit(10);
-
-  // Supabase에서 최신 웹툰 가져오기
-  const { data: webtoonEpisodes } = await supabase
-    .from("webtoon_episodes")
-    .select(`
-      id,
-      title,
-      episode_number,
-      created_at,
-      series_id,
-      webtoon_series!inner ( title )
-    `)
-    .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(3);
 
   if (error) {
     console.error("데이터 불러오기 실패:", error);
@@ -101,91 +82,52 @@ export default async function Home() {
       />
       <Header />
 
-      {/* Breaking News Ticker */}
-      <div className={styles.ticker}>
-        <div className={styles.ticker__inner}>
-          <span className={styles.ticker__label}>긴급</span>
-          <span className={styles.ticker__text}>
-            오른스푼 론칭! 올바른 시각의 소식을 매일 전해드립니다. 유튜브 채널을 구독하고 더 많은 소식을 받아보세요! &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
-          </span>
-          <span className={styles.ticker__text}>
-            오른스푼 론칭! 올바른 시각의 소식을 매일 전해드립니다. 유튜브 채널을 구독하고 더 많은 소식을 받아보세요! &nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;
-          </span>
+      <section className={styles.homeIntro}>
+        <div className={styles.homeIntro__copy}>
+          <div className={styles.homeIntro__eyebrow}>드럼통119의 정치·사회 해설 본진</div>
+          <h1 className={styles.homeIntro__title}>
+            흘러가는 이슈를 붙잡아, 오른쪽 시각으로 다시 씁니다.
+          </h1>
+          <p className={styles.homeIntro__desc}>
+            오른스푼은 인스타그램과 유튜브에서 짧게 지나가는 정치·사회 이슈를 글로 축적하는 1인 미디어입니다.
+            뉴스 복사가 아니라, 사건의 프레임과 쟁점을 운영자의 관점으로 정리합니다.
+          </p>
+          <div className={styles.homeIntro__actions}>
+            <Link href="/category/all" className="btn btn--primary">
+              최신 해설 읽기
+            </Link>
+            <Link href="/about" className="btn btn--outline">
+              운영자 소개
+            </Link>
+          </div>
         </div>
-      </div>
-
-      <DailyQuote />
+        <aside className={styles.homeIntro__panel} aria-label="오른스푼 사용 안내">
+          <strong>인스타에서 오셨다면</strong>
+          <span>짧은 문장으로 끝낸 이슈의 전체 맥락과 근거를 여기에서 이어서 읽을 수 있습니다.</span>
+          <span>마음에 남는 글은 링크로 저장하고 공유하세요. 이곳이 오른스푼의 아카이브입니다.</span>
+          <Link href="/from-instagram" className={styles.homeIntro__textLink}>
+            처음 오신 분들을 위한 안내 보기
+          </Link>
+        </aside>
+      </section>
 
       {/* Hero Section */}
       <section className={styles["hero-section"]}>
+        <div className={styles.section__header}>
+          <h2 className={styles.section__title}>
+            <span className={styles["section__title-accent"]} />
+            오늘의 대표 해설
+          </h2>
+        </div>
         <HeroArticle article={heroArticle} />
       </section>
-
-      {/* Game CTA Banner */}
-      <section className={styles.gameBanner}>
-        <Link href="/game/indictment-maker" className={styles.gameBanner__link}>
-          <div className={styles.gameBanner__content}>
-            <div className={styles.gameBanner__icon}>⚖️</div>
-            <div className={styles.gameBanner__text}>
-              <div className={styles.gameBanner__kicker}>🎮 체험형 정치 시뮬레이션</div>
-              <div className={styles.gameBanner__title}>재판을 지켜라 — 막을 수 있을까?</div>
-              <div className={styles.gameBanner__sub}>공소취소 방어전 · 거의 아무도 못 깹니다 🔥</div>
-            </div>
-            <div className={styles.gameBanner__arrow}>→</div>
-          </div>
-        </Link>
-      </section>
-
-      {/* Latest Webtoons */}
-      {webtoonEpisodes && webtoonEpisodes.length > 0 && (
-        <section className={styles.section}>
-          <div className={styles.section__header}>
-            <h2 className={styles.section__title}>
-              <span className={styles["section__title-accent"]} />
-              역사를 만화로, 최신 웹툰
-            </h2>
-            <Link href="/webtoon" className={styles.section__more}>
-              웹툰 홈 가기 →
-            </Link>
-          </div>
-
-          <div className={styles.webtoonGrid}>
-            {webtoonEpisodes.map((ep) => {
-              const thumbUrl = `/api/webtoon/thumb?episodeId=${ep.id}`;
-
-              // @ts-ignore - Handle joined relation array vs object issue
-              const seriesTitle = Array.isArray(ep.webtoon_series) ? ep.webtoon_series[0]?.title : ep.webtoon_series?.title;
-
-              return (
-                <Link key={ep.id} href={`/webtoon/${ep.series_id}/${ep.id}`} className={styles.webtoonCard}>
-                  <div className={styles.webtoonCard__thumbWrapper}>
-                    <span className={styles.webtoonCard__badge}>{ep.episode_number}</span>
-                    {thumbUrl ? (
-                      <img src={thumbUrl} alt={ep.title} className={styles.webtoonCard__thumb} />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>No Image</div>
-                    )}
-                  </div>
-                  <div className={styles.webtoonCard__info}>
-                    <div className={styles.webtoonCard__series}>{seriesTitle || "웹툰 시리즈"}</div>
-                    <h3 className={styles.webtoonCard__title}>{ep.title}</h3>
-                    <div className={styles.webtoonCard__meta}>
-                      <span>{new Date(ep.created_at).toLocaleDateString("ko-KR")}</span>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      )}
 
       {/* Latest Articles */}
       <section className={styles.section}>
         <div className={styles.section__header}>
           <h2 className={styles.section__title}>
             <span className={styles["section__title-accent"]} />
-            최신 콘텐츠
+            최신 해설
           </h2>
           {latestArticles.length > 0 && (
             <Link href="/category/all" className={styles.section__more}>
@@ -226,31 +168,40 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Popular Articles Ranking */}
-      <PopularArticles />
+      <section className={styles.instagramBridge}>
+        <div>
+          <strong>인스타 반응을 오른스푼 자산으로</strong>
+          <p>
+            짧은 릴스와 피드에서 반응이 있었던 주제는 오른스푼에서 긴 해설로 정리합니다.
+            저장 가능한 글, 공유 가능한 링크, 검색되는 아카이브로 남기는 것이 목표입니다.
+          </p>
+        </div>
+        <Link href="/from-instagram" className="btn btn--primary">
+          인스타 방문자 안내
+        </Link>
+      </section>
 
-      {/* Weekly Card News */}
-      <CardNewsSwiper />
-
-      {/* Join CTA */}
-      <section className={styles.cta}>
-        <div className={styles.cta__inner}>
-          <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <img src="/logo-character.webp" alt="드럼통119" style={{ width: "100px", height: "100px", borderRadius: "50%", border: "3px solid #d32f2f", boxShadow: "0 0 20px rgba(211,47,47,0.5)", marginBottom: "20px" }} />
-            <h2 className={styles.cta__title}>
-              대한민국 오른 목소리, 유튜브에서!
-            </h2>
-            <p className={styles.cta__desc} style={{ fontSize: "16px" }}>
-              오른스푼 공식 채널을 구독하시면 최신 영상과 깊이 있는 분석을 가장 먼저 받아보실 수 있습니다.
-            </p>
-            <div className={styles.cta__actions}>
-              <a href="https://youtube.com/channel/UCzoap467OGtjhLk5qmU53OA?si=qKPByMpqOz1bq44J" target="_blank" rel="noopener noreferrer" className="btn btn--primary" style={{ padding: "12px 24px", fontSize: "16px", borderRadius: "30px", background: "#FF0000" }}>
-                ▶ 유튜브 채널 구독하기
-              </a>
-              <Link href="/about" className="btn btn--outline" style={{ padding: "12px 24px", fontSize: "16px", borderRadius: "30px", color: "white", borderColor: "rgba(255,255,255,0.3)" }}>
-                사이트 소개
-              </Link>
-            </div>
+      <section className={styles.workflow}>
+        <div className={styles.workflow__copy}>
+          <span>운영 방식</span>
+          <h2>뉴스를 그대로 옮기지 않고, 해설 자산으로 바꿉니다.</h2>
+          <p>
+            매일 쏟아지는 이슈 중 오래 남길 주제만 고르고, AI 초안으로 구조를 잡은 뒤
+            드럼통119의 관점과 문장으로 다시 편집해 발행합니다.
+          </p>
+        </div>
+        <div className={styles.workflow__steps}>
+          <div>
+            <strong>1. 소재 수집</strong>
+            <p>뉴스, 공식자료, 인스타 반응에서 주제를 고릅니다.</p>
+          </div>
+          <div>
+            <strong>2. AI 구조화</strong>
+            <p>사실관계, 상대 프레임, 핵심 질문을 초안으로 만듭니다.</p>
+          </div>
+          <div>
+            <strong>3. 운영자 편집</strong>
+            <p>관점, 근거, 결론을 보강해 오른스푼 글로 발행합니다.</p>
           </div>
         </div>
       </section>

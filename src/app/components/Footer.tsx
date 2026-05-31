@@ -10,8 +10,8 @@ export default function Footer() {
                 <div>
                     <div className={styles["footer__brand-name"]}>RIGHT SPOON</div>
                     <p className={styles["footer__brand-desc"]}>
-                        대한민국 오른 시각의 뉴스와 칼럼을 전합니다.
-                        깊이 있는 분석과 사실에 기반한 미디어를 지향합니다.
+                        드럼통119의 정치·사회 해설 본진입니다.
+                        흘러가는 이슈를 오른쪽 시각의 글 자산으로 남깁니다.
                     </p>
                     <div className={styles.footer__socials}>
                         <a
@@ -49,6 +49,9 @@ export default function Footer() {
                         <Link href="/about" className={styles.footer__link}>
                             소개
                         </Link>
+                        <Link href="/from-instagram" className={styles.footer__link}>
+                            인스타 방문자 안내
+                        </Link>
                     </div>
                 </div>
 
@@ -61,6 +64,9 @@ export default function Footer() {
                         </Link>
                         <Link href="/terms" className={styles.footer__link}>
                             이용약관
+                        </Link>
+                        <Link href="/editorial-policy" className={styles.footer__link}>
+                            편집 원칙
                         </Link>
                     </div>
                 </div>
