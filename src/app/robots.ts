@@ -5,8 +5,9 @@ export default function robots(): MetadataRoute.Robots {
         rules: {
             userAgent: '*',
             allow: '/',
-            disallow: ['/admin/', '/admin-login/', '/admin/write/', '/admin/edit/'],
+            disallow: ['/admin', '/admin/', '/admin-login', '/admin-login/'],
         },
+        host: 'https://www.rightspoon.co.kr',
         sitemap: 'https://www.rightspoon.co.kr/sitemap.xml',
     };
 }

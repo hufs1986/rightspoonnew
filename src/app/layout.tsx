@@ -1,23 +1,39 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import InstallBanner from "./components/InstallBanner";
-import PushPermission from "./components/PushPermission";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "오른스푼 | Right Spoon — 대한민국 오른 미디어",
+  title: "오른스푼 | 드럼통119의 정치·사회 해설 본진",
   description:
-    "오른스푼은 대한민국 오른 시각의 뉴스와 칼럼을 전합니다. 유튜브 영상과 함께 깊이 있는 분석을 제공합니다.",
-  keywords: "오른스푼, rightspoon, 오른 미디어, 우파 뉴스, 정치, 경제, 역사",
+    "오른스푼은 드럼통119가 정치·사회 이슈를 오른쪽 시각으로 해설하고 기록하는 1인 미디어입니다. 뉴스 복사가 아닌 프레임 분석과 칼럼을 제공합니다.",
+  keywords: "오른스푼, rightspoon, 드럼통119, 우파 칼럼, 정치 해설, 사회 이슈, 보수 미디어",
   authors: [{ name: "오른스푼" }],
+  creator: "드럼통119",
+  publisher: "오른스푼",
   openGraph: {
     type: "website",
     locale: "ko_KR",
     url: "https://www.rightspoon.co.kr",
     siteName: "오른스푼 - Right Spoon",
-    title: "오른스푼 | 대한민국 오른 미디어",
+    title: "오른스푼 | 드럼통119의 정치·사회 해설 본진",
     description:
-      "대한민국 오른 시각의 뉴스와 칼럼. 유튜브 영상과 함께 깊이 있는 분석을 제공합니다.",
+      "흘러가는 정치·사회 이슈를 드럼통119의 관점으로 정리하는 1인 미디어입니다.",
+    images: [
+      {
+        url: "https://www.rightspoon.co.kr/api/og?title=%EC%98%A4%EB%A5%B8%EC%8A%A4%ED%91%BC&category=%EB%93%9C%EB%9F%BC%ED%86%B5119%EC%9D%98%20%EB%B3%B8%EC%A7%84",
+        width: 1200,
+        height: 630,
+        alt: "오른스푼",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "오른스푼 | 드럼통119의 정치·사회 해설 본진",
+    description: "흘러가는 정치·사회 이슈를 드럼통119의 관점으로 정리하는 1인 미디어입니다.",
+    images: [
+      "https://www.rightspoon.co.kr/api/og?title=%EC%98%A4%EB%A5%B8%EC%8A%A4%ED%91%BC&category=%EB%93%9C%EB%9F%BC%ED%86%B5119%EC%9D%98%20%EB%B3%B8%EC%A7%84",
+    ],
   },
   verification: {
     other: {
@@ -83,9 +99,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/logo-v2.png" />
       </head>
       <body>
-        {/* <InstallBanner /> */}
         {children}
-        {/* <PushPermission /> */}
       </body>
     </html>
   );

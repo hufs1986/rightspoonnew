@@ -1,19 +1,20 @@
 {
-  "name": "오른스푼 Media",
+  "name": "오른스푼 | 드럼통119의 정치·사회 해설 본진",
   "short_name": "오른스푼",
-  "description": "대한민국 오른 시각의 뉴스와 칼럼을 제공하는 미디어 플랫폼",
+  "description": "흘러가는 정치·사회 이슈를 드럼통119의 관점으로 정리하는 1인 해설 미디어",
   "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0d1117",
   "theme_color": "#c81e1e",
   "icons": [
     {
-      "src": "/drumtong119-logo.png",
+      "src": "/logo-v2.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/drumtong119-logo.png",
+      "src": "/logo-v2.png",
       "sizes": "512x512",
       "type": "image/png"
     }
