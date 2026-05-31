@@ -9,6 +9,7 @@ import ReadingProgressBar from "../../components/ReadingProgressBar";
 import NextArticleCTA from "../../components/NextArticleCTA";
 import Comments from "../../components/Comments";
 import ArticlePushBar from "../../components/ArticlePushBar";
+import InstagramShareKit from "../../components/InstagramShareKit";
 import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
@@ -43,21 +44,32 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     if (!data) return { title: '콘텐츠를 찾을 수 없습니다 | 오른스푼' };
 
     const article = formatArticle(data);
+    const ogImage = article.youtubeId
+        ? article.thumbnailUrl
+        : `https://www.rightspoon.co.kr/api/og?title=${encodeURIComponent(article.title)}&category=${encodeURIComponent(article.categoryLabel)}`;
 
     return {
         title: `${article.title} | 오른스푼`,
         description: article.excerpt,
+        alternates: {
+            canonical: `https://www.rightspoon.co.kr/article/${article.linkId}`,
+        },
         openGraph: {
             title: article.title,
             description: article.excerpt,
-            images: [article.thumbnailUrl || '/api/og?title=' + encodeURIComponent(article.title)],
+            url: `https://www.rightspoon.co.kr/article/${article.linkId}`,
+            siteName: "오른스푼",
+            images: [ogImage],
             type: 'article',
+            publishedTime: data.created_at,
+            modifiedTime: data.updated_at || data.created_at,
+            authors: ["드럼통119"],
         },
         twitter: {
             card: 'summary_large_image',
             title: article.title,
             description: article.excerpt,
-            images: [article.thumbnailUrl || '/api/og?title=' + encodeURIComponent(article.title)],
+            images: [ogImage],
         }
     };
 }
@@ -83,6 +95,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     }
 
     const article = formatArticle(dbArticle);
+    const articleUrl = `https://www.rightspoon.co.kr/article/${article.linkId}`;
 
     const { data: relatedDb } = await supabase
         .from('articles')
@@ -129,10 +142,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         },
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": `https://www.rightspoon.co.kr/article/${id}`
+            "@id": `https://www.rightspoon.co.kr/article/${article.linkId}`
         },
         "articleSection": article.categoryLabel,
         "wordCount": article.content.replace(/<[^>]+>/g, '').length,
+        "isAccessibleForFree": true,
+        "inLanguage": "ko-KR",
     };
 
     return (
@@ -253,6 +268,23 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
                 {/* Share */}
                 <ShareButtons title={article.title} description={article.excerpt} thumbnailUrl={article.thumbnailUrl} />
+
+                <InstagramShareKit title={article.title} excerpt={article.excerpt} url={articleUrl} />
+
+                <section className={styles.article__bridge}>
+                    <div>
+                        <p className={styles.article__bridge_kicker}>오른스푼 활용법</p>
+                        <h2>이 글은 흘러가는 피드가 아니라, 다시 꺼내 읽는 기록입니다.</h2>
+                        <p>
+                            인스타에서 짧게 본 이슈는 오른스푼에서 맥락과 근거를 붙여 보관합니다.
+                            처음 방문했다면 안내 페이지에서 읽는 순서를 확인하고, 괜찮았다면 글 주소를 저장해두세요.
+                        </p>
+                    </div>
+                    <div className={styles.article__bridge_actions}>
+                        <Link href="/from-instagram">처음 오신 분 안내</Link>
+                        <Link href="/category/all">다른 해설 읽기</Link>
+                    </div>
+                </section>
 
                 {/* Push Subscription Bar */}
                 <ArticlePushBar />

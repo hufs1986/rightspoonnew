@@ -16,6 +16,23 @@ export default function StoryEngine() {
     const [endingStats, setEndingStats] = useState<Record<string, number>>({});
     const [totalPlays, setTotalPlays] = useState<number>(0);
 
+    // 모바일 브라우저에서 게임 도중 위/아래로 당겨서 새로고침(pull-to-refresh)되는 현상을 격리 차단
+    useEffect(() => {
+        const html = document.documentElement;
+        const body = document.body;
+        
+        const origHtml = html.style.overscrollBehaviorY;
+        const origBody = body.style.overscrollBehaviorY;
+        
+        html.style.overscrollBehaviorY = "none";
+        body.style.overscrollBehaviorY = "none";
+        
+        return () => {
+            html.style.overscrollBehaviorY = origHtml;
+            body.style.overscrollBehaviorY = origBody;
+        };
+    }, []);
+
     // 타이틀 화면에서 통계 불러오기
     useEffect(() => {
         if (phase === "title") {
