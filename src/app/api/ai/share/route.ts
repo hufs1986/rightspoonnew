@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
 
 type ShareRequest = {
     title?: string;
@@ -42,6 +43,12 @@ function extractOutputText(data: unknown) {
 }
 
 export async function POST(request: Request) {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+        return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
+    }
+
     const body = (await request.json()) as ShareRequest;
     const apiKey = process.env.OPENAI_API_KEY;
 

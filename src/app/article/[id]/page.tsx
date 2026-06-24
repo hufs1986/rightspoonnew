@@ -14,6 +14,7 @@ import styles from "./page.module.css";
 import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
 import { formatArticle } from "@/utils/articleFormat";
+import AdSlot from "../../components/AdSlot";
 
 interface ArticlePageProps {
     params: Promise<{ id: string }>;
@@ -251,6 +252,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     );
                 })()}
 
+                {/* AdSlot Top */}
+                <AdSlot slot="article-top" format="auto" style={{ display: 'block', margin: '24px 0' }} />
+
                 {/* Article Content */}
                 <div
                     className={styles.article__body}
@@ -260,6 +264,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                             : article.content.replace(/\n/g, '<br/>')
                     }}
                 />
+
+                {/* AdSlot Bottom */}
+                <AdSlot slot="article-bottom" format="auto" style={{ display: 'block', margin: '24px 0' }} />
 
                 {/* Like Button */}
                 <div style={{ display: 'flex', justifyContent: 'center', margin: '40px 0' }}>

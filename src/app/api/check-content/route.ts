@@ -15,6 +15,11 @@ type AuditArticle = {
 export async function GET() {
     try {
         const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
+        }
+
         const { data, error } = await supabase
             .from('articles')
             .select('id, slug, title, category, content, created_at, view_count, like_count')

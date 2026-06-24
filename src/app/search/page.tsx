@@ -4,6 +4,7 @@ import { ArticleCard } from "../components/ArticleCard";
 import { createClient } from "@/utils/supabase/server";
 import { formatArticle } from "@/utils/articleFormat";
 import { Metadata } from "next";
+import AdSlot from "../components/AdSlot";
 
 interface SearchPageProps {
     searchParams: Promise<{ q?: string }>;
@@ -73,15 +74,18 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
                 {/* 결과 그리드 */}
                 {articles.length > 0 ? (
-                    <div style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                        gap: "var(--space-6)",
-                    }}>
-                        {articles.map((article) => (
-                            <ArticleCard key={article.id} article={article} />
-                        ))}
-                    </div>
+                    <>
+                        <AdSlot slot="search-top" format="auto" style={{ display: "block", margin: "24px 0" }} />
+                        <div style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                            gap: "var(--space-6)",
+                        }}>
+                            {articles.map((article) => (
+                                <ArticleCard key={article.id} article={article} />
+                            ))}
+                        </div>
+                    </>
                 ) : query.length >= 2 ? (
                     <div style={{
                         textAlign: "center",

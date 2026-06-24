@@ -22,6 +22,16 @@ function envStatus(key: string, label: string, required = true): HealthItem {
 }
 
 export async function GET() {
+    try {
+        const supabase = await createClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+            return NextResponse.json({ error: "인증이 필요합니다." }, { status: 401 });
+        }
+    } catch {
+        return NextResponse.json({ error: "인증 정보 확인 중 오류가 발생했습니다." }, { status: 500 });
+    }
+
     const checks: HealthItem[] = [
         envStatus("NEXT_PUBLIC_SUPABASE_URL", "Supabase URL"),
         envStatus("NEXT_PUBLIC_SUPABASE_ANON_KEY", "Supabase Anon Key"),
