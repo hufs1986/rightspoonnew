@@ -3,6 +3,16 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+    const host = request.headers.get("host") || "";
+    const pathname = request.nextUrl.pathname;
+
+    // Redirect apex domain (rightspoon.co.kr) to www.rightspoon.co.kr with 301
+    if (host === "rightspoon.co.kr") {
+        return NextResponse.redirect(`https://www.rightspoon.co.kr${pathname}`, {
+            status: 301,
+        });
+    }
+
     let supabaseResponse = NextResponse.next({
         request,
     });
