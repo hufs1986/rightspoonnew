@@ -3,10 +3,15 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styles from "./about.module.css";
 
-export const metadata = {
-    title: "소개 | 오른스푼 by 드럼통119",
+import { Metadata } from "next";
+import { generatePageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = generatePageMetadata({
+    title: "소개",
     description: "오른스푼은 드럼통119의 정치·사회 해설 본진입니다. 흘러가는 이슈를 붙잡아 글로 남깁니다.",
-};
+    urlPath: "/about",
+    imageUrl: "https://www.rightspoon.co.kr/logo-character.webp"
+});
 
 export default function AboutPage() {
     return (

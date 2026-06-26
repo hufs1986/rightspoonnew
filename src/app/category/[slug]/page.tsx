@@ -8,6 +8,7 @@ import { getCategoryValue } from "../../data/articles";
 import { Metadata } from "next";
 import { formatArticle } from "@/utils/articleFormat";
 import LoadMore from "../../components/LoadMore";
+import { generatePageMetadata } from "@/lib/seo";
 
 export const revalidate = 60; // Cache for 60 seconds
 
@@ -18,15 +19,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     else if (slug === "economy") categoryName = "경제";
     else if (slug === "history") categoryName = "역사";
 
-    return {
-        title: `${categoryName} | 오른스푼 - 대한민국 오른 미디어`,
-        description: `오른스푼 미디어의 ${categoryName} 콘텐츠 모아보기. 올바른 시각으로 세상을 분석합니다.`,
-        openGraph: {
-            title: `${categoryName} | 오른스푼`,
-            description: `오른스푼 미디어의 ${categoryName} 분야 최신 소식 및 전문적인 분석`,
-            images: ['/logo-character.jpg'],
-        }
-    };
+    const desc = `오른스푼 미디어의 ${categoryName} 분야 최신 소식 및 올바른 시각의 심층 해설을 만나보세요.`;
+
+    return generatePageMetadata({
+        title: `${categoryName} 분야 해설`,
+        description: desc,
+        urlPath: `/category/${slug}`,
+        imageUrl: `https://www.rightspoon.co.kr/logo-character.webp`
+    });
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {

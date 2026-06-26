@@ -15,6 +15,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Metadata } from "next";
 import { formatArticle } from "@/utils/articleFormat";
 import AdSlot from "../../components/AdSlot";
+import { generatePageMetadata } from "@/lib/seo";
 
 interface ArticlePageProps {
     params: Promise<{ id: string }>;
@@ -49,30 +50,14 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
         ? article.thumbnailUrl
         : `https://www.rightspoon.co.kr/api/og?title=${encodeURIComponent(article.title)}&category=${encodeURIComponent(article.categoryLabel)}`;
 
-    return {
-        title: `${article.title} | 오른스푼`,
+    return generatePageMetadata({
+        title: article.title,
         description: article.excerpt,
-        alternates: {
-            canonical: `https://www.rightspoon.co.kr/article/${article.linkId}`,
-        },
-        openGraph: {
-            title: article.title,
-            description: article.excerpt,
-            url: `https://www.rightspoon.co.kr/article/${article.linkId}`,
-            siteName: "오른스푼",
-            images: [ogImage],
-            type: 'article',
-            publishedTime: data.created_at,
-            modifiedTime: data.updated_at || data.created_at,
-            authors: ["드럼통119"],
-        },
-        twitter: {
-            card: 'summary_large_image',
-            title: article.title,
-            description: article.excerpt,
-            images: [ogImage],
-        }
-    };
+        urlPath: `/article/${article.linkId}`,
+        imageUrl: ogImage,
+        publishedTime: data.created_at,
+        modifiedTime: data.updated_at || data.created_at,
+    });
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
