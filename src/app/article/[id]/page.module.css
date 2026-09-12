@@ -47,6 +47,8 @@
     font-weight: var(--font-weight-black);
     line-height: var(--line-height-tight);
     margin-bottom: var(--space-4);
+    text-wrap: balance;
+    word-break: keep-all;
 }
 
 .article__excerpt {
@@ -117,6 +119,13 @@
     font-size: var(--text-lg);
     line-height: var(--line-height-loose);
     color: var(--color-text-primary);
+    /* 한국어 가독성: 음절 중간이 아니라 단어 경계에서 줄바꿈 */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+}
+
+.article__body p {
+    text-wrap: pretty;
 }
 
 .article__body h2 {

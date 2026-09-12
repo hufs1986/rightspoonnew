@@ -37,6 +37,8 @@
   line-height: 1.08;
   font-weight: var(--font-weight-black);
   margin-bottom: var(--space-5);
+  text-wrap: balance;
+  word-break: keep-all;
 }
 
 .homeIntro__desc {
