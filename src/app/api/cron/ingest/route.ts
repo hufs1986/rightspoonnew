@@ -85,7 +85,7 @@ export async function GET(request: Request) {
                 continue;
             }
             const { column, mode } = await generateColumn({
-                transcript: t.transcript,
+                source: `[영상 자막]\n${t.transcript}`,
                 videoTitle: entry.title || t.title,
             });
             if (mode !== "ai") {

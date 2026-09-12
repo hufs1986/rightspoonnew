@@ -99,12 +99,10 @@ async function callOpenAI(prompt: string): Promise<GeneratedColumn> {
 }
 
 export async function generateColumn(input: {
-    transcript?: string;
-    notes?: string;
+    source: string;
     videoTitle?: string;
-    memo?: string;
 }): Promise<GenerateResult> {
-    const fallbackSource = input.transcript?.trim() || input.notes?.trim() || "";
+    const fallbackSource = input.source.trim();
     if (!process.env.OPENAI_API_KEY) {
         return {
             column: fallbackColumn(fallbackSource, input.videoTitle),
@@ -115,10 +113,8 @@ export async function generateColumn(input: {
     try {
         const anchors = await fetchStyleAnchors();
         const prompt = buildColumnPrompt({
-            transcript: input.transcript,
-            notes: input.notes,
+            source: input.source,
             videoTitle: input.videoTitle,
-            memo: input.memo,
             anchors,
         });
         return { column: await callOpenAI(prompt), mode: "ai", message: "" };
